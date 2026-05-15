@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { buildMasterSkkniContext, normalizeCompetencyMap, normalizeUnitDetail, transformSemanticSearch } from "./skkni.service";
+import { buildSkkniContext, buildMasterSkkniContext, normalizeCompetencyMap, normalizeUnitDetail, transformSemanticSearch } from "./skkni.service";
 
 describe("skkni service helpers", () => {
 	it("builds Master SKKNI semantic context from master json", () => {
@@ -66,5 +66,40 @@ describe("skkni service helpers", () => {
 
 		expect(map.main_goal).toBe("Meningkatkan penjualan");
 		expect(map.basic_function).toBe("Kampanye digital");
+	});
+
+	it("builds Trainer SKKNI semantic context from trainer json", () => {
+		const context = buildSkkniContext({
+			schema_key: "hono_trainer_alpha_v1",
+			brainstorming: {
+				trainer_name: "Ujang Abdus Salam",
+				institution: "Mandiri",
+				expertise: "Marketing",
+				audience: "UMKM yang mau naik kelas",
+				outcome: "UMKM bisa membuat strategi pemasaran sendiri",
+			},
+		});
+
+		expect(context).toEqual({
+			expertise: "Marketing",
+			activities: "UMKM bisa membuat strategi pemasaran sendiri",
+			audience: "UMKM yang mau naik kelas",
+			outcome: "UMKM bisa membuat strategi pemasaran sendiri",
+			domain_hint: "Marketing",
+			inferred_goal_label: "UMKM bisa membuat strategi pemasaran sendiri",
+		});
+	});
+
+	it("limits semantic candidates to 10 results", () => {
+		const response = {
+			results: Array.from({ length: 12 }, (_, index) => ({
+				rank: index + 1,
+				unit_code: `CODE.${index + 1}`,
+				unit_title: `Unit ${index + 1}`,
+				score: 1 - index * 0.01,
+			})),
+		};
+
+		expect(transformSemanticSearch(response)).toHaveLength(10);
 	});
 });

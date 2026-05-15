@@ -60,17 +60,33 @@ function clean(value: unknown): string | undefined {
 	return typeof value === "string" && value.trim().length > 0 ? value.trim() : undefined;
 }
 
-export function buildMasterSkkniContext(masterJson: unknown): MasterSkkniContext {
-	const source = (masterJson && typeof masterJson === "object" ? (masterJson as any).brainstorming_master : {}) ?? {};
+export function buildSkkniContext(masterJson: unknown): MasterSkkniContext {
+	const root = masterJson && typeof masterJson === "object" ? (masterJson as any) : {};
+	const master = root.brainstorming_master ?? {};
+	const trainer = root.brainstorming ?? {};
+
+	if (root.schema_key === "hono_trainer_alpha_v1" || trainer.expertise || trainer.audience || trainer.outcome) {
+		return {
+			expertise: clean(trainer.expertise),
+			activities: clean(trainer.outcome) ?? clean(trainer.training_objective),
+			audience: clean(trainer.audience),
+			outcome: clean(trainer.outcome) ?? clean(trainer.training_objective),
+			domain_hint: clean(trainer.expertise),
+			inferred_goal_label: clean(trainer.outcome) ?? clean(trainer.training_objective),
+		};
+	}
+
 	return {
-		expertise: clean(source.organization_focus) ?? clean(source.program_name),
-		activities: clean(source.program_goal),
-		audience: clean(source.target_participants),
-		outcome: clean(source.industry_problem),
-		domain_hint: clean(source.program_name),
-		inferred_goal_label: clean(source.program_goal),
+		expertise: clean(master.organization_focus) ?? clean(master.program_name),
+		activities: clean(master.program_goal),
+		audience: clean(master.target_participants),
+		outcome: clean(master.program_goal) ?? clean(master.industry_problem),
+		domain_hint: clean(master.program_name) ?? clean(master.organization_focus),
+		inferred_goal_label: clean(master.program_goal),
 	};
 }
+
+export const buildMasterSkkniContext = buildSkkniContext;
 
 export function transformSemanticSearch(response: SemanticSearchResponse): SkkniCandidate[] {
 	return (response.results ?? []).slice(0, 10).map((item, index) => ({
@@ -120,11 +136,11 @@ export class SkkniService {
 	constructor(private readonly baseUrl = env.WSP_API_URL) {}
 
 	async searchMaster(masterJson: unknown): Promise<SkkniCandidate[]> {
-		const context = buildMasterSkkniContext(masterJson);
+		const context = buildSkkniContext(masterJson);
 		const payload = {
 			...context,
 			query_text: [context.expertise, context.activities, context.audience, context.outcome].filter(Boolean).join(" dan "),
-			top_k: 5,
+			top_k: 10,
 			debug: false,
 			include_explanations: true,
 		};
