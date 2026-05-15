@@ -6,6 +6,7 @@ import { Button } from 'src/components/ui/button';
 import { Loading } from 'src/components/ui/loading';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from 'src/components/ui/tabs';
 import { useAdminBatchWorkspace } from './hooks/useAdminBatchWorkspace';
+import { EnrollmentTable } from './components/EnrollmentTable';
 
 const tabs = [
   { value: 'overview', label: 'Overview', icon: 'solar:chart-square-linear' },
@@ -160,8 +161,12 @@ const AdminBatchDetail = () => {
             </div>
           </TabsContent>
 
+          <TabsContent value="member" className="p-4">
+            {batchId ? <EnrollmentTable batchId={batchId} /> : null}
+          </TabsContent>
+
           {tabs
-            .filter((tab) => tab.value !== 'overview')
+            .filter((tab) => tab.value !== 'overview' && tab.value !== 'member')
             .map((tab) => (
               <TabsContent key={tab.value} value={tab.value} className="p-4">
                 <div className="rounded-xl border border-dashed border-gray-300 p-8 text-center">
