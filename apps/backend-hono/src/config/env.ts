@@ -15,6 +15,7 @@ const envSchema = z.object({
   OUTPUT_DIR: z.string().min(1).default("./outputs"),
   PGBOSS_SCHEMA: z.string().min(1).default("pgboss"),
   FRONTEND_URL: z.string().url().default("http://localhost:5757"),
+  FRONTEND_ORIGINS: z.string().optional(),
   AWS_REGION: z.string().min(1).default("auto"),
   AWS_S3_BUCKET: z.string().min(1).default("trainerhub-storage"),
   AWS_ACCESS_KEY_ID: z.string().optional(),
@@ -45,3 +46,12 @@ export function parseEnv(input: NodeJS.ProcessEnv | Record<string, string | unde
 }
 
 export const env = parseEnv(process.env);
+
+export function getFrontendOrigins(input: Pick<AppEnv, "FRONTEND_URL" | "FRONTEND_ORIGINS"> = env) {
+  const origins = input.FRONTEND_ORIGINS
+    ?.split(",")
+    .map((origin) => origin.trim())
+    .filter(Boolean);
+
+  return origins?.length ? origins : [input.FRONTEND_URL];
+}

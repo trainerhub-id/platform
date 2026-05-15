@@ -37,6 +37,19 @@ require_cmd pm2
 require_cmd rsync
 require_cmd jq
 
+load_env_file() {
+  local file="$1"
+  if [[ -f "$file" ]]; then
+    while IFS= read -r line || [[ -n "$line" ]]; do
+      [[ -z "$line" || "$line" == \#* || "$line" != *=* ]] && continue
+      local key="${line%%=*}"
+      local value="${line#*=}"
+      [[ "$key" =~ ^[A-Za-z_][A-Za-z0-9_]*$ ]] || continue
+      export "$key=$value"
+    done < "$file"
+  fi
+}
+
 hydrate_env_from_pm2() {
   local keys=(
     DATABASE_URL
@@ -71,6 +84,9 @@ hydrate_env_from_pm2() {
 log "Installing workspace dependencies"
 cd "$PROJECT_DIR"
 bun install
+
+log "Loading backend environment"
+load_env_file "$BACKEND_DIR/.env"
 
 log "Loading PM2 environment for verification and reload"
 hydrate_env_from_pm2

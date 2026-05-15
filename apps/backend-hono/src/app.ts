@@ -7,7 +7,7 @@ import { createCertificateRoutes } from "./certificates/certificate.routes";
 import { handleAppError, errorResponse } from "./common/errors";
 import { createOpenApiApp } from "./common/openapi";
 import { requestIdMiddleware } from "./common/request-id.middleware";
-import { env } from "./config/env";
+import { env, getFrontendOrigins } from "./config/env";
 import { createAuditLogRoutes } from "./audit/audit-log.routes";
 import { createDocumentRoutes } from "./documents/document.routes";
 import { createDokumenRoutes } from "./dokumen/dokumen.routes";
@@ -34,7 +34,7 @@ export function createApp(options: CreateAppOptions = {}) {
   const app = new OpenAPIHono<{ Variables: AppVariables }>();
 
   app.use("*", cors({
-    origin: env.FRONTEND_URL,
+    origin: getFrontendOrigins(env),
     credentials: true,
     allowHeaders: ["Content-Type", "Authorization"],
     allowMethods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
