@@ -46,6 +46,16 @@ describe("BatchService", () => {
 		});
 	});
 
+	it("blocks workspace lookup when batch does not exist", async () => {
+		const service = new BatchService({
+			repository: {
+				getWorkspace: async () => null,
+			} as any,
+		});
+
+		await expect(service.getWorkspace("batch_1")).rejects.toThrow("BATCH_NOT_FOUND");
+	});
+
 	it("publishes a draft batch when active tiers are priced and synced", async () => {
 		const service = new BatchService({
 			repository: {
