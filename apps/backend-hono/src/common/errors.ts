@@ -31,6 +31,10 @@ export function handleAppError(err: Error, c: Context) {
   const knownErrors: Record<string, { status: number; message: string }> = {
     BATCH_NOT_FOUND: { status: 404, message: "Batch not found" },
     BATCH_NOT_OPEN: { status: 404, message: "Batch is not open for registration" },
+    BATCH_NOT_DRAFT: { status: 409, message: "Batch is not a draft" },
+    BATCH_REQUIRES_ACTIVE_TIER: { status: 409, message: "Batch requires at least one active tier" },
+    BATCH_TIER_PRICE_REQUIRED: { status: 409, message: "Active tiers must have a price greater than zero" },
+    BATCH_TIERS_NOT_SYNCED: { status: 409, message: "Active tiers must be synced before publishing" },
     TIER_NOT_FOUND: { status: 404, message: "Tier not found" },
     TIER_BATCH_MISMATCH: { status: 400, message: "Tier does not belong to batch" },
     DUPLICATE_REGISTRATION: { status: 409, message: "Duplicate registration" },
