@@ -37,9 +37,9 @@ export class EnrollmentRepository {
 		return db
 			.select({
 				...getTableColumns(pesertaBatch),
-				participantName: peserta.nama,
-				participantEmail: peserta.email,
-				participantPhone: peserta.noWa,
+				pesertaName: peserta.nama,
+				pesertaEmail: peserta.email,
+				pesertaPhone: peserta.noWa,
 				tierName: batchTiers.name,
 				tierSlug: batchTiers.slug,
 			})
@@ -54,20 +54,26 @@ export class EnrollmentRepository {
 		const pattern = `%${query.trim()}%`;
 		return db
 			.select({
-				...getTableColumns(pesertaBatch),
-				participantName: peserta.nama,
-				participantEmail: peserta.email,
-				participantPhone: peserta.noWa,
+				enrollmentId: pesertaBatch.id,
+				pesertaId: peserta.id,
+				pesertaName: peserta.nama,
+				pesertaEmail: peserta.email,
+				pesertaPhone: peserta.noWa,
+				batchId: batchTraining.id,
 				batchName: batchTraining.namaBatch,
+				batchSlug: batchTraining.slug,
+				tierId: batchTiers.id,
 				tierName: batchTiers.name,
-				tierSlug: batchTiers.slug,
+				paymentStatus: pesertaBatch.paymentStatus,
+				enrollmentStatus: pesertaBatch.status,
 			})
 			.from(pesertaBatch)
 			.leftJoin(peserta, eq(pesertaBatch.pesertaId, peserta.id))
 			.leftJoin(batchTraining, eq(pesertaBatch.batchId, batchTraining.id))
 			.leftJoin(batchTiers, eq(pesertaBatch.tierId, batchTiers.id))
 			.where(or(ilike(peserta.nama, pattern), ilike(peserta.email, pattern), ilike(peserta.noWa, pattern), ilike(batchTraining.namaBatch, pattern)))
-			.orderBy(desc(pesertaBatch.createdAt));
+			.orderBy(desc(pesertaBatch.createdAt))
+			.limit(20);
 	}
 
 	async setPaymentStatus(input: SetPaymentStatusInput) {
