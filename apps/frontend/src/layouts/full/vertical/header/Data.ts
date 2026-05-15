@@ -271,8 +271,8 @@ const adminProfileDD: ProfileType[] = [
     url: "/admin/home",
   },
   {
-    title: "Manage Training",
-    url: "/admin/manage-training",
+    title: "Kelola Batch",
+    url: "/admin/batches",
   },
   {
     title: "Sign Out",
