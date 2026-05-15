@@ -144,11 +144,18 @@ export class InterviewEngine {
       const masterJson = flow === "master" ? compileMasterJson(stateSnapshot) : compileTrainerJson(stateSnapshot);
       await documents.updateInterviewState(input.documentId, { masterJson, readiness, currentPhase: nextPhase });
 
+      const capturedFields = stateSnapshot
+        .filter((s) => ["captured", "confirmed"].includes(s.status) && s.value !== null && s.value !== undefined)
+        .map((s) => ({ phaseKey: s.phaseKey, fieldKey: s.fieldKey, value: s.value }));
+
       return {
         message: input.message,
         phase: nextPhase,
         readiness,
         nextField: readiness.missing[0] ?? null,
+        capturedFields,
+        missingFields: readiness.missing,
+        flow,
       };
     });
 
