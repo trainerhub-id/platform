@@ -1,8 +1,12 @@
+const path = require('node:path');
+
+const projectRoot = path.resolve(__dirname, '../..');
+
 module.exports = {
   apps: [
     {
       name: 'trainerhub-beta-backend',
-      cwd: '/home/ujang/0new/thub/trainerhub-beta/apps/backend-hono',
+      cwd: path.join(projectRoot, 'apps/backend-hono'),
       script: 'src/server.ts',
       interpreter: 'bun',
       env: {
