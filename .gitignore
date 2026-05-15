@@ -50,3 +50,4 @@ apps/outputs/
 apps/backend/backups/
 apps/backend/ecosystem.local.config.js
 .ralph/
+.playwright-cli/
