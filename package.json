@@ -3,10 +3,15 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
+    "check": "biome lint .",
+    "check:write": "biome lint --write .",
     "dev:backend": "cd apps/backend-hono && bun run dev",
     "dev:frontend": "cd apps/frontend && npm run dev",
     "build:backend": "cd apps/backend-hono && bun run build",
     "build:frontend": "cd apps/frontend && bun run build",
+    "format": "biome format --write .",
+    "format:check": "biome format .",
+    "lint": "biome lint .",
     "typecheck:backend": "cd apps/backend-hono && bun run typecheck",
     "test:backend": "cd apps/backend-hono && bun test",
     "deploy:hono": "./scripts/deploy-hono.sh",
@@ -15,16 +20,14 @@
   "workspaces": [
     "apps/*"
   ],
-  "dependencies": {},
   "overrides": {
-    "react": "19.2.0",
-    "react-dom": "19.2.0",
-    "@types/react": "19.2.2",
-    "@types/react-dom": "19.2.2"
+    "react": "19.2.6",
+    "react-dom": "19.2.6",
+    "@types/react": "19.2.14",
+    "@types/react-dom": "19.2.3"
   },
   "devDependencies": {
-    "@ai-sdk/google-v5": "npm:@ai-sdk/google@^2.0.54",
-    "ai-v5": "npm:ai@^5.0.137",
-    "serve": "^14.2.5"
+    "@biomejs/biome": "^2.4.15",
+    "serve": "^14.2.6"
   }
 }

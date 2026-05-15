@@ -40,7 +40,7 @@ export function DatePicker({ value, onChange, placeholder = "Pick a date", class
                     mode="single"
                     selected={value}
                     onSelect={onChange}
-                    initialFocus
+                    autoFocus
                 />
             </PopoverContent>
         </Popover>

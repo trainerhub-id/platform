@@ -708,23 +708,23 @@ body {
 
 /* Headlessui */
 .ui-button {
-  @apply flex items-stretch justify-between text-center py-2.5 px-5 text-white text-center font-medium rounded-md
+  @apply flex items-stretch justify-between text-center py-2.5 px-5 text-white text-center font-medium rounded-md;
 }
 
 .ui-button-small {
-  @apply flex items-stretch justify-between text-center py-2 px-6 text-white text-center font-medium rounded-md
+  @apply flex items-stretch justify-between text-center py-2 px-6 text-white text-center font-medium rounded-md;
 }
 
 .ui-dropdown {
-  @apply text-ld w-full !max-w-56 bg-white dark:bg-dark shadow-md dark:shadow-dark-md text-start rounded-sm py-3
+  @apply text-ld w-full !max-w-56 bg-white dark:bg-dark shadow-md dark:shadow-dark-md text-start rounded-sm py-3;
 }
 
 .ui-dropdown-item {
-  @apply flex w-full gap-3 cursor-pointer items-center justify-start px-4 py-2 text-sm text-ld hover:text-primary bg-hover focus:bg-hover focus:outline-none
+  @apply flex w-full gap-3 cursor-pointer items-center justify-start px-4 py-2 text-sm text-ld hover:text-primary bg-hover focus:bg-hover focus:outline-none;
 }
 
 .ui-dropdown-animation {
-  @apply origin-top-right transition duration-100 ease-out [--anchor-gap:var(--spacing-1)] focus:outline-none data-[closed]:scale-95 data-[closed]:opacity-0
+  @apply origin-top-right transition duration-100 ease-out [--anchor-gap:var(--spacing-1)] focus:outline-none data-[closed]:scale-95 data-[closed]:opacity-0;
 }
 
 .ui-form-control {
@@ -736,7 +736,7 @@ body {
 }
 
 .ui-checkbox {
-  @apply h-[18px] w-[18px] border border-border dark:border-darkborder bg-white dark:bg-transparent data-[checked]:bg-primary dark:data-[checked]:bg-primary rounded cursor-pointer focus:ring-0 focus:ring-offset-0 outline-none
+  @apply h-[18px] w-[18px] border border-border dark:border-darkborder bg-white dark:bg-transparent data-[checked]:bg-primary dark:data-[checked]:bg-primary rounded cursor-pointer focus:ring-0 focus:ring-offset-0 outline-none;
 }
 
 @layer utilities {

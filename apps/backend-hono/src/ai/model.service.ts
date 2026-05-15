@@ -1,4 +1,4 @@
-import { createOpenAICompatible } from "@ai-sdk/openai-compatible";
+import { createDeepSeek } from "@ai-sdk/deepseek";
 import type { LanguageModel } from "ai";
 import { env, type AppEnv } from "../config/env";
 
@@ -23,11 +23,9 @@ export class ModelService {
 			throw new AiModelNotConfiguredError("AI_MODEL_NOT_CONFIGURED: DEEPSEEK_API_KEY is required");
 		}
 
-		const deepseek = createOpenAICompatible({
-			name: "deepseek",
+		const deepseek = createDeepSeek({
 			apiKey: this.modelEnv.DEEPSEEK_API_KEY,
 			baseURL: this.modelEnv.DEEPSEEK_BASE_URL,
-			includeUsage: true,
 		});
 
 		return deepseek(this.modelEnv.AI_MODEL);

@@ -13,7 +13,7 @@ describe("ModelService", () => {
 		expect(() => service.getLanguageModel()).toThrow(AiModelNotConfiguredError);
 	});
 
-	it("creates a DeepSeek OpenAI-compatible model", () => {
+	it("creates a DeepSeek model", () => {
 		const service = new ModelService({
 			AI_PROVIDER: "deepseek",
 			AI_MODEL: "deepseek-v4-flash",

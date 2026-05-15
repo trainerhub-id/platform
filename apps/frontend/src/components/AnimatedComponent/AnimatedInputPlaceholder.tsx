@@ -25,7 +25,7 @@ const PlaceholdersInput = forwardRef<PlaceholdersInputHandle, PlaceholdersInputP
     const inputRef = useRef<HTMLInputElement>(null);
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const newDataRef = useRef<any[]>([]);
-    const intervalRef = useRef<NodeJS.Timeout | null>(null);
+    const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
     // Cycle through placeholders every 3s
     useEffect(() => {

@@ -35,7 +35,9 @@ export function createGenerationRoutes(deps: GenerationRoutesDeps = {}) {
 	async function requireOwnedDocument(c: Context<{ Variables: GenerationVariables }>) {
 		const user = c.get("user");
 		if (!user) return { error: errorResponse(c, 401, "UNAUTHORIZED", "Authentication required") };
-		const doc = await documents.findById(c.req.param("documentId"));
+		const documentId = c.req.param("documentId");
+		if (!documentId) return { error: errorResponse(c, 400, "VALIDATION_ERROR", "Document id is required") };
+		const doc = await documents.findById(documentId);
 		if (!doc) return { error: errorResponse(c, 404, "DOCUMENT_NOT_FOUND", "Document not found") };
 		if (!isDocumentOwner(doc, user.id)) return { error: errorResponse(c, 403, "FORBIDDEN", "Document belongs to another user") };
 		return { doc };
@@ -77,7 +79,9 @@ export function createGenerationRoutes(deps: GenerationRoutesDeps = {}) {
 	app.post("/api/documents/:documentId/generate/:documentType", requireAuth, async (c) => {
 		const owned = await requireOwnedDocument(c);
 		if ("error" in owned) return owned.error;
-		return enqueueForDocument(c, owned.doc, [c.req.param("documentType")]);
+		const documentType = c.req.param("documentType");
+		if (!documentType) return errorResponse(c, 400, "VALIDATION_ERROR", "Document type is required");
+		return enqueueForDocument(c, owned.doc, [documentType]);
 	});
 
 	app.get("/api/documents/:documentId/generation-jobs", requireAuth, async (c) => {
