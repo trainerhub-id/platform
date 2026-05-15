@@ -8,8 +8,10 @@ import { handleAppError, errorResponse } from "./common/errors";
 import { createOpenApiApp } from "./common/openapi";
 import { requestIdMiddleware } from "./common/request-id.middleware";
 import { env } from "./config/env";
+import { createAuditLogRoutes } from "./audit/audit-log.routes";
 import { createDocumentRoutes } from "./documents/document.routes";
 import { createDokumenRoutes } from "./dokumen/dokumen.routes";
+import { createEnrollmentRoutes } from "./enrollment/enrollment.routes";
 import { createGenerationRoutes } from "./generation/generation.routes";
 import { createInterviewReadRoutes, createInterviewRoutes } from "./interview/interview.routes";
 import { createKelasRoutes } from "./kelas/kelas.routes";
@@ -75,6 +77,8 @@ export function createApp(options: CreateAppOptions = {}) {
   app.route("/api", createTugasRoutes());
   app.route("/api", createKelasRoutes());
   app.route("/api", createDokumenRoutes());
+  app.route("/api", createAuditLogRoutes());
+  app.route("/api", createEnrollmentRoutes());
   app.route("/", createDocumentRoutes());
   app.route("/", createBatchRoutes());
   app.route("/", createPaymentRoutes());
@@ -88,6 +92,8 @@ export function createApp(options: CreateAppOptions = {}) {
   app.route("/", createTugasRoutes());
   app.route("/", createKelasRoutes());
   app.route("/", createDokumenRoutes());
+  app.route("/", createAuditLogRoutes());
+  app.route("/", createEnrollmentRoutes());
 
   app.notFound((c) => errorResponse(c, 404, "NOT_FOUND", "Not found"));
   app.onError(handleAppError);
