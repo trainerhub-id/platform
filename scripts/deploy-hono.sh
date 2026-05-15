@@ -36,10 +36,45 @@ require_dir "$FRONTEND_TARGET"
 require_cmd bun
 require_cmd pm2
 require_cmd rsync
+require_cmd jq
+
+hydrate_env_from_pm2() {
+  local keys=(
+    DATABASE_URL
+    BETTER_AUTH_SECRET
+    BETTER_AUTH_URL
+    FRONTEND_URL
+    DEEPSEEK_API_KEY
+    SCALEV_API_KEY
+    SCALEV_BASE_URL
+    SCALEV_WEBHOOK_SECRET
+    S3_ENDPOINT
+    S3_REGION
+    S3_BUCKET
+    S3_ACCESS_KEY_ID
+    S3_SECRET_ACCESS_KEY
+    S3_PUBLIC_URL
+  )
+
+  for key in "${keys[@]}"; do
+    if [[ -n "${!key:-}" ]]; then
+      continue
+    fi
+
+    local value
+    value="$(pm2 jlist | jq -r --arg app "$PM2_APP_NAME" --arg key "$key" '.[] | select(.name == $app) | .pm2_env[$key] // empty' | head -n 1)"
+    if [[ -n "$value" ]]; then
+      export "$key=$value"
+    fi
+  done
+}
 
 log "Installing workspace dependencies"
 cd "$PROJECT_DIR"
 bun install
+
+log "Loading PM2 environment for verification and reload"
+hydrate_env_from_pm2
 
 log "Building frontend"
 cd "$FRONTEND_DIR"
