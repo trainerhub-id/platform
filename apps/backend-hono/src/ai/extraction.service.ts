@@ -1,5 +1,5 @@
-import { generateText } from "ai";
-import { extractionResultSchema, type ExtractedPatch, type ExtractionResult } from "../interview/extraction.schemas";
+import { generateText, Output } from "ai";
+import { extractionResultSchema, type ExtractionResult } from "../interview/extraction.schemas";
 import { ModelService } from "./model.service";
 import { extractorPrompt } from "./prompts/extractor.prompt";
 
@@ -85,84 +85,22 @@ export function normalizeExtractionObject(value: unknown, defaultFlow: "master" 
 	});
 }
 
-export function extractExplicitMessagePatches(message: string, flow: "master" | "trainer"): ExtractedPatch[] {
-	const phaseKey = flow === "trainer" ? "brainstorming" : "profile";
-	const patches: ExtractedPatch[] = [];
-	const trainerName = extractExplicitValue(message, [
-		/\bnama\s+(?:pelatih|trainer|instruktur|narasumber)(?:nya)?\s*(?:adalah|=|:)?\s+([^.,;\n]+)/i,
-		/\b(?:pelatih|trainer|instruktur|narasumber)(?:nya)?\s*(?:adalah|=|:)?\s+([^.,;\n]+)/i,
-	]);
-
-	if (trainerName) {
-		patches.push({
-			flow,
-			phaseKey,
-			fieldKey: "trainer_name",
-			value: trainerName,
-			source: "user_explicit",
-			confidence: 0.95,
-		});
-	}
-
-	if (flow === "trainer") {
-		const expertise = extractExplicitValue(message, [
-			/\b(?:bidang\s+keahlian(?:\s+utama)?|keahlian|expertise)(?:nya)?\s*(?:adalah|=|:)?\s+([^.,;\n]+)/i,
-			/\bbidang\s+([^.,;\n]+)/i,
-		]);
-
-		if (expertise) {
-			patches.push({
-				flow,
-				phaseKey: "brainstorming",
-				fieldKey: "expertise",
-				value: expertise,
-				source: "user_explicit",
-				confidence: 0.9,
-			});
-		}
-	}
-
-	return patches;
-}
-
 export class ExtractionService implements ExtractionServiceLike {
 	constructor(private readonly modelService = new ModelService()) {}
 
 	async extract(input: ExtractionInput): Promise<ExtractionResult> {
-		const { text } = await generateText({
+		const { output } = await generateText({
 			model: this.modelService.getLanguageModel(),
+			output: Output.object({
+				schema: extractionResultSchema,
+				name: "interview_extraction",
+				description: "Structured field patches extracted from one Indonesian chat message.",
+			}),
 			system: extractorPrompt,
 			prompt: JSON.stringify(input),
 		});
 
 		const flow = input.phase === "brainstorming" || input.phase === "training_details" ? "trainer" : "master";
-		const normalized = normalizeExtractionObject(extractJson(text), flow);
-		const existingPatchKeys = new Set(normalized.patches.map((patch) => `${patch.flow}.${patch.phaseKey}.${patch.fieldKey}`));
-		const fallbackPatches = extractExplicitMessagePatches(input.message, flow).filter(
-			(patch) => !existingPatchKeys.has(`${patch.flow}.${patch.phaseKey}.${patch.fieldKey}`),
-		);
-
-		return {
-			...normalized,
-			patches: [...normalized.patches, ...fallbackPatches],
-		};
+		return normalizeExtractionObject(output, flow);
 	}
-}
-
-function extractExplicitValue(message: string, patterns: RegExp[]): string | null {
-	for (const pattern of patterns) {
-		const match = message.match(pattern);
-		const value = cleanExplicitValue(match?.[1]);
-		if (value) return value;
-	}
-	return null;
-}
-
-function cleanExplicitValue(value: string | undefined): string | null {
-	const cleaned = value
-		?.replace(/\*\*/g, "")
-		.replace(/^["'`]+|["'`]+$/g, "")
-		.trim();
-	if (!cleaned || cleaned.length < 2) return null;
-	return cleaned;
 }
