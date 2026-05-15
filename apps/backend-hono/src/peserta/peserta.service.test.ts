@@ -33,22 +33,31 @@ describe("PesertaService", () => {
 		expect(linked).toBe(true);
 	});
 
-	it("grants paid peserta access to trainer and master AI features", async () => {
+	it("does not grant access from profile payment status without paid enrollment access", async () => {
 		const service = new PesertaService({
 			repository: {
-				findByClerkId: async () => ({
-					id: "peserta_1",
-					clerkId: "user_1",
-					nama: "Budi",
-					email: "budi@example.com",
-					paymentStatus: "paid",
-				}),
+				findByClerkId: async () => ({ id: "peserta_1", clerkId: "user_1", nama: "Budi", email: "budi@example.com", paymentStatus: "paid" }),
 			} as any,
+			enrollmentService: {
+				getPaidAccess: async () => ({
+					hasTier: false,
+					tierNames: [],
+					aiFeatures: [],
+					courseIds: [],
+					benefits: [],
+					enrollments: [],
+				}),
+			},
 		});
 
-		const access = await service.getAccess("user_1", "budi@example.com");
+		const access = await service.getAccess("user_1");
 
-		expect(access.hasTier).toBe(true);
-		expect(access.aiFeatures).toEqual(["trainer", "master"]);
+		expect(access).toMatchObject({
+			hasTier: false,
+			tierName: null,
+			aiFeatures: [],
+			courseIds: [],
+			benefits: [],
+		});
 	});
 });

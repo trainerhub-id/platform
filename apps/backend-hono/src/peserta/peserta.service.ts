@@ -1,3 +1,4 @@
+import { EnrollmentService, type PaidAccess } from "../enrollment/enrollment.service";
 import { PesertaRepository, type CreatePesertaInput, type UpdatePesertaInput } from "./peserta.repository";
 
 type PesertaRecord = {
@@ -18,11 +19,17 @@ type PesertaRepositoryLike = {
 	update(id: string, input: UpdatePesertaInput): Promise<PesertaRecord>;
 };
 
+type EnrollmentServiceLike = {
+	getPaidAccess(pesertaId: string): Promise<PaidAccess>;
+};
+
 export class PesertaService {
 	private readonly repository: PesertaRepositoryLike;
+	private readonly enrollmentService: EnrollmentServiceLike;
 
-	constructor(deps: { repository?: PesertaRepositoryLike } = {}) {
+	constructor(deps: { repository?: PesertaRepositoryLike; enrollmentService?: EnrollmentServiceLike } = {}) {
 		this.repository = deps.repository ?? new PesertaRepository();
+		this.enrollmentService = deps.enrollmentService ?? new EnrollmentService();
 	}
 
 	async create(userId: string, input: Omit<CreatePesertaInput, "clerkId">) {
@@ -64,13 +71,7 @@ export class PesertaService {
 		if (profile.id === "00000000-0000-0000-0000-000000000000") {
 			return { hasTier: false, tierName: null, aiFeatures: [], courseIds: [], benefits: [] };
 		}
-		const hasTier = profile.paymentStatus === "paid";
-		return {
-			hasTier,
-			tierName: hasTier ? "TrainerHub Full Access" : null,
-			aiFeatures: hasTier ? ["trainer", "master"] : [],
-			courseIds: [],
-			benefits: [],
-		};
+		const access = await this.enrollmentService.getPaidAccess(profile.id);
+		return { ...access, tierName: access.tierNames[0] ?? null };
 	}
 }
