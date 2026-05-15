@@ -1,25 +1,44 @@
 const path = require('node:path');
 
-const projectDir = path.resolve(__dirname, '../..');
-const passThroughEnv = ['DATABASE_URL', 'DEEPSEEK_API_KEY', 'DEEPSEEK_BASE_URL', 'AI_PROVIDER', 'AI_MODEL']
-  .reduce((env, key) => {
-    if (process.env[key]) env[key] = process.env[key];
-    return env;
-  }, {});
+const projectRoot = path.resolve(__dirname, '../..');
+const forwardedEnvKeys = [
+  'DATABASE_URL',
+  'BETTER_AUTH_SECRET',
+  'DEEPSEEK_API_KEY',
+  'DEEPSEEK_BASE_URL',
+  'AI_PROVIDER',
+  'AI_MODEL',
+  'SCALEV_API_KEY',
+  'SCALEV_BASE_URL',
+  'SCALEV_WEBHOOK_SECRET',
+  'S3_ENDPOINT',
+  'S3_REGION',
+  'S3_BUCKET',
+  'S3_ACCESS_KEY_ID',
+  'S3_SECRET_ACCESS_KEY',
+  'S3_PUBLIC_URL',
+];
+
+const forwardedEnv = Object.fromEntries(
+  forwardedEnvKeys
+    .filter((key) => process.env[key])
+    .map((key) => [key, process.env[key]]),
+);
 
 module.exports = {
   apps: [
     {
       name: 'trainerhub-beta-backend',
-      cwd: path.join(projectDir, 'apps/backend-hono'),
+      cwd: path.join(projectRoot, 'apps/backend-hono'),
       script: 'src/server.ts',
       interpreter: 'bun',
       env: {
+        ...forwardedEnv,
         NODE_ENV: 'production',
         PORT: '3739',
         FRONTEND_URL: 'https://hono.sertifikasitrainer.com',
+        FRONTEND_ORIGINS: 'https://hono.sertifikasitrainer.com',
         BETTER_AUTH_URL: 'https://hono.sertifikasitrainer.com/api/auth',
-        ...passThroughEnv,
       },
     },
   ],

@@ -56,7 +56,14 @@ bun run build
 
 log "Reloading PM2 app: $PM2_APP_NAME"
 if pm2 describe "$PM2_APP_NAME" >/dev/null 2>&1; then
-  pm2 reload "$PM2_CONFIG" --only "$PM2_APP_NAME" --update-env
+  current_cwd="$(pm2 jlist | node -e "let data=''; process.stdin.on('data', c => data += c); process.stdin.on('end', () => { const app = JSON.parse(data).find((item) => item.name === '$PM2_APP_NAME'); process.stdout.write(app?.pm2_env?.pm_cwd || ''); });")"
+  if [[ "$current_cwd" != "$BACKEND_DIR" ]]; then
+    log "PM2 cwd mismatch; restarting $PM2_APP_NAME from $BACKEND_DIR"
+    pm2 delete "$PM2_APP_NAME"
+    pm2 start "$PM2_CONFIG" --only "$PM2_APP_NAME" --update-env
+  else
+    pm2 reload "$PM2_CONFIG" --only "$PM2_APP_NAME" --update-env
+  fi
 else
   pm2 start "$PM2_CONFIG"
 fi
