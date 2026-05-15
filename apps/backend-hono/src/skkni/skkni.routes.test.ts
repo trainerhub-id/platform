@@ -28,13 +28,26 @@ class FakeFieldStateRepository {
 
 const fakeSkkni = {
 	async searchMaster() {
-		return [{ id: "u1", unitCode: "M.70MKT00.001.1", title: "Mengelola Kampanye Digital", relevanceScore: 0.9, reason: "high", evidence: [] }];
+		return [{ id: "unit_1", unitCode: "M.70MKT00.001.1", title: "Mengelola Kampanye Digital", relevanceScore: 0.92, reason: "Sesuai", evidence: ["Rank 1"] }];
 	},
 	async getUnitDetail() {
-		return { code: "M.70MKT00.001.1", name: "Mengelola Kampanye Digital", elements: [{ element_text: "Menyiapkan kampanye", kuk: [] }] };
+		return {
+			code: "M.70MKT00.001.1",
+			name: "Mengelola Kampanye Digital",
+			description: "Unit kompetensi kampanye digital.",
+			elements: [{ element_number: 1, element_text: "Menyiapkan kampanye", kuk: [{ kuk_code: "1.1", kuk_text: "Tujuan kampanye ditentukan." }] }],
+			variable_constraints: {},
+			assessment_guide: {},
+			source_document: { document_id: "doc_wsp", document_title: "SKKNI Pemasaran" },
+		};
 	},
 	async getCompetencyMap() {
-		return { main_goal: "Goal", key_function: "Key", main_function: "Main", basic_function: "Basic" };
+		return {
+			main_goal: "Kampanye digital efektif",
+			key_function: "Pemasaran digital",
+			main_function: "Mengelola kampanye",
+			basic_function: "Menyiapkan kampanye",
+		};
 	},
 };
 
@@ -75,6 +88,22 @@ describe("skkni routes", () => {
 		expect(body.unit.code).toBe("M.70MKT00.001.1");
 		expect(docs.updated.masterJson.unit.code).toBe("M.70MKT00.001.1");
 		expect(fields.states.map((state) => state.fieldKey)).toContain("skkni_map");
+
+		const unitDetail = fields.states.find((state) => state.phaseKey === "unit_selection" && state.fieldKey === "unit_detail");
+		const competencyMap = fields.states.find((state) => state.phaseKey === "competency_map" && state.fieldKey === "skkni_map");
+
+		expect(unitDetail?.source).toBe("imported");
+		expect(competencyMap?.source).toBe("imported");
+		expect(unitDetail?.value).toMatchObject({
+			code: "M.70MKT00.001.1",
+			name: "Mengelola Kampanye Digital",
+		});
+		expect(competencyMap?.value).toMatchObject({
+			main_goal: expect.any(String),
+			key_function: expect.any(String),
+			main_function: expect.any(String),
+			basic_function: expect.any(String),
+		});
 	});
 
 	it("selects unit and updates Trainer readiness state", async () => {
