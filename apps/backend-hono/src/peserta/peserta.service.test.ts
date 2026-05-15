@@ -32,4 +32,32 @@ describe("PesertaService", () => {
 		expect(profile.clerkId).toBe("user_1");
 		expect(linked).toBe(true);
 	});
+
+	it("does not grant access from profile payment status without paid enrollment access", async () => {
+		const service = new PesertaService({
+			repository: {
+				findByClerkId: async () => ({ id: "peserta_1", clerkId: "user_1", nama: "Budi", email: "budi@example.com", paymentStatus: "paid" }),
+			} as any,
+			enrollmentService: {
+				getPaidAccess: async () => ({
+					hasTier: false,
+					tierNames: [],
+					aiFeatures: [],
+					courseIds: [],
+					benefits: [],
+					enrollments: [],
+				}),
+			},
+		});
+
+		const access = await service.getAccess("user_1");
+
+		expect(access).toMatchObject({
+			hasTier: false,
+			tierName: null,
+			aiFeatures: [],
+			courseIds: [],
+			benefits: [],
+		});
+	});
 });
