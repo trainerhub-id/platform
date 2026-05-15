@@ -48,6 +48,8 @@ type BatchRepositoryLike = {
 	assignPeserta(batchId: string, pesertaId: string): Promise<Record<string, unknown>>;
 	updateStatus(input: { batchId: string; pesertaId: string; status: string }): Promise<Record<string, unknown>>;
 	getPesertaInBatch(batchId: string): Promise<Array<Record<string, unknown>>>;
+	getWorkspace(batchId: string): Promise<Record<string, unknown> | null>;
+	getActiveTiersForPublish(batchId: string): Promise<Array<{ price: number | string | null; scalevSyncStatus: string | null }>>;
 	getCurriculum(batchId: string): Promise<unknown>;
 };
 
@@ -92,6 +94,25 @@ export class BatchService {
 
 	async getPesertaInBatch(batchId: string) {
 		return this.repository.getPesertaInBatch(batchId);
+	}
+
+	async getWorkspace(batchId: string) {
+		const workspace = await this.repository.getWorkspace(batchId);
+		if (!workspace) throw new Error("BATCH_NOT_FOUND");
+		return workspace;
+	}
+
+	async publish(batchId: string) {
+		const batch = await this.repository.findById(batchId);
+		if (!batch) throw new Error("BATCH_NOT_FOUND");
+		if (batch.status !== "draft") throw new Error("BATCH_NOT_DRAFT");
+
+		const activeTiers = await this.repository.getActiveTiersForPublish(batchId);
+		if (activeTiers.length === 0) throw new Error("BATCH_REQUIRES_ACTIVE_TIER");
+		if (activeTiers.some((tier) => Number(tier.price ?? 0) <= 0)) throw new Error("BATCH_TIER_PRICE_REQUIRED");
+		if (activeTiers.some((tier) => tier.scalevSyncStatus !== "synced")) throw new Error("BATCH_TIERS_NOT_SYNCED");
+
+		return this.repository.update(batchId, { status: "open" });
 	}
 
 	async getCurriculum(batchId: string) {

@@ -22,6 +22,7 @@ import { useLocation } from "react-router";
 import NotificationButton from "./NotificationButton";
 import SidebarLayout from "../sidebar/Sidebar";
 import api from "src/api/axios";
+import { AdminGlobalSearch } from "src/views/admin/components/AdminGlobalSearch";
 
 interface HeaderPropsType {
   layoutType: string;
@@ -36,6 +37,7 @@ const Header = ({ layoutType }: HeaderPropsType) => {
     useContext(CustomizerContext);
 
   const [mobileMenu, setMobileMenu] = useState("");
+  const [adminSearch, setAdminSearch] = useState("");
 
   const [mounted, setMounted] = useState(false);
   useEffect(() => setMounted(true), []);
@@ -233,6 +235,26 @@ const Header = ({ layoutType }: HeaderPropsType) => {
                         </p>
                       </>
                     )}
+                    {pathname === "/admin/batches" && (
+                      <>
+                        <h2 className="text-xl font-semibold text-white mb-0.5">
+                          Kelola Batch
+                        </h2>
+                        <p className="text-white/70 text-xs">
+                          Pantau batch, peserta, paket, dokumen, dan aktivitas
+                        </p>
+                      </>
+                    )}
+                    {pathname.startsWith("/admin/batches/") && (
+                      <>
+                        <h2 className="text-xl font-semibold text-white mb-0.5">
+                          Workspace Batch
+                        </h2>
+                        <p className="text-white/70 text-xs">
+                          Member, dokumen, sertifikat, paket, dan activity log
+                        </p>
+                      </>
+                    )}
                     {pathname === "/admin/daftar-peserta" && (
                       <>
                         <h2 className="text-xl font-semibold text-white mb-0.5">
@@ -296,10 +318,10 @@ const Header = ({ layoutType }: HeaderPropsType) => {
                     {pathname === "/admin/tier-management" && (
                       <>
                         <h2 className="text-xl font-semibold text-white mb-0.5">
-                          Tier Management
+                          Paket & Akses
                         </h2>
                         <p className="text-white/70 text-xs">
-                          Kelola master tier templates untuk batch training
+                          Kelola paket, benefit, kelas bonus, dan akses AI
                         </p>
                       </>
                     )}
@@ -469,6 +491,12 @@ const Header = ({ layoutType }: HeaderPropsType) => {
                 {/* Meassage Dropdown */}
 
                 {/* Notification Dropdown */}
+                {isAdmin && (
+                  <div className="hidden xl:block flex-1 px-6">
+                    <AdminGlobalSearch value={adminSearch} onChange={setAdminSearch} />
+                  </div>
+                )}
+
                 <NotificationButton />
 
                 {/* Profile Dropdown */}
