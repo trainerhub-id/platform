@@ -6,6 +6,10 @@ import { Alert, AlertDescription } from "src/components/ui/alert";
 import { Skeleton } from "src/components/ui/skeleton";
 import AiMentorLogo from "src/assets/images/logos/logo-ai-mentor.png";
 
+const debugLog = (...args: unknown[]) => {
+  if (import.meta.env.DEV) console.log(...args);
+};
+
 interface AiCategory {
   id: string;
   title: string;
@@ -46,7 +50,7 @@ const AiHub = () => {
   const navigate = useNavigate();
   const { hasAccess, getUpgradeMessage, isLoading, hasTier, tierName, access, aiFeatures } = useAiAccess();
 
-  console.log('🏠 [AiHub] Render state:', {
+  debugLog('[AiHub] Render state:', {
     isLoading,
     hasTier,
     tierName,
@@ -55,14 +59,14 @@ const AiHub = () => {
   });
 
   const handleCardClick = (category: AiCategory) => {
-    console.log(`🖱️ [AiHub] Card clicked: ${category.id}`);
+    debugLog(`[AiHub] Card clicked: ${category.id}`);
     const canAccess = hasAccess(category.id);
-    console.log(`🔐 [AiHub] Access check for ${category.id}:`, canAccess);
+    debugLog(`[AiHub] Access check for ${category.id}:`, canAccess);
     
     // Allow all users to navigate - access control happens at trailer level
     // FREE users will see trailer with "Upgrade" button
     // PAID users will see trailer with "Lanjutkan" button
-    console.log(`✅ [AiHub] Navigating to ${category.route}`);
+    debugLog(`[AiHub] Navigating to ${category.route}`);
     navigate(category.route);
   };
 
@@ -114,7 +118,7 @@ const AiHub = () => {
         {categories.map((category) => {
           const isAccessible = hasAccess(category.id);
           
-          console.log(`🎨 [AiHub] Rendering ${category.id}:`, {
+          debugLog(`[AiHub] Rendering ${category.id}:`, {
             isAccessible,
             aiFeatures,
           });

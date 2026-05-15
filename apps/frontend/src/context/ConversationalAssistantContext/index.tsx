@@ -29,6 +29,14 @@ import { SkkniSearchUI, SkkniSearchUI_2, SkkniSearchUI_3, SkkniSearchUI_4, Skkni
 import { ShowPlanUI } from '../../components/ai/PlanToolUI';
 import { buildThreadMessageFromStoredMessage } from '../../components/ai/ConversationalThread.helpers';
 
+const debugLog = (...args: unknown[]) => {
+  if (import.meta.env.DEV) console.log(...args);
+};
+
+const debugWarn = (...args: unknown[]) => {
+  if (import.meta.env.DEV) console.warn(...args);
+};
+
 // ============================================
 // Types
 // ============================================
@@ -187,7 +195,7 @@ const createHonoAiStreamAdapter = (
   return {
     async *run({ messages, abortSignal }) {
       try {
-        console.log('[Hono AI Adapter] Starting chat with agentId:', agentId);
+        debugLog('[Hono AI Adapter] Starting chat with agentId:', agentId);
 
         // Convert Assistant UI messages to API format
         let apiMessages = messages
@@ -201,7 +209,7 @@ const createHonoAiStreamAdapter = (
           .filter((msg) => {
             const isValid = msg.content.trim().length > 0;
             if (!isValid) {
-              console.warn('[Hono AI Adapter] Dropping empty message from payload:', {
+              debugWarn('[Hono AI Adapter] Dropping empty message from payload:', {
                 role: msg.role,
               });
             }
@@ -211,19 +219,19 @@ const createHonoAiStreamAdapter = (
         // REGENERATE FIX: If last message is from assistant, this is a regenerate request
         // Remove the last assistant message so AI generates a new response
         if (apiMessages.length > 0 && apiMessages[apiMessages.length - 1].role === 'assistant') {
-          console.log('[Hono AI Adapter] 🔄 Regenerate detected - removing last assistant message');
+          debugLog('[Hono AI Adapter] 🔄 Regenerate detected - removing last assistant message');
           apiMessages = apiMessages.slice(0, -1);
         }
 
         if (apiMessages.length === 0) {
-          console.warn('[Hono AI Adapter] ❌ No valid messages left after sanitization, raw messages:', messages);
+          debugWarn('[Hono AI Adapter] ❌ No valid messages left after sanitization, raw messages:', messages);
           throw new Error('Pesan kosong. Silakan ketik pertanyaan Anda terlebih dahulu.');
         }
 
         // Get the last user message for persistence
         const lastUserMsg = apiMessages.filter((m) => m.role === 'user').pop();
         if (!lastUserMsg) {
-          console.warn('[Hono AI Adapter] No user message found in sanitized payload');
+          debugWarn('[Hono AI Adapter] No user message found in sanitized payload');
           throw new Error('Tidak ada pertanyaan pengguna yang dapat diproses. Silakan kirim ulang pesan Anda.');
         }
 
@@ -255,7 +263,7 @@ const createHonoAiStreamAdapter = (
           ...(threadId && { threadId }),
         };
 
-        console.log('[Hono AI Adapter] Sending request to /ai/chat:', {
+        debugLog('[Hono AI Adapter] Sending request to /ai/chat:', {
           url,
           headers: {
             ...headers,
@@ -341,7 +349,7 @@ const createHonoAiStreamAdapter = (
                   const normalizedResponse = fullResponseText.toLowerCase();
                   if (!skkniAutosaveSuccessSignaled && normalizedResponse.includes('autosave unit berhasil')) {
                     skkniAutosaveSuccessSignaled = true;
-                    console.log('[Hono AI Adapter] ✅ SKKNI autosave success signal detected, triggering refresh callbacks');
+                    debugLog('[Hono AI Adapter] ✅ SKKNI autosave success signal detected, triggering refresh callbacks');
                     window.dispatchEvent(new CustomEvent('skkni-fetch-progress', {
                       detail: { type: 'complete' },
                     }));
@@ -352,7 +360,7 @@ const createHonoAiStreamAdapter = (
 
                   if (!skkniAutosaveFailureSignaled && normalizedResponse.includes('penyimpanan otomatis belum berhasil')) {
                     skkniAutosaveFailureSignaled = true;
-                    console.log('[Hono AI Adapter] ⚠️ SKKNI autosave failure signal detected');
+                    debugLog('[Hono AI Adapter] ⚠️ SKKNI autosave failure signal detected');
                     window.dispatchEvent(new CustomEvent('skkni-fetch-progress', {
                       detail: { type: 'error', error: 'Autosave unit belum berhasil' },
                     }));
@@ -363,7 +371,7 @@ const createHonoAiStreamAdapter = (
                   };
                 } else if (type === 'tool-call') {
                   // Yield tool-call for makeAssistantToolUI to render
-                  console.log('[Hono AI Adapter] Tool call:', payload);
+                  debugLog('[Hono AI Adapter] Tool call:', payload);
                   const toolCallId = payload.toolCallId || `tool-${Date.now()}`;
                   const rawToolName = payload.toolName || 'unknown';
                   const toolName = normalizeToolName(rawToolName);
@@ -385,7 +393,7 @@ const createHonoAiStreamAdapter = (
                     toolName.includes('skkni_search') ||
                     !!args?.area;
                   if (isFetchSkkniDetails && unitCodeValue) {
-                    console.log('[Hono AI Adapter] 🔄 SKKNI fetch started for:', unitCodeValue);
+                    debugLog('[Hono AI Adapter] 🔄 SKKNI fetch started for:', unitCodeValue);
                     window.dispatchEvent(new CustomEvent('skkni-fetch-progress', { 
                       detail: { type: 'start', unitCode: unitCodeValue } 
                     }));
@@ -410,7 +418,7 @@ const createHonoAiStreamAdapter = (
                     ],
                   };
                 } else if (type === 'tool-result') {
-                  console.log('[Hono AI Adapter] Tool result RAW payload:', JSON.stringify(payload, null, 2));
+                  debugLog('[Hono AI Adapter] Tool result RAW payload:', JSON.stringify(payload, null, 2));
                   
                   const toolCallId = payload.toolCallId || `tool-${Date.now()}`;
                   // Handle data saving callbacks
@@ -420,12 +428,12 @@ const createHonoAiStreamAdapter = (
                   const args = payload.args || payload.result?.args || 
                     (window as any).__pendingToolCalls?.[toolCallId]?.args || {};
                   
-                  console.log('[Hono AI Adapter] Extracted toolName:', toolName);
-                  console.log('[Hono AI Adapter] Extracted result keys:', payload.result ? Object.keys(payload.result) : 'null');
+                  debugLog('[Hono AI Adapter] Extracted toolName:', toolName);
+                  debugLog('[Hono AI Adapter] Extracted result keys:', payload.result ? Object.keys(payload.result) : 'null');
 
                   const isPatchTool = args?.section || toolName === 'patch_master_json';
                   if (isPatchTool) {
-                    console.log('[Hono AI Adapter] 🎯 Data save detected:', { toolName, section: args?.section });
+                    debugLog('[Hono AI Adapter] 🎯 Data save detected:', { toolName, section: args?.section });
                     onToolCall('patchMasterJson', args || {});
                   }
 
@@ -435,7 +443,7 @@ const createHonoAiStreamAdapter = (
                     result: payload.result,
                     args: args
                   };
-                  console.log('[Hono AI Adapter] Pushing toolInvocation:', JSON.stringify(toolInvocation, null, 2));
+                  debugLog('[Hono AI Adapter] Pushing toolInvocation:', JSON.stringify(toolInvocation, null, 2));
                   allToolInvocations.push(toolInvocation);
                   
                   // CRITICAL: Store to global for ConversationalThread to pick up
@@ -450,7 +458,7 @@ const createHonoAiStreamAdapter = (
                     (payload.result?.documents && payload.result?.summary?.totalDocuments !== undefined);
                   
                   if (isSkkniSearch && payload.result?.documents) {
-                    console.log('[Hono AI Adapter] 🎯 Storing SKKNI result to global (detected via:', 
+                    debugLog('[Hono AI Adapter] 🎯 Storing SKKNI result to global (detected via:', 
                       toolName === 'skkni_search' ? 'toolName' : 
                       payload.result?._sourcetool ? '_sourcetool' : 'structure', ')');
                     (window as any).__lastSkkniResult = {
@@ -472,12 +480,12 @@ const createHonoAiStreamAdapter = (
                   if (isFetchSkkniDetails) {
                     if (payload.result?.success) {
                       skkniFetchSucceeded = true;
-                      console.log('[Hono AI Adapter] ✅ SKKNI fetch completed');
+                      debugLog('[Hono AI Adapter] ✅ SKKNI fetch completed');
                       window.dispatchEvent(new CustomEvent('skkni-fetch-progress', { 
                         detail: { type: 'step', step: 'save' } 
                       }));
                     } else {
-                      console.log('[Hono AI Adapter] ❌ SKKNI fetch failed:', payload.result?.message);
+                      debugLog('[Hono AI Adapter] ❌ SKKNI fetch failed:', payload.result?.message);
                       window.dispatchEvent(new CustomEvent('skkni-fetch-progress', { 
                         detail: { type: 'error', error: payload.result?.message } 
                       }));
@@ -485,7 +493,7 @@ const createHonoAiStreamAdapter = (
                   }
                 } else if (type === 'data-saved') {
                   // Handle data-saved events from deterministic autosave (training_details, etc.)
-                  console.log('[Hono AI Adapter] 🎯 Data saved event:', payload);
+                  debugLog('[Hono AI Adapter] 🎯 Data saved event:', payload);
                   onToolCall('patchMasterJson', payload || {});
                 } else if (type === 'error') {
                   console.error('[Hono AI Adapter] Stream error:', payload);
@@ -495,10 +503,10 @@ const createHonoAiStreamAdapter = (
                 } else if (type === 'finish') {
                   // Hono AI stream signals finish, but we should continue reading until stream is done
                   // to capture any trailing data (like embedded SKKNI data for persistence)
-                  console.log('[Hono AI Adapter] Received finish event, continuing to read trailing data...');
+                  debugLog('[Hono AI Adapter] Received finish event, continuing to read trailing data...');
                 }
               } catch (parseError) {
-                console.warn('[Hono AI Adapter] JSON parse error:', parseError, dataStr);
+                debugWarn('[Hono AI Adapter] JSON parse error:', parseError, dataStr);
               }
             }
           }
@@ -507,7 +515,7 @@ const createHonoAiStreamAdapter = (
         }
 
         if (skkniFetchSucceeded && !skkniAutosaveSuccessSignaled && !skkniAutosaveFailureSignaled) {
-          console.log('[Hono AI Adapter] ℹ️ SKKNI autosave note not found, triggering fallback refresh callbacks');
+          debugLog('[Hono AI Adapter] ℹ️ SKKNI autosave note not found, triggering fallback refresh callbacks');
           window.dispatchEvent(new CustomEvent('skkni-fetch-progress', {
             detail: { type: 'complete' },
           }));
@@ -548,15 +556,15 @@ const createHonoAiStreamAdapter = (
         if (fullResponseText) {
           // Debug: Check if embedded data is included
           const hasEmbeddedSkkni = fullResponseText.includes('<!--SKKNI_DATA:');
-          console.log('[Hono AI Adapter] 💾 Persisting message, length:', fullResponseText.length, 'hasEmbeddedSkkni:', hasEmbeddedSkkni);
+          debugLog('[Hono AI Adapter] 💾 Persisting message, length:', fullResponseText.length, 'hasEmbeddedSkkni:', hasEmbeddedSkkni);
           if (hasEmbeddedSkkni) {
-            console.log('[Hono AI Adapter] ✅ SKKNI data embedded in message for reload recovery');
+            debugLog('[Hono AI Adapter] ✅ SKKNI data embedded in message for reload recovery');
           }
           await onAssistantMessage(fullResponseText);
         }
 
-        console.log('[Hono AI Adapter] FINAL allToolInvocations:', JSON.stringify(allToolInvocations, null, 2));
-        console.log('[Hono AI Adapter] FINAL allToolInvocations count:', allToolInvocations.length);
+        debugLog('[Hono AI Adapter] FINAL allToolInvocations:', JSON.stringify(allToolInvocations, null, 2));
+        debugLog('[Hono AI Adapter] FINAL allToolInvocations count:', allToolInvocations.length);
 
         // Yield final content with metadata attached (only if we have tool invocations)
         // This replaces the last streaming yield rather than duplicating it
@@ -697,14 +705,14 @@ export const ConversationalAssistantProvider: React.FC<
 
   const fetchDocumentProgress = useCallback(async () => {
     if (!documentId) {
-      console.log('[fetchDocumentProgress] No documentId, skipping...');
+      debugLog('[fetchDocumentProgress] No documentId, skipping...');
       return;
     }
 
     try {
-      console.log('[fetchDocumentProgress] Fetching progress for document:', documentId);
+      debugLog('[fetchDocumentProgress] Fetching progress for document:', documentId);
       const { data } = await api.get(`/ai/document/progress/${documentId}`);
-      console.log('[fetchDocumentProgress] Received progress data:', data.progress);
+      debugLog('[fetchDocumentProgress] Received progress data:', data.progress);
       setDocumentProgress(data.progress);
     } catch (error) {
       console.error('[fetchDocumentProgress] Failed to fetch document progress:', error);
@@ -849,7 +857,7 @@ export const ConversationalAssistantProvider: React.FC<
       
       // Guard: don't initialize without agentId
       if (!agentId) {
-        console.warn('[ConversationalAssistantProvider] Skipping initialization - agentId not provided');
+        debugWarn('[ConversationalAssistantProvider] Skipping initialization - agentId not provided');
         setIsInitialized(true);
         return;
       }
@@ -884,7 +892,7 @@ export const ConversationalAssistantProvider: React.FC<
               compatibleProgress = progressData?.progress || {};
             }
           } catch (progressError) {
-            console.warn(
+            debugWarn(
               '[ConversationalAssistantProvider] Failed to restore persisted document:',
               persistedDocumentId,
               progressError,
@@ -973,7 +981,7 @@ export const ConversationalAssistantProvider: React.FC<
               }
             }
           } catch (transcriptError) {
-            console.warn('[ConversationalAssistantProvider] Failed to hydrate transcript:', transcriptError);
+            debugWarn('[ConversationalAssistantProvider] Failed to hydrate transcript:', transcriptError);
           }
         }
 
@@ -1000,7 +1008,7 @@ export const ConversationalAssistantProvider: React.FC<
         }
       } finally {
         const initDurationMs = Math.round(performance.now() - initStart);
-        console.log(`[ConversationalAssistantProvider] Initialize completed in ${initDurationMs}ms`);
+        debugLog(`[ConversationalAssistantProvider] Initialize completed in ${initDurationMs}ms`);
         setIsInitialized(true);
       }
     };
@@ -1013,7 +1021,7 @@ export const ConversationalAssistantProvider: React.FC<
   // ============================================
 
   const handleToolCall = useCallback((toolName: string, args: any) => {
-    console.log('[handleToolCall] Tool called:', toolName, args);
+    debugLog('[handleToolCall] Tool called:', toolName, args);
 
     // Trigger all registered callbacks
     dataSaveCallbacks.current.forEach(callback => {
@@ -1026,12 +1034,12 @@ export const ConversationalAssistantProvider: React.FC<
   }, []);
 
   const onDataSaved = useCallback((callback: () => void) => {
-    console.log('[onDataSaved] Registering callback');
+    debugLog('[onDataSaved] Registering callback');
     dataSaveCallbacks.current.add(callback);
 
     // Return cleanup function
     return () => {
-      console.log('[onDataSaved] Unregistering callback');
+      debugLog('[onDataSaved] Unregistering callback');
       dataSaveCallbacks.current.delete(callback);
     };
   }, []);
@@ -1041,7 +1049,7 @@ export const ConversationalAssistantProvider: React.FC<
   // ============================================
 
   const switchDocument = useCallback(async (newDocumentId: string) => {
-    console.log('[switchDocument] Switching to document:', newDocumentId);
+    debugLog('[switchDocument] Switching to document:', newDocumentId);
     try {
       // Fetch the document to verify it exists
       const { data } = await api.get(`/ai/document/progress/${newDocumentId}`);
@@ -1106,18 +1114,18 @@ export const ConversationalAssistantProvider: React.FC<
             setInitialMessages(transcriptMessages);
             setRuntimeKey(`${agentId}-doc-${newDocumentId}-${latestThreadIdFromTranscript}-${Date.now()}`);
             hydratedFromTranscript = true;
-            console.log('[switchDocument] Hydrated transcript for document:', newDocumentId);
+            debugLog('[switchDocument] Hydrated transcript for document:', newDocumentId);
           }
         }
       } catch (transcriptError) {
-        console.warn('[switchDocument] Transcript hydration failed:', transcriptError);
+        debugWarn('[switchDocument] Transcript hydration failed:', transcriptError);
       }
 
       if (!hydratedFromTranscript) {
         // Create new chat session if no transcript exists for this document
         const { data: newSession } = await api.post('/ai/chat/sessions', { agentType: agentId });
         setCurrentSessionId(newSession.id);
-        console.log('[switchDocument] Created new chat session:', newSession.id);
+        debugLog('[switchDocument] Created new chat session:', newSession.id);
         setRuntimeKey(`${agentId}-doc-${newDocumentId}-${newSession.id}-${Date.now()}`);
         setInitialMessages([]);
       }
@@ -1129,7 +1137,7 @@ export const ConversationalAssistantProvider: React.FC<
       // Refresh sessions list
       await fetchSessions();
 
-      console.log('[switchDocument] Successfully switched to:', newDocumentId);
+      debugLog('[switchDocument] Successfully switched to:', newDocumentId);
     } catch (error) {
       console.error('[switchDocument] Failed:', error);
       throw error;
@@ -1137,7 +1145,7 @@ export const ConversationalAssistantProvider: React.FC<
   }, [agentId, fetchSessions]);
 
   const deleteDocument = useCallback(async (docId: string) => {
-    console.log('[deleteDocument] Deleting document:', docId);
+    debugLog('[deleteDocument] Deleting document:', docId);
     try {
       await api.post(`/ai/document/${docId}/delete`);
 
@@ -1155,7 +1163,7 @@ export const ConversationalAssistantProvider: React.FC<
         setInitialMessages([]);
       }
 
-      console.log('[deleteDocument] Successfully deleted:', docId);
+      debugLog('[deleteDocument] Successfully deleted:', docId);
     } catch (error) {
       console.error('[deleteDocument] Failed:', error);
       throw error;
@@ -1163,7 +1171,7 @@ export const ConversationalAssistantProvider: React.FC<
   }, [agentId, documentId]);
 
   const createDocument = useCallback(async (documentName: string) => {
-    console.log('[createDocument] Creating document:', documentName);
+    debugLog('[createDocument] Creating document:', documentName);
       try {
         const { data: newDoc } = await api.post('/ai/document/create', { name: documentName });
 
@@ -1175,7 +1183,7 @@ export const ConversationalAssistantProvider: React.FC<
       // Create new chat session for the new document
       const { data: newSession } = await api.post('/ai/chat/sessions', { agentType: agentId });
       setCurrentSessionId(newSession.id);
-      console.log('[createDocument] Created new chat session:', newSession.id);
+      debugLog('[createDocument] Created new chat session:', newSession.id);
 
       // Reset runtime for fresh start
       setRuntimeKey(`${agentId}-doc-${newDoc.documentId}-${newSession.id}-${Date.now()}`);
@@ -1188,7 +1196,7 @@ export const ConversationalAssistantProvider: React.FC<
       // Refresh sessions list
       await fetchSessions();
 
-      console.log('[createDocument] Successfully created:', newDoc.documentId);
+      debugLog('[createDocument] Successfully created:', newDoc.documentId);
     } catch (error) {
       console.error('[createDocument] Failed:', error);
       throw error;

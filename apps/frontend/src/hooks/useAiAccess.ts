@@ -2,6 +2,10 @@ import { useQuery } from '@tanstack/react-query';
 import { useUser } from 'src/lib/better-auth';
 import api from 'src/api/axios';
 
+const debugLog = (...args: unknown[]) => {
+  if (import.meta.env.DEV) console.log(...args);
+};
+
 export interface AiAccessResponse {
   hasTier: boolean;
   tierName: string | null;
@@ -16,13 +20,13 @@ export const useAiAccess = () => {
   const { data, isLoading, error } = useQuery<AiAccessResponse>({
     queryKey: ['ai-access'],
     queryFn: async () => {
-      console.log('🔍 [useAiAccess] Fetching /peserta/me/access...');
+      debugLog('[useAiAccess] Fetching /peserta/me/access...');
       try {
         const response = await api.get('/peserta/me/access');
-        console.log('✅ [useAiAccess] Response:', response.data);
+        debugLog('[useAiAccess] Response:', response.data);
         return response.data;
       } catch (err: any) {
-        console.error('❌ [useAiAccess] Error:', err.response?.data || err.message);
+        console.error('[useAiAccess] Error:', err.response?.data || err.message);
         throw err;
       }
     },
@@ -30,7 +34,7 @@ export const useAiAccess = () => {
     staleTime: 5 * 60 * 1000, // 5 minutes
   });
 
-  console.log('🎯 [useAiAccess] State:', {
+  debugLog('[useAiAccess] State:', {
     isLoading,
     error: error?.message,
     data,
@@ -41,11 +45,11 @@ export const useAiAccess = () => {
 
   const hasAccess = (featureId: string): boolean => {
     if (!data) {
-      console.log(`🔒 [useAiAccess] hasAccess(${featureId}): NO DATA`);
+      debugLog(`[useAiAccess] hasAccess(${featureId}): NO DATA`);
       return false;
     }
     const result = data.aiFeatures.includes(featureId);
-    console.log(`🔍 [useAiAccess] hasAccess(${featureId}):`, result, '| aiFeatures:', data.aiFeatures);
+    debugLog(`[useAiAccess] hasAccess(${featureId}):`, result, '| aiFeatures:', data.aiFeatures);
     return result;
   };
 

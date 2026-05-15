@@ -14,6 +14,14 @@ import { buildMasterSectionPatchValue } from "./components/master-sidebar.helper
 import type { MasterSidebarSectionId } from "./components/master-sidebar.config";
 import { useAiAccess } from "src/hooks/useAiAccess";
 
+const debugLog = (...args: unknown[]) => {
+  if (import.meta.env.DEV) console.log(...args);
+};
+
+const debugWarn = (...args: unknown[]) => {
+  if (import.meta.env.DEV) console.warn(...args);
+};
+
 const categoryConfig: Record<string, {
   title: string;
   description: string;
@@ -103,7 +111,7 @@ const AiConversationContent = () => {
 
       // Check localStorage first - did user already skip this category's trailer?
       if (!shouldShowTrailer(category)) {
-        console.log('⏭️ [Trailer] User already skipped trailer for', category);
+        debugLog('[Trailer] User already skipped trailer for', category);
         setShowTrailer(false);
         setTrailerLoading(false);
         return;
@@ -111,8 +119,8 @@ const AiConversationContent = () => {
 
       try {
         const { data } = await api.get(`/ai-trailer/${category}`);
-        console.log('🎬 [Trailer] Fetched data:', data);
-        console.log('🎬 [Trailer] Checks:', {
+        debugLog('[Trailer] Fetched data:', data);
+        debugLog('[Trailer] Checks:', {
           hasData: !!data,
           isActive: data?.isActive,
           hasMuxPlaybackId: !!data?.muxPlaybackId,
@@ -120,15 +128,15 @@ const AiConversationContent = () => {
         });
 
         if (data && data.isActive && data.muxPlaybackId) {
-          console.log('✅ [Trailer] Showing trailer');
+          debugLog('[Trailer] Showing trailer');
           setTrailerData(data);
           setShowTrailer(true);
         } else {
-          console.log('⏭️ [Trailer] Skipping trailer - missing video or not active');
+          debugLog('[Trailer] Skipping trailer - missing video or not active');
           setShowTrailer(false);
         }
       } catch (error) {
-        console.error('❌ [Trailer] Failed to fetch:', error);
+        console.error('[Trailer] Failed to fetch:', error);
         setShowTrailer(false);
       } finally {
         setTrailerLoading(false);
@@ -147,7 +155,7 @@ const AiConversationContent = () => {
 
     // Subscribe to data save events
     const unsubscribe = onDataSaved(() => {
-      console.log('[AiConversation] 🎯 Data saved event received, refreshing progress...');
+      debugLog('[AiConversation] Data saved event received, refreshing progress...');
       // Wait a bit for backend to finish processing
       setTimeout(() => {
         fetchDocumentProgress();
@@ -165,7 +173,7 @@ const AiConversationContent = () => {
     const promptParam = searchParams.get('prompt');
 
     if (promptParam && isInitialized && !promptHandledRef.current) {
-      console.log('[AiConversation] 🚀 Deep link detected, prompt:', promptParam);
+      debugLog('[AiConversation] Deep link detected, prompt:', promptParam);
       promptHandledRef.current = true;
 
       // Clear the prompt from URL to prevent re-sending on refresh
@@ -176,10 +184,10 @@ const AiConversationContent = () => {
       // Send the message after a short delay to ensure chat is ready
       setTimeout(() => {
         if ((window as any).__sendChatMessage) {
-          console.log('[AiConversation] 📨 Sending deep-linked message...');
+          debugLog('[AiConversation] Sending deep-linked message...');
           (window as any).__sendChatMessage(decodeURIComponent(promptParam));
         } else {
-          console.warn('[AiConversation] ⚠️ __sendChatMessage not available yet');
+          debugWarn('[AiConversation] __sendChatMessage not available yet');
         }
       }, 500);
     }
@@ -217,17 +225,17 @@ const AiConversationContent = () => {
 
   const handleCreateDocument = async (documentName: string) => {
     await createDocument(documentName);
-    console.log('[AiConversation] Created new document:', documentName);
+    debugLog('[AiConversation] Created new document:', documentName);
   };
 
   const handleSwitchDocument = async (docId: string) => {
     await switchDocument(docId);
-    console.log('[AiConversation] Switched to document:', docId);
+    debugLog('[AiConversation] Switched to document:', docId);
   };
 
   const handleDeleteDocument = async (docId: string) => {
     await contextDeleteDocument(docId);
-    console.log('[AiConversation] Deleted document:', docId);
+    debugLog('[AiConversation] Deleted document:', docId);
   };
 
   const handleSaveMasterSection = useCallback(
@@ -238,7 +246,7 @@ const AiConversationContent = () => {
 
       const { section, value } = buildMasterSectionPatchValue(sectionId, values);
       if (!value || Object.keys(value).length === 0) {
-        console.log('[AiConversation] No values provided for master section save, skipping.');
+        debugLog('[AiConversation] No values provided for master section save, skipping.');
         return;
       }
 
@@ -251,7 +259,7 @@ const AiConversationContent = () => {
         await api.post(`/ai/document/${documentId}/fields`, { fields });
         await fetchDocumentProgress();
         setSidebarRefreshKey((k) => k + 1);
-        console.log('[AiConversation] Master section saved and progress refreshed:', sectionId);
+        debugLog('[AiConversation] Master section saved and progress refreshed:', sectionId);
       } catch (error) {
         console.error('[AiConversation] Failed to save master section:', error);
         throw error;
@@ -370,7 +378,7 @@ const AiConversationContent = () => {
         <div className="flex-1 min-h-0 overflow-hidden">
           <ConversationalThread
             agentColor={config.color}
-            onSendMessage={(msg) => console.log('Send message:', msg)}
+            onSendMessage={(msg) => debugLog('Send message:', msg)}
           />
         </div>
       </div>
@@ -383,10 +391,10 @@ const AiConversationContent = () => {
           refreshTrigger={sidebarRefreshKey}
           onRefresh={fetchDocumentProgress}
           onDocumentClick={(templateName, doc) => {
-            console.log('Document clicked:', templateName, doc);
+            debugLog('Document clicked:', templateName, doc);
           }}
           onGenerateClick={(templateName) => {
-            console.log('Generate clicked:', templateName);
+            debugLog('Generate clicked:', templateName);
             fetchDocumentProgress(); // Refresh after generation
             setSidebarRefreshKey((k) => k + 1);
           }}

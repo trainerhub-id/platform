@@ -71,24 +71,16 @@ export const AiTrailerPromotion = ({
                 {/* Video Player */}
                 <div className="relative w-full bg-black shadow-sm shrink-0 rounded-xl overflow-hidden aspect-video max-w-5xl mx-auto">
                     {muxPlaybackId ? (
-                        <>
-                            {console.log('🎬 [MuxPlayer] Props:', {
-                                playbackId: muxPlaybackId,
-                                hasToken: !!playbackToken,
-                                tokenLength: playbackToken?.length,
-                                tokenPreview: playbackToken?.substring(0, 50) + '...',
-                            })}
-                            <LazyMuxPlayer
-                                playbackId={muxPlaybackId}
-                                tokens={playbackToken ? { playback: playbackToken } : undefined}
-                                metadata={{
-                                    video_title: title,
-                                }}
-                                accentColor="#4F75FF"
-                                className="w-full h-full"
-                                streamType="on-demand"
-                            />
-                        </>
+                        <LazyMuxPlayer
+                            playbackId={muxPlaybackId}
+                            tokens={playbackToken ? { playback: playbackToken } : undefined}
+                            metadata={{
+                                video_title: title,
+                            }}
+                            accentColor="#4F75FF"
+                            className="w-full h-full"
+                            streamType="on-demand"
+                        />
                     ) : thumbnailUrl ? (
                         <img 
                             src={thumbnailUrl} 
