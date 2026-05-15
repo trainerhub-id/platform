@@ -90,7 +90,14 @@ bun run build
 
 log "Reloading PM2 app: $PM2_APP_NAME"
 if pm2 describe "$PM2_APP_NAME" >/dev/null 2>&1; then
-  pm2 reload "$PM2_CONFIG" --only "$PM2_APP_NAME" --update-env
+  current_cwd="$(pm2 jlist | jq -r --arg app "$PM2_APP_NAME" '.[] | select(.name == $app) | .pm2_env.pm_cwd // empty' | head -n 1)"
+  if [[ "$current_cwd" != "$BACKEND_DIR" ]]; then
+    log "PM2 app cwd changed from $current_cwd to $BACKEND_DIR; recreating app"
+    pm2 delete "$PM2_APP_NAME"
+    pm2 start "$PM2_CONFIG"
+  else
+    pm2 reload "$PM2_CONFIG" --only "$PM2_APP_NAME" --update-env
+  fi
 else
   pm2 start "$PM2_CONFIG"
 fi
