@@ -122,7 +122,7 @@ export const TierTemplateModal = ({
       onOpenChange(false);
     } catch (error) {
       console.error('Error saving template:', error);
-      alert('Gagal menyimpan tier template');
+      alert('Gagal menyimpan paket');
     } finally {
       setLoading(false);
     }
@@ -134,20 +134,20 @@ export const TierTemplateModal = ({
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <Icon icon="solar:widget-4-bold" className="text-primary" height={24} />
-            {templateToEdit ? 'Edit Tier Template' : 'Buat Tier Template Baru'}
+            {templateToEdit ? 'Edit Paket' : 'Tambah Paket'}
           </DialogTitle>
         </DialogHeader>
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <Label htmlFor="name">
-              Nama Tier <span className="text-red-500">*</span>
+              Nama Paket <span className="text-red-500">*</span>
             </Label>
             <Input
               id="name"
               value={formData.name}
               onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
-              placeholder="e.g., VIP, Regular, Premium"
+              placeholder="e.g., Master, Trainer"
               required
             />
           </div>
@@ -158,7 +158,7 @@ export const TierTemplateModal = ({
               id="description"
               value={formData.description}
               onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
-              placeholder="Deskripsi singkat tier"
+              placeholder="Deskripsi singkat paket"
               rows={2}
             />
           </div>
@@ -166,11 +166,11 @@ export const TierTemplateModal = ({
           <div className="border rounded-lg p-4 space-y-3">
             <Label className="flex items-center gap-2">
               <Icon icon="solar:book-linear" height={16} />
-              Akses Kelas
+              Default Kelas Bonus
             </Label>
             <div className="max-h-40 overflow-y-auto space-y-2">
               {courses.length === 0 ? (
-                <p className="text-sm text-gray-400 italic">Tidak ada course tersedia</p>
+                <p className="text-sm text-gray-400 italic">Tidak ada kelas tersedia</p>
               ) : (
                 courses.map(course => (
                   <div key={course.id} className="flex items-center gap-2">
@@ -191,7 +191,7 @@ export const TierTemplateModal = ({
           <div className="border rounded-lg p-4 space-y-3">
             <Label className="flex items-center gap-2">
               <Icon icon="solar:star-linear" height={16} />
-              Fitur AI
+              Default Akses AI
             </Label>
             <div className="max-h-48 overflow-y-auto space-y-2">
               {AI_FEATURES.map(feature => (
@@ -213,12 +213,12 @@ export const TierTemplateModal = ({
           </div>
 
           <div>
-            <Label htmlFor="benefits">Default Benefits (satu per baris)</Label>
+            <Label htmlFor="benefits">Benefit Paket (satu per baris)</Label>
             <Textarea
               id="benefits"
               value={formData.defaultBenefits}
               onChange={(e) => setFormData(prev => ({ ...prev, defaultBenefits: e.target.value }))}
-              placeholder={"Training 2 hari\nCourse online\nSertifikat digital"}
+              placeholder={"Training 2 hari\nKelas bonus online\nSertifikat digital"}
               rows={4}
             />
           </div>
