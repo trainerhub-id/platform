@@ -235,6 +235,26 @@ const Header = ({ layoutType }: HeaderPropsType) => {
                         </p>
                       </>
                     )}
+                    {pathname === "/admin/batches" && (
+                      <>
+                        <h2 className="text-xl font-semibold text-white mb-0.5">
+                          Kelola Batch
+                        </h2>
+                        <p className="text-white/70 text-xs">
+                          Pantau batch, peserta, paket, dokumen, dan aktivitas
+                        </p>
+                      </>
+                    )}
+                    {pathname.startsWith("/admin/batches/") && (
+                      <>
+                        <h2 className="text-xl font-semibold text-white mb-0.5">
+                          Workspace Batch
+                        </h2>
+                        <p className="text-white/70 text-xs">
+                          Member, dokumen, sertifikat, paket, dan activity log
+                        </p>
+                      </>
+                    )}
                     {pathname === "/admin/daftar-peserta" && (
                       <>
                         <h2 className="text-xl font-semibold text-white mb-0.5">
@@ -298,10 +318,10 @@ const Header = ({ layoutType }: HeaderPropsType) => {
                     {pathname === "/admin/tier-management" && (
                       <>
                         <h2 className="text-xl font-semibold text-white mb-0.5">
-                          Tier Management
+                          Paket & Akses
                         </h2>
                         <p className="text-white/70 text-xs">
-                          Kelola master tier templates untuk batch training
+                          Kelola paket, benefit, kelas bonus, dan akses AI
                         </p>
                       </>
                     )}
