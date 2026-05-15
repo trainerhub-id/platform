@@ -24,6 +24,27 @@ export class BatchRepository {
 		return row ?? null;
 	}
 
+	async getWorkspace(id: string) {
+		const [row] = await db
+			.select({
+				...getTableColumns(batchTraining),
+				trainerName: trainer.nama,
+				trainerPhoto: trainer.fotoUrl,
+				courseName: courses.title,
+				totalEnrollments: sql<number>`count(${pesertaBatch.id})`.mapWith(Number),
+				paidEnrollments: sql<number>`count(${pesertaBatch.id}) filter (where ${pesertaBatch.paymentStatus} = 'paid')`.mapWith(Number),
+				pendingPayments: sql<number>`count(${pesertaBatch.id}) filter (where ${pesertaBatch.paymentStatus} = 'pending')`.mapWith(Number),
+			})
+			.from(batchTraining)
+			.leftJoin(trainer, eq(batchTraining.trainerId, trainer.id))
+			.leftJoin(courses, eq(batchTraining.courseId, courses.id))
+			.leftJoin(pesertaBatch, eq(batchTraining.id, pesertaBatch.batchId))
+			.where(eq(batchTraining.id, id))
+			.groupBy(batchTraining.id, trainer.id, courses.id)
+			.limit(1);
+		return row ?? null;
+	}
+
 	async findAll() {
 		return db
 			.select({ ...getTableColumns(batchTraining), trainerName: trainer.nama, trainerPhoto: trainer.fotoUrl, courseName: courses.title, participantsCount: sql<number>`count(${pesertaBatch.id})`.mapWith(Number) })
@@ -67,6 +88,17 @@ export class BatchRepository {
 
 	async getPesertaInBatch(batchId: string) {
 		return db.select().from(pesertaBatch).where(eq(pesertaBatch.batchId, batchId));
+	}
+
+	async getActiveTiersForPublish(batchId: string) {
+		return db
+			.select({
+				id: batchTiers.id,
+				price: batchTiers.price,
+				scalevSyncStatus: batchTiers.scalevSyncStatus,
+			})
+			.from(batchTiers)
+			.where(and(eq(batchTiers.batchId, batchId), eq(batchTiers.isActive, true)));
 	}
 
 	async getCurriculum(batchId: string) {

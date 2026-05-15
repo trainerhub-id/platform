@@ -11,7 +11,7 @@ const updateStatusSchema = z.object({ pesertaId: z.string().min(1), batchId: z.s
 
 type BatchVariables = AuthVariables & { requestId: string };
 type UserLike = { id: string; role?: string };
-type BatchServiceLike = Pick<BatchService, "create" | "update" | "remove" | "listForUser" | "assignPeserta" | "updateStatus" | "getPesertaInBatch" | "getCurriculum" | "resolveMapUrl">;
+type BatchServiceLike = Pick<BatchService, "create" | "update" | "remove" | "listForUser" | "assignPeserta" | "updateStatus" | "getPesertaInBatch" | "getWorkspace" | "publish" | "getCurriculum" | "resolveMapUrl">;
 
 export function createBatchRoutes(service: BatchServiceLike = new BatchService()) {
 	const app = new Hono<{ Variables: BatchVariables }>();
@@ -44,6 +44,8 @@ export function createBatchRoutes(service: BatchServiceLike = new BatchService()
 	});
 
 	app.get("/batch/:id/peserta", requireAuth, requireRole(["admin"]), async (c) => c.json({ peserta: await service.getPesertaInBatch(c.req.param("id")) }));
+	app.get("/admin/batches/:id/workspace", requireAuth, requireRole(["admin"]), async (c) => c.json({ batch: await service.getWorkspace(c.req.param("id")) }));
+	app.post("/admin/batches/:id/publish", requireAuth, requireRole(["admin"]), async (c) => c.json({ batch: await service.publish(c.req.param("id")) }));
 	app.get("/batch/:id/curriculum", requireAuth, requireRole(["peserta", "admin"]), async (c) => c.json(await service.getCurriculum(c.req.param("id"))));
 	app.post("/batch/resolve-map-url", requireAuth, requireRole(["admin"]), async (c) => c.json(await service.resolveMapUrl((await c.req.json()).url)));
 
