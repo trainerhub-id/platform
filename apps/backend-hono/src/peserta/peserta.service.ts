@@ -5,6 +5,7 @@ type PesertaRecord = {
 	clerkId: string;
 	nama: string;
 	email: string;
+	paymentStatus?: string | null;
 	[key: string]: unknown;
 };
 
@@ -63,6 +64,13 @@ export class PesertaService {
 		if (profile.id === "00000000-0000-0000-0000-000000000000") {
 			return { hasTier: false, tierName: null, aiFeatures: [], courseIds: [], benefits: [] };
 		}
-		return { hasTier: profile.paymentStatus === "paid", tierName: null, aiFeatures: [], courseIds: [], benefits: [] };
+		const hasTier = profile.paymentStatus === "paid";
+		return {
+			hasTier,
+			tierName: hasTier ? "TrainerHub Full Access" : null,
+			aiFeatures: hasTier ? ["trainer", "master"] : [],
+			courseIds: [],
+			benefits: [],
+		};
 	}
 }

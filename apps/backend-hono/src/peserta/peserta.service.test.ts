@@ -32,4 +32,23 @@ describe("PesertaService", () => {
 		expect(profile.clerkId).toBe("user_1");
 		expect(linked).toBe(true);
 	});
+
+	it("grants paid peserta access to trainer and master AI features", async () => {
+		const service = new PesertaService({
+			repository: {
+				findByClerkId: async () => ({
+					id: "peserta_1",
+					clerkId: "user_1",
+					nama: "Budi",
+					email: "budi@example.com",
+					paymentStatus: "paid",
+				}),
+			} as any,
+		});
+
+		const access = await service.getAccess("user_1", "budi@example.com");
+
+		expect(access.hasTier).toBe(true);
+		expect(access.aiFeatures).toEqual(["trainer", "master"]);
+	});
 });

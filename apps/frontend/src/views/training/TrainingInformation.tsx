@@ -27,7 +27,25 @@ const TrainingInformation = () => {
   }
 
   if (!selectedTraining) {
-    return <div className="p-6">Belum ada training yang tersedia.</div>
+    return (
+      <CardBox className="p-12 text-center">
+        <div className="flex flex-col items-center justify-center">
+          <div className="h-20 w-20 rounded-full bg-gray-100 flex items-center justify-center mb-4">
+            <Icon
+              icon="solar:calendar-minimalistic-linear"
+              className="text-gray-400"
+              height={40}
+            />
+          </div>
+          <h3 className="text-lg font-semibold text-dark mb-2">
+            Belum Ada Training
+          </h3>
+          <p className="text-sm text-bodytext">
+            Saat ini belum ada training yang tersedia untuk Anda.
+          </p>
+        </div>
+      </CardBox>
+    )
   }
 
   return (
@@ -110,5 +128,4 @@ const TrainingInformation = () => {
 };
 
 export default TrainingInformation;
-
 
