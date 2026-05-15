@@ -1,6 +1,6 @@
 import type { FieldStateSnapshot } from "./field-state.types";
 import { masterProfileRequiredFields } from "./master/master-fields";
-import { trainerBrainstormingRequiredFields, trainerSkkniRequiredFields, trainerTrainingDetailsRequiredFields } from "./trainer/trainer-fields";
+import { trainerBrainstormingRequiredFields, trainerSkkniRequiredFields } from "./trainer/trainer-fields";
 
 export type MasterPhase = "profile" | "unit_selection" | "competency_map" | "generation_ready";
 export type TrainerPhase = "brainstorming" | "unit_selection" | "competency_map" | "training_details" | "generation_ready";
@@ -40,11 +40,6 @@ export function getNextTrainerPhase(states: FieldStateSnapshot[]): TrainerPhase 
   if (!unitComplete) return "unit_selection";
 
   if (!hasFinalValue(states, "competency_map", "skkni_map")) return "competency_map";
-
-  const trainingDetailsComplete = trainerTrainingDetailsRequiredFields.every((fieldKey) =>
-    hasFinalValue(states, "training_details", fieldKey),
-  );
-  if (!trainingDetailsComplete) return "training_details";
 
   return "generation_ready";
 }
