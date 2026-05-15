@@ -1,5 +1,5 @@
 import type { FieldStateSnapshot, ReadinessResult } from "../field-state.types";
-import { masterProfileOptionalFields, masterProfileRequiredFields, masterSkkniRequiredFields } from "./master-fields";
+import { masterProfileGeneratedFields, masterProfileOptionalFields, masterProfileRequiredFields, masterSkkniRequiredFields } from "./master-fields";
 
 function hasUsableValue(value: unknown): boolean {
   if (typeof value === "string") return value.trim().length > 0;
@@ -41,6 +41,13 @@ export function buildMasterReadiness(states: FieldStateSnapshot[]): ReadinessRes
 
   for (const requirement of masterSkkniRequiredFields) {
     requireField(requirement.phaseKey, requirement.fieldKey);
+  }
+
+  for (const fieldKey of masterProfileGeneratedFields) {
+    const state = byKey.get(keyOf("profile", fieldKey));
+    if (!state || !hasUsableValue(state.value)) {
+      optionalGaps.push(keyOf("profile", fieldKey));
+    }
   }
 
   for (const fieldKey of masterProfileOptionalFields) {

@@ -33,7 +33,7 @@ describe("buildTrainerReadiness", () => {
 		expect(readiness.missing).toContain("unit_selection.selected_unit_code");
 		expect(readiness.missing).toContain("unit_selection.unit_detail");
 		expect(readiness.missing).toContain("competency_map.skkni_map");
-		expect(readiness.missing).toContain("training_details.duration_jp");
+		expect(readiness.optionalGaps).toContain("training_details.duration_jp");
 	});
 
 	it("is ready when required Trainer fields are complete", () => {
@@ -51,5 +51,22 @@ describe("buildTrainerReadiness", () => {
 			"brainstorming.training_objective",
 			"brainstorming.training_date",
 		]);
+	});
+
+	it("does not require generated training details before SKKNI search", () => {
+		const states: FieldStateSnapshot[] = [
+			confirmed("brainstorming", "trainer_name", "Ujang Abdus Salam"),
+			confirmed("brainstorming", "institution", "Mandiri"),
+			confirmed("brainstorming", "expertise", "Marketing"),
+			confirmed("brainstorming", "audience", "UMKM yang mau naik kelas"),
+			confirmed("brainstorming", "outcome", "UMKM bisa membuat strategi pemasaran sendiri"),
+		];
+
+		const readiness = buildTrainerReadiness(states);
+
+		expect(readiness.missing).not.toContain("training_details.program_name");
+		expect(readiness.missing).not.toContain("training_details.delivery_method");
+		expect(readiness.missing).not.toContain("training_details.duration_jp");
+		expect(readiness.missing).toContain("unit_selection.selected_unit_code");
 	});
 });

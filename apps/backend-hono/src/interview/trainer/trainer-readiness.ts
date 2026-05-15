@@ -1,5 +1,5 @@
 import type { FieldStateSnapshot, ReadinessResult } from "../field-state.types";
-import { trainerBrainstormingOptionalFields, trainerBrainstormingRequiredFields, trainerSkkniRequiredFields, trainerTrainingDetailsRequiredFields } from "./trainer-fields";
+import { trainerBrainstormingOptionalFields, trainerBrainstormingRequiredFields, trainerSkkniRequiredFields, trainerTrainingDetailsGeneratedFields } from "./trainer-fields";
 
 function hasUsableValue(value: unknown): boolean {
 	if (typeof value === "string") return value.trim().length > 0;
@@ -33,7 +33,10 @@ export function buildTrainerReadiness(states: FieldStateSnapshot[]): ReadinessRe
 
 	for (const fieldKey of trainerBrainstormingRequiredFields) requireField("brainstorming", fieldKey);
 	for (const requirement of trainerSkkniRequiredFields) requireField(requirement.phaseKey, requirement.fieldKey);
-	for (const fieldKey of trainerTrainingDetailsRequiredFields) requireField("training_details", fieldKey);
+	for (const fieldKey of trainerTrainingDetailsGeneratedFields) {
+		const state = byKey.get(keyOf("training_details", fieldKey));
+		if (!state || !hasUsableValue(state.value)) optionalGaps.push(keyOf("training_details", fieldKey));
+	}
 
 	for (const fieldKey of trainerBrainstormingOptionalFields) {
 		const state = byKey.get(keyOf("brainstorming", fieldKey));

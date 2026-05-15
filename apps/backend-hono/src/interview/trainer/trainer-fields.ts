@@ -1,8 +1,8 @@
-export const trainerBrainstormingRequiredFields = ["trainer_name", "expertise", "audience", "outcome", "institution"] as const;
+export const trainerBrainstormingRequiredFields = ["trainer_name", "institution", "expertise", "audience", "outcome"] as const;
 
 export const trainerBrainstormingOptionalFields = ["activities", "training_objective", "training_date"] as const;
 
-export const trainerTrainingDetailsRequiredFields = ["program_name", "delivery_method", "duration_jp"] as const;
+export const trainerTrainingDetailsGeneratedFields = ["program_name", "delivery_method", "duration_jp"] as const;
 
 export const trainerSkkniRequiredFields = [
 	{ phaseKey: "unit_selection", fieldKey: "selected_unit_code" },

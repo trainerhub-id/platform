@@ -58,4 +58,23 @@ describe("buildMasterReadiness", () => {
     expect(readiness.ready).toBe(false);
     expect(readiness.pendingConfirmation).toContain("profile.organization_name");
   });
+
+  it("does not require organization_city or generated program fields before SKKNI search", () => {
+    const states: FieldStateSnapshot[] = [
+      confirmed("profile", "trainer_name", "Budi Santoso"),
+      confirmed("profile", "organization_name", "PT LSP"),
+      confirmed("profile", "organization_focus", "Digital Marketing"),
+      confirmed("profile", "target_participants", "Owner UMKM"),
+      confirmed("profile", "industry_problem", "Iklan boros tapi hasil minim"),
+      confirmed("profile", "program_goal", "Meningkatkan penjualan UMKM melalui strategi digital"),
+      confirmed("profile", "training_location", "Bekasi"),
+      confirmed("profile", "training_duration", "2 hari"),
+    ];
+
+    const readiness = buildMasterReadiness(states);
+
+    expect(readiness.missing).not.toContain("profile.organization_city");
+    expect(readiness.missing).not.toContain("profile.program_name");
+    expect(readiness.missing).toContain("unit_selection.selected_unit_code");
+  });
 });

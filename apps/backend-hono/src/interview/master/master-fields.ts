@@ -1,15 +1,15 @@
 export const masterProfileRequiredFields = [
-  "organization_name",
   "trainer_name",
-  "organization_city",
+  "organization_name",
   "organization_focus",
-  "program_name",
-  "program_goal",
   "target_participants",
   "industry_problem",
+  "program_goal",
   "training_location",
   "training_duration",
 ] as const;
+
+export const masterProfileGeneratedFields = ["program_name", "organization_city"] as const;
 
 export const masterProfileOptionalFields = ["delivery_method", "evaluation_methods"] as const;
 
@@ -20,4 +20,5 @@ export const masterSkkniRequiredFields = [
 ] as const;
 
 export type MasterProfileRequiredField = (typeof masterProfileRequiredFields)[number];
+export type MasterProfileGeneratedField = (typeof masterProfileGeneratedFields)[number];
 export type MasterProfileOptionalField = (typeof masterProfileOptionalFields)[number];
