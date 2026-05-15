@@ -16,6 +16,8 @@ const AiConversation = Loadable(lazy(() => import('../views/ai-hub/AiConversatio
 const AiMasterWorkspace = Loadable(lazy(() => import('../views/ai-hub/master-workspace/AiMasterWorkspace')));
 const AdminHome = Loadable(lazy(() => import('../views/admin/AdminHome')));
 const ManageTraining = Loadable(lazy(() => import('../views/admin/ManageTraining')));
+const AdminBatchList = Loadable(lazy(() => import('../views/admin/batches/AdminBatchList')));
+const AdminBatchDetail = Loadable(lazy(() => import('../views/admin/batches/AdminBatchDetail')));
 const TierManagement = Loadable(lazy(() => import('../views/admin/tier-management/TierManagement')));
 const DaftarPeserta = Loadable(lazy(() => import('../views/admin/DaftarPeserta')));
 const DaftarTrainer = Loadable(lazy(() => import('../views/admin/DaftarTrainer')));
@@ -44,6 +46,8 @@ export const protectedRouteChildren = [
   { path: '/user/profile', exact: true, element: <UserRoute><ProfilePage /></UserRoute> },
 
   { path: '/admin/home', exact: true, element: <AdminRoute><AdminHome /></AdminRoute> },
+  { path: '/admin/batches', exact: true, element: <AdminRoute><AdminBatchList /></AdminRoute> },
+  { path: '/admin/batches/:batchId', exact: true, element: <AdminRoute><AdminBatchDetail /></AdminRoute> },
   { path: '/admin/manage-training', exact: true, element: <AdminRoute><ManageTraining /></AdminRoute> },
   { path: '/admin/tier-management', exact: true, element: <AdminRoute><TierManagement /></AdminRoute> },
   { path: '/admin/daftar-peserta', exact: true, element: <AdminRoute><DaftarPeserta /></AdminRoute> },
