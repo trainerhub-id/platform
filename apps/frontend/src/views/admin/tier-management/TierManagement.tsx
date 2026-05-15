@@ -28,11 +28,11 @@ const TierManagement = () => {
     const stats = usageStats[template.id] ?? (await loadUsageStats(template.id));
     
     if (stats > 0) {
-      if (!confirm(`Tier "${template.name}" digunakan di ${stats} batch. Akan di-soft delete. Lanjutkan?`)) {
+      if (!confirm(`Paket "${template.name}" digunakan di ${stats} batch. Akan dinonaktifkan. Lanjutkan?`)) {
         return;
       }
     } else {
-      if (!confirm(`Yakin ingin menghapus tier "${template.name}"?`)) {
+      if (!confirm(`Yakin ingin menghapus paket "${template.name}"?`)) {
         return;
       }
     }
@@ -40,7 +40,7 @@ const TierManagement = () => {
     try {
       await deleteTemplate(template.id);
     } catch (error) {
-      alert('Gagal menghapus tier template');
+      alert('Gagal menghapus paket');
     }
   };
 
@@ -64,16 +64,20 @@ const TierManagement = () => {
 
   return (
     <div className="space-y-6">
-      {/* Tier List */}
       <CardBox className="p-0">
-        <div className="p-4 border-b border-gray-100 flex items-center justify-between">
-          <h3 className="font-bold text-dark">Daftar Tier Templates</h3>
+        <div className="p-4 border-b border-gray-100 flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+          <div>
+            <h3 className="font-bold text-dark">Kelola Paket & Akses</h3>
+            <p className="mt-1 text-sm text-bodytext">
+              Atur paket global seperti Master dan Trainer, termasuk default kelas bonus, akses AI, dan benefit. Harga final tetap diatur per batch.
+            </p>
+          </div>
           <Button
             className="bg-primary hover:bg-primary/90 text-white rounded-xl shadow-md shrink-0"
             onClick={handleCreate}
           >
             <Icon icon="solar:add-circle-linear" className="mr-2" height={18} />
-            Buat Tier Template
+            Tambah Paket
           </Button>
         </div>
         <div className="p-4">
@@ -81,9 +85,9 @@ const TierManagement = () => {
             <div className="py-20 text-center">
               <div className="flex flex-col items-center opacity-40">
                 <Icon icon="solar:box-minimalistic-linear" height={64} />
-                <p className="mt-2 font-medium">Belum ada tier template</p>
+                <p className="mt-2 font-medium">Belum ada paket</p>
                 <p className="text-sm text-bodytext mt-1">
-                  Buat tier template untuk mengatur akses course dan fitur AI
+                  Tambah paket untuk mengatur default kelas bonus, akses AI, dan benefit
                 </p>
               </div>
             </div>
@@ -109,11 +113,10 @@ const TierManagement = () => {
                       )}
 
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
-                        {/* Course Access */}
                         <div>
                           <h5 className="text-xs font-semibold text-bodytext uppercase mb-2 flex items-center gap-1">
                             <Icon icon="solar:book-linear" height={14} />
-                            Akses Kelas
+                            Default Kelas Bonus
                           </h5>
                           {template.defaultCourseIds.length === 0 ? (
                             <p className="text-sm text-gray-400 italic">Tidak ada kelas</p>
@@ -121,7 +124,7 @@ const TierManagement = () => {
                             <div className="flex flex-wrap gap-1">
                               {template.defaultCourseIds.slice(0, 3).map((courseId, idx) => (
                                 <Badge key={idx} variant="outline" className="text-xs">
-                                  Course {idx + 1}
+                                  Kelas {idx + 1}
                                 </Badge>
                               ))}
                               {template.defaultCourseIds.length > 3 && (
@@ -133,11 +136,10 @@ const TierManagement = () => {
                           )}
                         </div>
 
-                        {/* AI Features */}
                         <div>
                           <h5 className="text-xs font-semibold text-bodytext uppercase mb-2 flex items-center gap-1">
                             <Icon icon="solar:star-linear" height={14} />
-                            Fitur AI
+                            Default Akses AI
                           </h5>
                           {template.defaultAiFeatures.length === 0 ? (
                             <p className="text-sm text-gray-400 italic">Tidak ada fitur AI</p>
@@ -161,7 +163,7 @@ const TierManagement = () => {
                       {/* Benefits */}
                       {template.defaultBenefits && template.defaultBenefits.length > 0 && (
                         <div className="mt-4 pt-4 border-t border-gray-100">
-                          <h5 className="text-xs font-semibold text-bodytext uppercase mb-2">Default Benefits</h5>
+                          <h5 className="text-xs font-semibold text-bodytext uppercase mb-2">Benefit Paket</h5>
                           <ul className="text-sm text-bodytext space-y-1">
                             {template.defaultBenefits.slice(0, 3).map((benefit, idx) => (
                               <li key={idx} className="flex items-start gap-2">
@@ -194,7 +196,7 @@ const TierManagement = () => {
                         variant="ghost"
                         className="h-9 rounded-xl hover:bg-blue-50 text-blue-600 transition-all"
                         onClick={() => handleEdit(template)}
-                        title="Edit Tier"
+                        title="Edit Paket"
                       >
                         <Icon icon="solar:pen-linear" height={18} className="mr-1" />
                         Edit
@@ -203,10 +205,10 @@ const TierManagement = () => {
                         variant="ghost"
                         className="h-9 rounded-xl hover:bg-red-50 text-red-600 transition-all"
                         onClick={() => handleDelete(template)}
-                        title="Hapus Tier"
+                        title="Hapus Paket"
                       >
                         <Icon icon="solar:trash-bin-trash-linear" height={18} className="mr-1" />
-                        Hapus Tier
+                        Hapus
                       </Button>
                     </div>
                   </div>
