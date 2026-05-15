@@ -97,7 +97,9 @@ export class BatchService {
 	}
 
 	async getWorkspace(batchId: string) {
-		return this.repository.getWorkspace(batchId);
+		const workspace = await this.repository.getWorkspace(batchId);
+		if (!workspace) throw new Error("BATCH_NOT_FOUND");
+		return workspace;
 	}
 
 	async publish(batchId: string) {
