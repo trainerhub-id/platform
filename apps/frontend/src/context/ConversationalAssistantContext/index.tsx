@@ -2,7 +2,7 @@
  * Conversational Assistant Context
  *
  * Provides Assistant UI runtime for AI Hub conversational agents.
- * Integrates with Mastra streaming endpoint /api/ai/chat
+ * Integrates with Hono AI streaming endpoint /api/ai/chat
  * Includes chat session persistence
  */
 
@@ -172,10 +172,10 @@ const ConversationalAssistantContext = createContext<
 >(undefined);
 
 // ============================================
-// Custom Model Adapter for Mastra Streaming with Persistence
+// Custom Model Adapter for Hono AI Streaming with Persistence
 // ============================================
 
-const createMastraStreamAdapter = (
+const createHonoAiStreamAdapter = (
   agentId: string,
   getToken: () => Promise<string | null>,
   onUserMessage: (content: string) => Promise<void>,
@@ -187,7 +187,7 @@ const createMastraStreamAdapter = (
   return {
     async *run({ messages, abortSignal }) {
       try {
-        console.log('[Mastra Adapter] Starting chat with agentId:', agentId);
+        console.log('[Hono AI Adapter] Starting chat with agentId:', agentId);
 
         // Convert Assistant UI messages to API format
         let apiMessages = messages
@@ -201,7 +201,7 @@ const createMastraStreamAdapter = (
           .filter((msg) => {
             const isValid = msg.content.trim().length > 0;
             if (!isValid) {
-              console.warn('[Mastra Adapter] Dropping empty message from payload:', {
+              console.warn('[Hono AI Adapter] Dropping empty message from payload:', {
                 role: msg.role,
               });
             }
@@ -211,19 +211,19 @@ const createMastraStreamAdapter = (
         // REGENERATE FIX: If last message is from assistant, this is a regenerate request
         // Remove the last assistant message so AI generates a new response
         if (apiMessages.length > 0 && apiMessages[apiMessages.length - 1].role === 'assistant') {
-          console.log('[Mastra Adapter] 🔄 Regenerate detected - removing last assistant message');
+          console.log('[Hono AI Adapter] 🔄 Regenerate detected - removing last assistant message');
           apiMessages = apiMessages.slice(0, -1);
         }
 
         if (apiMessages.length === 0) {
-          console.warn('[Mastra Adapter] ❌ No valid messages left after sanitization, raw messages:', messages);
+          console.warn('[Hono AI Adapter] ❌ No valid messages left after sanitization, raw messages:', messages);
           throw new Error('Pesan kosong. Silakan ketik pertanyaan Anda terlebih dahulu.');
         }
 
         // Get the last user message for persistence
         const lastUserMsg = apiMessages.filter((m) => m.role === 'user').pop();
         if (!lastUserMsg) {
-          console.warn('[Mastra Adapter] No user message found in sanitized payload');
+          console.warn('[Hono AI Adapter] No user message found in sanitized payload');
           throw new Error('Tidak ada pertanyaan pengguna yang dapat diproses. Silakan kirim ulang pesan Anda.');
         }
 
@@ -255,7 +255,7 @@ const createMastraStreamAdapter = (
           ...(threadId && { threadId }),
         };
 
-        console.log('[Mastra Adapter] Sending request to /ai/chat:', {
+        console.log('[Hono AI Adapter] Sending request to /ai/chat:', {
           url,
           headers: {
             ...headers,
@@ -276,7 +276,7 @@ const createMastraStreamAdapter = (
 
         if (!response.ok) {
           const errorText = await response.text();
-          console.error('[Mastra Adapter] Error response:', errorText);
+          console.error('[Hono AI Adapter] Error response:', errorText);
           
           // Provide user-friendly error messages based on status code
           let errorMessage = 'Terjadi kesalahan saat menghubungi AI.';
@@ -328,7 +328,7 @@ const createMastraStreamAdapter = (
                 const type = event.type;
                 const payload = event.payload || {};
 
-                // Map Mastra events to Assistant UI Protocol
+                // Map Hono AI events to Assistant UI Protocol
                 if (type === 'text-delta') {
                   const text = payload.text || payload.delta?.text || '';
                   fullResponseText += text; // Accumulate locally for persistence
@@ -341,7 +341,7 @@ const createMastraStreamAdapter = (
                   const normalizedResponse = fullResponseText.toLowerCase();
                   if (!skkniAutosaveSuccessSignaled && normalizedResponse.includes('autosave unit berhasil')) {
                     skkniAutosaveSuccessSignaled = true;
-                    console.log('[Mastra Adapter] ✅ SKKNI autosave success signal detected, triggering refresh callbacks');
+                    console.log('[Hono AI Adapter] ✅ SKKNI autosave success signal detected, triggering refresh callbacks');
                     window.dispatchEvent(new CustomEvent('skkni-fetch-progress', {
                       detail: { type: 'complete' },
                     }));
@@ -352,7 +352,7 @@ const createMastraStreamAdapter = (
 
                   if (!skkniAutosaveFailureSignaled && normalizedResponse.includes('penyimpanan otomatis belum berhasil')) {
                     skkniAutosaveFailureSignaled = true;
-                    console.log('[Mastra Adapter] ⚠️ SKKNI autosave failure signal detected');
+                    console.log('[Hono AI Adapter] ⚠️ SKKNI autosave failure signal detected');
                     window.dispatchEvent(new CustomEvent('skkni-fetch-progress', {
                       detail: { type: 'error', error: 'Autosave unit belum berhasil' },
                     }));
@@ -363,7 +363,7 @@ const createMastraStreamAdapter = (
                   };
                 } else if (type === 'tool-call') {
                   // Yield tool-call for makeAssistantToolUI to render
-                  console.log('[Mastra Adapter] Tool call:', payload);
+                  console.log('[Hono AI Adapter] Tool call:', payload);
                   const toolCallId = payload.toolCallId || `tool-${Date.now()}`;
                   const rawToolName = payload.toolName || 'unknown';
                   const toolName = normalizeToolName(rawToolName);
@@ -385,7 +385,7 @@ const createMastraStreamAdapter = (
                     toolName.includes('skkni_search') ||
                     !!args?.area;
                   if (isFetchSkkniDetails && unitCodeValue) {
-                    console.log('[Mastra Adapter] 🔄 SKKNI fetch started for:', unitCodeValue);
+                    console.log('[Hono AI Adapter] 🔄 SKKNI fetch started for:', unitCodeValue);
                     window.dispatchEvent(new CustomEvent('skkni-fetch-progress', { 
                       detail: { type: 'start', unitCode: unitCodeValue } 
                     }));
@@ -410,7 +410,7 @@ const createMastraStreamAdapter = (
                     ],
                   };
                 } else if (type === 'tool-result') {
-                  console.log('[Mastra Adapter] Tool result RAW payload:', JSON.stringify(payload, null, 2));
+                  console.log('[Hono AI Adapter] Tool result RAW payload:', JSON.stringify(payload, null, 2));
                   
                   const toolCallId = payload.toolCallId || `tool-${Date.now()}`;
                   // Handle data saving callbacks
@@ -420,12 +420,12 @@ const createMastraStreamAdapter = (
                   const args = payload.args || payload.result?.args || 
                     (window as any).__pendingToolCalls?.[toolCallId]?.args || {};
                   
-                  console.log('[Mastra Adapter] Extracted toolName:', toolName);
-                  console.log('[Mastra Adapter] Extracted result keys:', payload.result ? Object.keys(payload.result) : 'null');
+                  console.log('[Hono AI Adapter] Extracted toolName:', toolName);
+                  console.log('[Hono AI Adapter] Extracted result keys:', payload.result ? Object.keys(payload.result) : 'null');
 
                   const isPatchTool = args?.section || toolName === 'patch_master_json';
                   if (isPatchTool) {
-                    console.log('[Mastra Adapter] 🎯 Data save detected:', { toolName, section: args?.section });
+                    console.log('[Hono AI Adapter] 🎯 Data save detected:', { toolName, section: args?.section });
                     onToolCall('patchMasterJson', args || {});
                   }
 
@@ -435,7 +435,7 @@ const createMastraStreamAdapter = (
                     result: payload.result,
                     args: args
                   };
-                  console.log('[Mastra Adapter] Pushing toolInvocation:', JSON.stringify(toolInvocation, null, 2));
+                  console.log('[Hono AI Adapter] Pushing toolInvocation:', JSON.stringify(toolInvocation, null, 2));
                   allToolInvocations.push(toolInvocation);
                   
                   // CRITICAL: Store to global for ConversationalThread to pick up
@@ -450,7 +450,7 @@ const createMastraStreamAdapter = (
                     (payload.result?.documents && payload.result?.summary?.totalDocuments !== undefined);
                   
                   if (isSkkniSearch && payload.result?.documents) {
-                    console.log('[Mastra Adapter] 🎯 Storing SKKNI result to global (detected via:', 
+                    console.log('[Hono AI Adapter] 🎯 Storing SKKNI result to global (detected via:', 
                       toolName === 'skkni_search' ? 'toolName' : 
                       payload.result?._sourcetool ? '_sourcetool' : 'structure', ')');
                     (window as any).__lastSkkniResult = {
@@ -472,12 +472,12 @@ const createMastraStreamAdapter = (
                   if (isFetchSkkniDetails) {
                     if (payload.result?.success) {
                       skkniFetchSucceeded = true;
-                      console.log('[Mastra Adapter] ✅ SKKNI fetch completed');
+                      console.log('[Hono AI Adapter] ✅ SKKNI fetch completed');
                       window.dispatchEvent(new CustomEvent('skkni-fetch-progress', { 
                         detail: { type: 'step', step: 'save' } 
                       }));
                     } else {
-                      console.log('[Mastra Adapter] ❌ SKKNI fetch failed:', payload.result?.message);
+                      console.log('[Hono AI Adapter] ❌ SKKNI fetch failed:', payload.result?.message);
                       window.dispatchEvent(new CustomEvent('skkni-fetch-progress', { 
                         detail: { type: 'error', error: payload.result?.message } 
                       }));
@@ -485,20 +485,20 @@ const createMastraStreamAdapter = (
                   }
                 } else if (type === 'data-saved') {
                   // Handle data-saved events from deterministic autosave (training_details, etc.)
-                  console.log('[Mastra Adapter] 🎯 Data saved event:', payload);
+                  console.log('[Hono AI Adapter] 🎯 Data saved event:', payload);
                   onToolCall('patchMasterJson', payload || {});
                 } else if (type === 'error') {
-                  console.error('[Mastra Adapter] Stream error:', payload);
+                  console.error('[Hono AI Adapter] Stream error:', payload);
                   const errorMsg = String(payload.error || payload.message || 'Terjadi kesalahan pada stream');
                   streamErrorMessage = mapStreamErrorToUserMessage(errorMsg);
                   continue;
                 } else if (type === 'finish') {
-                  // Mastra signals finish, but we should continue reading until stream is done
+                  // Hono AI stream signals finish, but we should continue reading until stream is done
                   // to capture any trailing data (like embedded SKKNI data for persistence)
-                  console.log('[Mastra Adapter] Received finish event, continuing to read trailing data...');
+                  console.log('[Hono AI Adapter] Received finish event, continuing to read trailing data...');
                 }
               } catch (parseError) {
-                console.warn('[Mastra Adapter] JSON parse error:', parseError, dataStr);
+                console.warn('[Hono AI Adapter] JSON parse error:', parseError, dataStr);
               }
             }
           }
@@ -507,7 +507,7 @@ const createMastraStreamAdapter = (
         }
 
         if (skkniFetchSucceeded && !skkniAutosaveSuccessSignaled && !skkniAutosaveFailureSignaled) {
-          console.log('[Mastra Adapter] ℹ️ SKKNI autosave note not found, triggering fallback refresh callbacks');
+          console.log('[Hono AI Adapter] ℹ️ SKKNI autosave note not found, triggering fallback refresh callbacks');
           window.dispatchEvent(new CustomEvent('skkni-fetch-progress', {
             detail: { type: 'complete' },
           }));
@@ -530,7 +530,7 @@ const createMastraStreamAdapter = (
               'Saya sudah memproses data, tapi respons teks belum tersedia. Silakan lanjutkan pertanyaan atau klik Coba Lagi.';
             fullResponseText = `${fallbackNotice}\n\n${fullResponseText}`;
           } else {
-            console.error('[Mastra Adapter] ❌ No response text received - AI might have encountered an error');
+            console.error('[Hono AI Adapter] ❌ No response text received - AI might have encountered an error');
             throw new Error(streamErrorMessage || 'AI gagal menghasilkan respons. Silakan coba lagi.');
           }
         }
@@ -540,7 +540,7 @@ const createMastraStreamAdapter = (
           .trim();
 
         if (!finalVisibleResponseText) {
-          console.error('[Mastra Adapter] ❌ No response text received - AI might have encountered an error');
+          console.error('[Hono AI Adapter] ❌ No response text received - AI might have encountered an error');
           throw new Error(streamErrorMessage || 'AI gagal menghasilkan respons. Silakan coba lagi.');
         }
 
@@ -548,15 +548,15 @@ const createMastraStreamAdapter = (
         if (fullResponseText) {
           // Debug: Check if embedded data is included
           const hasEmbeddedSkkni = fullResponseText.includes('<!--SKKNI_DATA:');
-          console.log('[Mastra Adapter] 💾 Persisting message, length:', fullResponseText.length, 'hasEmbeddedSkkni:', hasEmbeddedSkkni);
+          console.log('[Hono AI Adapter] 💾 Persisting message, length:', fullResponseText.length, 'hasEmbeddedSkkni:', hasEmbeddedSkkni);
           if (hasEmbeddedSkkni) {
-            console.log('[Mastra Adapter] ✅ SKKNI data embedded in message for reload recovery');
+            console.log('[Hono AI Adapter] ✅ SKKNI data embedded in message for reload recovery');
           }
           await onAssistantMessage(fullResponseText);
         }
 
-        console.log('[Mastra Adapter] FINAL allToolInvocations:', JSON.stringify(allToolInvocations, null, 2));
-        console.log('[Mastra Adapter] FINAL allToolInvocations count:', allToolInvocations.length);
+        console.log('[Hono AI Adapter] FINAL allToolInvocations:', JSON.stringify(allToolInvocations, null, 2));
+        console.log('[Hono AI Adapter] FINAL allToolInvocations count:', allToolInvocations.length);
 
         // Yield final content with metadata attached (only if we have tool invocations)
         // This replaces the last streaming yield rather than duplicating it
@@ -574,7 +574,7 @@ const createMastraStreamAdapter = (
         return;
 
       } catch (error) {
-        console.error('[Mastra Adapter] Fatal error:', error);
+        console.error('[Hono AI Adapter] Fatal error:', error);
         throw error;
       }
     },
@@ -1214,7 +1214,7 @@ export const ConversationalAssistantProvider: React.FC<
 
   const modelAdapter = useMemo(
     () =>
-      createMastraStreamAdapter(
+      createHonoAiStreamAdapter(
         agentId,
         stableGetToken,
         (content) => persistMessageRef.current('user', content),

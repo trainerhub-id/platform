@@ -746,7 +746,7 @@ const AssistantMessageContent: React.FC = () => {
     if (toolInvocations && toolInvocations.length > 0) {
 
       // Find SKKNI search tool result
-      // Note: Mastra may use different tool names like "_3" instead of "skkniSearchTool"
+      // Note: Hono AI may use different tool names like "_3" instead of "skkniSearchTool"
       const skkniTool = toolInvocations.find(
         (inv: any) => {
           const toolName = inv.payload?.toolName || inv.toolName;

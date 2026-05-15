@@ -1,4 +1,5 @@
 import { Hono, type Context } from "hono";
+import { AiModelNotConfiguredError } from "../ai/model.service";
 import { requireAuth, type AuthVariables } from "../auth/auth.middleware";
 import { errorResponse } from "../common/errors";
 import { DocumentRepository, isDocumentOwner, type DocumentFlow } from "../documents/document.repository";
@@ -25,6 +26,8 @@ const agents = [
   { type: "master", id: "master", name: "AI for Master", description: "Susun dokumen master sertifikasi berbasis data training.", category: "sertifikasi" },
   { type: "trainer", id: "trainer", name: "AI for Trainer", description: "Siapkan dokumen trainer dan materi pelatihan.", category: "training" },
 ];
+
+const trailerCategories = new Set(["trainer", "master", "branding"]);
 
 function getUser(c: Context<{ Variables: AiCompatVariables }>): UserLike {
   const user = c.get("user");
@@ -202,6 +205,64 @@ export function createAiCompatRoutes(deps: AiCompatDeps = {}) {
 
   app.get("/ai/documents/agents", requireAuth, (c) => c.json(agents));
   app.get("/ai/agents", requireAuth, (c) => c.json(agents));
+
+  app.get("/ai-trailer/:category", requireAuth, (c) => {
+    const category = c.req.param("category");
+    if (!trailerCategories.has(category)) return errorResponse(c, 404, "TRAILER_NOT_FOUND", "AI trailer not found");
+    return c.json({
+      category,
+      title: category === "master" ? "AI for Master" : category === "trainer" ? "AI for Trainer" : "AI for Branding",
+      description: "",
+      muxPlaybackId: null,
+      playbackToken: null,
+      thumbnailUrl: null,
+      buyUrl: null,
+      upgradeUrl: null,
+      isActive: false,
+    });
+  });
+
+  app.get("/admin/ai-trailer", requireAuth, (c) => c.json(
+    Object.fromEntries([...trailerCategories].map((category) => [
+      category,
+      {
+        category,
+        title: category === "master" ? "AI for Master" : category === "trainer" ? "AI for Trainer" : "AI for Branding",
+        description: "",
+        muxPlaybackId: null,
+        playbackToken: null,
+        thumbnailUrl: null,
+        buyUrl: null,
+        upgradeUrl: null,
+        isActive: false,
+      },
+    ])),
+  ));
+
+  app.put("/admin/ai-trailer/:category", requireAuth, async (c) => {
+    const category = c.req.param("category");
+    if (!trailerCategories.has(category)) return errorResponse(c, 404, "TRAILER_NOT_FOUND", "AI trailer not found");
+    const body = await c.req.json().catch(() => ({}));
+    return c.json({ ...body, category, isActive: false });
+  });
+
+  app.post("/admin/ai-trailer/:category/mux-upload", requireAuth, (c) => {
+    const category = c.req.param("category");
+    if (!trailerCategories.has(category)) return errorResponse(c, 404, "TRAILER_NOT_FOUND", "AI trailer not found");
+    return errorResponse(c, 501, "TRAILER_UPLOAD_NOT_IMPLEMENTED", "Trailer upload is not available in Hono yet");
+  });
+
+  app.get("/admin/ai-trailer/:category/mux-status", requireAuth, (c) => {
+    const category = c.req.param("category");
+    if (!trailerCategories.has(category)) return errorResponse(c, 404, "TRAILER_NOT_FOUND", "AI trailer not found");
+    return c.json({ category, status: "not_configured", isReady: false });
+  });
+
+  app.delete("/admin/ai-trailer/:category/mux-asset", requireAuth, (c) => {
+    const category = c.req.param("category");
+    if (!trailerCategories.has(category)) return errorResponse(c, 404, "TRAILER_NOT_FOUND", "AI trailer not found");
+    return c.json({ success: true });
+  });
 
   app.post("/ai/document/create", requireAuth, async (c) => {
     const body = await c.req.json().catch(() => ({}));
@@ -388,7 +449,12 @@ export function createAiCompatRoutes(deps: AiCompatDeps = {}) {
       return eventStream([{ type: "text-delta", payload: { text: "Kirim pesan dan pilih dokumen agar AI bisa memproses data." } }]);
     }
 
-    const response = await interviewEngine.handleMessage({ documentId, userId: user.id, message });
+    const response = await interviewEngine.handleMessage({ documentId, userId: user.id, message }).catch((error) => {
+      if (error instanceof AiModelNotConfiguredError) {
+        return errorResponse(c, 503, "AI_MODEL_NOT_CONFIGURED", "Layanan AI belum dikonfigurasi di server.");
+      }
+      throw error;
+    });
     if (!response.ok) return response;
     const text = await response.text();
     return eventStream([{ type: "text-delta", payload: { text } }]);

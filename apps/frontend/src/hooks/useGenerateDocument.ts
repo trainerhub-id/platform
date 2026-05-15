@@ -1,7 +1,7 @@
 /**
  * useGenerateDocument Hook
  *
- * Custom hook for generating documents using the Mastra agent system.
+ * Custom hook for generating documents using the Hono AI compatibility API.
  * Handles document generation, validation, and state management.
  *
  * Requirements: 2.1, 6.1

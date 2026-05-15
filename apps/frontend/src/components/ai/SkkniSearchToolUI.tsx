@@ -111,7 +111,7 @@ const SkkniSearchContent: React.FC<{ result?: any; args?: any; toolName?: string
 };
 
 // Register multiple tool UIs for different possible tool names
-// Mastra may use "skkni_search", "_2", "_3", "_4", "_5", etc. depending on tool registration order
+// Hono AI may use "skkni_search", "_2", "_3", "_4", "_5", etc. depending on tool registration order
 export const SkkniSearchUI = makeAssistantToolUI({
     toolName: "skkni_search",
     render: (props) => <SkkniSearchContent {...props} />,

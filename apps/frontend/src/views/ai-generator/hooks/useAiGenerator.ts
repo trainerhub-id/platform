@@ -32,7 +32,7 @@ export const useAiGenerator = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        // Try the new Mastra agent endpoint first
+        // Try the Hono AI endpoint first
         const res = await api.get('/ai/documents/agents');
         const agents = Array.isArray(res.data) ? res.data : [];
         setDocumentTypes(agents.map(adaptAgentToDocType));

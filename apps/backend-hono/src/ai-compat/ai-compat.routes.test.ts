@@ -1,5 +1,6 @@
 import { Hono } from "hono";
 import { describe, expect, it } from "vitest";
+import { AiModelNotConfiguredError } from "../ai/model.service";
 import { createAiCompatRoutes } from "./ai-compat.routes";
 
 const now = new Date("2026-01-01T00:00:00.000Z");
@@ -42,6 +43,16 @@ describe("AI compatibility routes", () => {
 
     expect(res.status).toBe(200);
     expect(body.map((agent: { type: string }) => agent.type)).toContain("trainer");
+  });
+
+  it("serves inactive legacy trailer data instead of 404", async () => {
+    const app = createAuthedApp();
+    const res = await app.request("/api/ai-trailer/trainer");
+    const body = await res.json();
+
+    expect(res.status).toBe(200);
+    expect(body.category).toBe("trainer");
+    expect(body.isActive).toBe(false);
   });
 
   it("maps legacy document create and progress routes to Hono documents", async () => {
@@ -131,5 +142,25 @@ describe("AI compatibility routes", () => {
     expect(res.headers.get("content-type")).toContain("text/event-stream");
     expect(text).toContain("text-delta");
     expect(text).toContain("Halo dari Hono");
+  });
+
+  it("returns a clear 503 when the AI model is not configured", async () => {
+    const app = createAuthedApp({
+      interviewEngine: {
+        handleMessage: async () => {
+          throw new AiModelNotConfiguredError("AI_MODEL_NOT_CONFIGURED: DEEPSEEK_API_KEY is required");
+        },
+      },
+    });
+
+    const res = await app.request("/api/ai/chat", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ documentId: "doc_1", messages: [{ role: "user", content: "Halo" }] }),
+    });
+    const body = await res.json();
+
+    expect(res.status).toBe(503);
+    expect(body.error.code).toBe("AI_MODEL_NOT_CONFIGURED");
   });
 });
