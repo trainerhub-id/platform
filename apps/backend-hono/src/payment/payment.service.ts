@@ -11,6 +11,7 @@ type CreatePaymentSessionInput = {
 	batchId: string;
 	tierId: string;
 	pesertaId?: string | null;
+	enrollmentId?: string | null;
 	batchNameSnapshot?: string | null;
 	tierNameSnapshot?: string | null;
 	amount: number;
@@ -53,6 +54,7 @@ type PaymentSessionRecord = {
 	batchId?: string | null;
 	tierId?: string | null;
 	pesertaId?: string | null;
+	enrollmentId?: string | null;
 	amount?: number | null | undefined;
 	status: string;
 	provider?: string | null;
@@ -248,6 +250,7 @@ export class PaymentService {
 			batchId: batch.id,
 			tierId: tier.id,
 			pesertaId: pendingEnrollment.pesertaId,
+			enrollmentId: pendingEnrollment.id,
 			batchNameSnapshot: batch.namaBatch ?? null,
 			tierNameSnapshot: tier.name ?? null,
 			amount: tier.price,
@@ -280,6 +283,7 @@ export class PaymentService {
 					trainerhub_reference_id: referenceId,
 					batch_id: batch.id,
 					tier_id: tier.id,
+					enrollment_id: pendingEnrollment.id,
 					email: input.email,
 					bundle_price_option_unique_id: scalevConfig.bundlePriceOptionUniqueId,
 				},
@@ -330,7 +334,9 @@ export class PaymentService {
 			updated = await this.repository.updateSessionFromScalev(sessionId, this.toScalevSessionUpdate(normalized));
 		}
 
-		return this.buildCheckoutResponse(updated ?? { id: sessionId, email: session.email, amount: session.amount, status: normalized.status, ...this.sessionFieldsFromScalev(normalized) });
+		const updatedSession = updated ? { ...session, ...updated } : { ...session, id: sessionId, email: session.email, amount: session.amount, status: normalized.status, ...this.sessionFieldsFromScalev(normalized) };
+		await this.activateEnrollmentIfPaid(updatedSession);
+		return this.buildCheckoutResponse(updatedSession);
 	}
 
 	async claimPayment(sessionId: string, claimToken?: string) {
@@ -340,6 +346,7 @@ export class PaymentService {
 		if (session.status === "pending") throw new Error("PAYMENT_NOT_COMPLETED");
 		if (session.status === "failed" || session.status === "expired") throw new Error("PAYMENT_NOT_SUCCESSFUL");
 		if (session.clerkTokenExpiry && new Date(session.clerkTokenExpiry) < new Date()) throw new Error("SIGN_IN_TOKEN_EXPIRED");
+		await this.activateEnrollmentIfPaid(session);
 		if (!session.claimTokenUsed) await this.repository.markClaimTokenUsed(sessionId);
 		return {
 			signInToken: session.clerkSignInToken ?? null,
@@ -351,6 +358,11 @@ export class PaymentService {
 
 	private assertClaimToken(session: PaymentSessionRecord, claimToken?: string) {
 		if (session.claimToken && claimToken !== session.claimToken) throw new Error("INVALID_CLAIM_TOKEN");
+	}
+
+	private async activateEnrollmentIfPaid(session: PaymentSessionRecord) {
+		if (session.status !== "paid" || !session.enrollmentId) return;
+		await this.enrollmentService.markPaid(session.enrollmentId);
 	}
 
 	private buildManualPaymentUrl(params: { sessionId: string; referenceId: string; email: string; amount: number; batchId: string; tierId: string; claimToken: string }) {

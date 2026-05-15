@@ -8,6 +8,7 @@ type CreatePaymentSessionInput = {
 	batchId: string;
 	tierId: string;
 	pesertaId?: string | null;
+	enrollmentId?: string | null;
 	batchNameSnapshot?: string | null;
 	tierNameSnapshot?: string | null;
 	amount: number;
@@ -164,6 +165,7 @@ export class PaymentRepository {
 				batchId: input.batchId,
 				tierId: input.tierId,
 				pesertaId: input.pesertaId ?? null,
+				enrollmentId: input.enrollmentId ?? null,
 				batchNameSnapshot: input.batchNameSnapshot ?? null,
 				tierNameSnapshot: input.tierNameSnapshot ?? null,
 				amount: input.amount,

@@ -91,6 +91,7 @@ export const paymentSessions = pgTable("payment_sessions", {
 	batchId: uuid("batch_id").references(() => batchTraining.id, { onDelete: "set null" }),
 	tierId: uuid("tier_id").references(() => batchTiers.id, { onDelete: "set null" }),
 	pesertaId: uuid("peserta_id").references(() => peserta.id, { onDelete: "set null" }),
+	enrollmentId: uuid("enrollment_id").references(() => pesertaBatch.id, { onDelete: "set null" }),
 	name: varchar("name", { length: 255 }),
 	batchNameSnapshot: varchar("batch_name_snapshot", { length: 255 }),
 	tierNameSnapshot: varchar("tier_name_snapshot", { length: 255 }),
