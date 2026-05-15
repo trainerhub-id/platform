@@ -1,0 +1,107 @@
+/* Custom MuxPlayer Styling */
+mux-player {
+  /* Primary accent color - for progress bar, buttons, hover states */
+  --media-accent-color: #C39341;
+  --media-primary-color: #C39341;
+  
+  /* Control bar background */
+  --media-control-background: rgba(0, 0, 0, 0.7);
+  --media-control-hover-background: rgba(195, 147, 65, 0.92);
+  
+  /* Icon colors */
+  --media-icon-color: #FFFFFF;
+  --media-secondary-color: rgba(255, 255, 255, 0.7);
+  
+  /* Range/Progress colors */
+  --media-range-track-background: rgba(255, 255, 255, 0.3);
+  --media-range-bar-color: #C39341;
+  --media-range-thumb-background: #C39341;
+  
+  /* Time display */
+  --media-time-display-color: #FFFFFF;
+  
+  /* Focus ring */
+  --media-focus-ring-color: #C39341;
+  
+  /* Tooltip background */
+  --media-tooltip-background: rgba(0, 0, 0, 0.9);
+  --media-tooltip-color: #FFFFFF;
+}
+
+/* Hover state for controls */
+mux-player::part(bottom) {
+  transition: all 0.2s ease;
+}
+
+/* Play button in center */
+mux-player::part(play button) {
+  background: rgba(195, 147, 65, 0.92) !important;
+  border-color: #C39341 !important;
+}
+
+mux-player::part(play button):hover {
+  background: rgba(166, 124, 61, 1) !important;
+  transform: scale(1.1);
+}
+
+/* Loading spinner color */
+mux-player::part(loading-indicator) {
+  --media-loading-indicator-color: #C39341;
+}
+
+/* Custom styling for better visibility */
+mux-player {
+  --media-font-family: inherit;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+/* Google Drive Player Controls Overlay */
+.google-drive-player-wrapper {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+/* Block top-right controls area (download, pop-out buttons) */
+.google-drive-player-wrapper::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 140px;
+  height: 52px;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(4px);
+  pointer-events: auto;
+  z-index: 10;
+  border-bottom-left-radius: 8px;
+}
+
+/* Block bottom-right controls area (more options) */
+.google-drive-player-wrapper::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 140px;
+  height: 52px;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(4px);
+  pointer-events: auto;
+  z-index: 10;
+  border-top-left-radius: 8px;
+}
+
+/* Iframe inside wrapper */
+.google-drive-player-wrapper iframe {
+  position: relative;
+  z-index: 1;
+  border: none;
+}
+
+/* Optional: Show hint on hover over blocked areas */
+.google-drive-player-wrapper:hover::before,
+.google-drive-player-wrapper:hover::after {
+  background: rgba(0, 0, 0, 0.7);
+}

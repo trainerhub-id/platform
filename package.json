@@ -1,0 +1,30 @@
+{
+  "name": "trainerhub-monorepo",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev:backend": "cd apps/backend-hono && bun run dev",
+    "dev:frontend": "cd apps/frontend && npm run dev",
+    "build:backend": "cd apps/backend-hono && bun run build",
+    "build:frontend": "cd apps/frontend && bun run build",
+    "typecheck:backend": "cd apps/backend-hono && bun run typecheck",
+    "test:backend": "cd apps/backend-hono && bun test",
+    "deploy:hono": "./scripts/deploy-hono.sh",
+    "smoke:hono": "./scripts/smoke-beta-hono.sh"
+  },
+  "workspaces": [
+    "apps/*"
+  ],
+  "dependencies": {},
+  "overrides": {
+    "react": "19.2.0",
+    "react-dom": "19.2.0",
+    "@types/react": "19.2.2",
+    "@types/react-dom": "19.2.2"
+  },
+  "devDependencies": {
+    "@ai-sdk/google-v5": "npm:@ai-sdk/google@^2.0.54",
+    "ai-v5": "npm:ai@^5.0.137",
+    "serve": "^14.2.5"
+  }
+}

@@ -1,0 +1,320 @@
+/**
+ * Interview Assistant UI Styles
+ *
+ * Custom styles for the Assistant UI chat interface
+ * that match the TrainerHub theme.
+ *
+ * Requirements: 2.1
+ */
+
+/* ============================================
+   Assistant UI Container
+   ============================================ */
+
+.interview-assistant-container {
+  @apply flex flex-col h-full bg-white dark:bg-darkgray rounded-lg border border-ld overflow-hidden;
+}
+
+/* ============================================
+   Chat Thread Styles
+   ============================================ */
+
+.interview-thread {
+  @apply flex-1 overflow-y-auto p-4 space-y-4;
+}
+
+.interview-thread::-webkit-scrollbar {
+  width: 6px;
+}
+
+.interview-thread::-webkit-scrollbar-track {
+  @apply bg-transparent;
+}
+
+.interview-thread::-webkit-scrollbar-thumb {
+  @apply bg-gray-200 rounded-full;
+}
+
+.dark .interview-thread::-webkit-scrollbar-thumb {
+  @apply bg-gray-700;
+}
+
+.interview-thread::-webkit-scrollbar-thumb:hover {
+  @apply bg-gray-300;
+}
+
+.dark .interview-thread::-webkit-scrollbar-thumb:hover {
+  @apply bg-gray-600;
+}
+
+/* ============================================
+   Message Styles
+   ============================================ */
+
+.interview-message {
+  @apply flex gap-3 max-w-[85%];
+}
+
+.interview-message--user {
+  @apply ml-auto flex-row-reverse;
+}
+
+.interview-message--assistant {
+  @apply mr-auto;
+}
+
+.interview-message__avatar {
+  @apply w-8 h-8 rounded-full flex items-center justify-center shrink-0;
+}
+
+.interview-message__avatar--user {
+  @apply bg-primary text-white;
+}
+
+.interview-message__avatar--assistant {
+  @apply bg-lightprimary text-primary;
+}
+
+.interview-message__content {
+  @apply rounded-lg px-4 py-3 text-sm leading-relaxed;
+}
+
+.interview-message__content--user {
+  @apply bg-primary text-white rounded-br-none;
+}
+
+.interview-message__content--assistant {
+  @apply bg-lightgray dark:bg-dark text-ld rounded-bl-none;
+}
+
+.interview-message__content p {
+  @apply mb-2 last:mb-0;
+}
+
+.interview-message__content strong {
+  @apply font-semibold;
+}
+
+.interview-message__content em {
+  @apply italic text-bodytext dark:text-lightmuted;
+}
+
+.interview-message__content ul,
+.interview-message__content ol {
+  @apply ml-4 mb-2 space-y-1;
+}
+
+.interview-message__content li {
+  @apply text-sm;
+}
+
+/* ============================================
+   Input Area Styles
+   ============================================ */
+
+.interview-input-area {
+  @apply border-t border-ld p-4 bg-white dark:bg-darkgray;
+}
+
+.interview-input-form {
+  @apply flex gap-3 items-end;
+}
+
+.interview-input-wrapper {
+  @apply flex-1 relative;
+}
+
+.interview-input {
+  @apply w-full min-h-[44px] max-h-[120px] px-4 py-3 pr-12 rounded-lg border border-ld bg-transparent text-sm text-ld placeholder:text-bodytext dark:placeholder:text-lightmuted resize-none focus:border-primary focus:outline-none focus:ring-0;
+}
+
+.interview-input:disabled {
+  @apply opacity-50 cursor-not-allowed;
+}
+
+.interview-send-button {
+  @apply absolute right-2 bottom-2 w-8 h-8 rounded-md bg-primary text-white flex items-center justify-center hover:bg-primaryemphasis transition-colors disabled:opacity-50 disabled:cursor-not-allowed;
+}
+
+/* ============================================
+   Progress Bar Styles
+   ============================================ */
+
+.interview-progress {
+  @apply px-4 py-3 border-b border-ld bg-lightgray dark:bg-dark;
+}
+
+.interview-progress__header {
+  @apply flex items-center justify-between mb-2;
+}
+
+.interview-progress__label {
+  @apply text-xs font-medium text-bodytext dark:text-lightmuted;
+}
+
+.interview-progress__count {
+  @apply text-xs font-semibold text-primary;
+}
+
+.interview-progress__bar {
+  @apply h-1.5 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden;
+}
+
+.interview-progress__fill {
+  @apply h-full bg-primary rounded-full transition-all duration-300 ease-out;
+}
+
+/* ============================================
+   Welcome Screen Styles
+   ============================================ */
+
+.interview-welcome {
+  @apply flex flex-col items-center justify-center h-full p-8 text-center;
+}
+
+.interview-welcome__icon {
+  @apply w-16 h-16 rounded-full bg-lightprimary text-primary flex items-center justify-center mb-4;
+}
+
+.interview-welcome__title {
+  @apply text-xl font-semibold text-ld mb-2;
+}
+
+.interview-welcome__description {
+  @apply text-sm text-bodytext dark:text-lightmuted mb-6 max-w-md;
+}
+
+.interview-welcome__button {
+  @apply px-6 py-2.5 bg-primary text-white rounded-md font-medium hover:bg-primaryemphasis transition-colors;
+}
+
+/* ============================================
+   Completion Screen Styles
+   ============================================ */
+
+.interview-complete {
+  @apply flex flex-col items-center justify-center p-6 bg-lightsuccess dark:bg-success/10 rounded-lg mx-4 my-4;
+}
+
+.interview-complete__icon {
+  @apply w-12 h-12 rounded-full bg-success text-white flex items-center justify-center mb-3;
+}
+
+.interview-complete__title {
+  @apply text-lg font-semibold text-success mb-1;
+}
+
+.interview-complete__description {
+  @apply text-sm text-bodytext dark:text-lightmuted text-center;
+}
+
+/* ============================================
+   Question Type Indicators
+   ============================================ */
+
+.interview-question-type {
+  @apply inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-medium mb-2;
+}
+
+.interview-question-type--required {
+  @apply bg-error/10 text-error;
+}
+
+.interview-question-type--optional {
+  @apply bg-lightgray dark:bg-dark text-bodytext;
+}
+
+/* ============================================
+   Options List Styles
+   ============================================ */
+
+.interview-options {
+  @apply mt-3 space-y-2;
+}
+
+.interview-option {
+  @apply flex items-center gap-2 px-3 py-2 rounded-md border border-ld bg-white dark:bg-darkgray cursor-pointer hover:border-primary hover:bg-lightprimary transition-colors;
+}
+
+.interview-option--selected {
+  @apply border-primary bg-lightprimary;
+}
+
+.interview-option__radio {
+  @apply w-4 h-4 rounded-full border-2 border-ld flex items-center justify-center;
+}
+
+.interview-option__radio--selected {
+  @apply border-primary;
+}
+
+.interview-option__radio--selected::after {
+  content: '';
+  @apply w-2 h-2 rounded-full bg-primary;
+}
+
+.interview-option__label {
+  @apply text-sm text-ld;
+}
+
+/* ============================================
+   Loading States
+   ============================================ */
+
+.interview-loading {
+  @apply flex items-center gap-2 px-4 py-3;
+}
+
+.interview-loading__dots {
+  @apply flex gap-1;
+}
+
+.interview-loading__dot {
+  @apply w-2 h-2 rounded-full bg-primary animate-bounce;
+}
+
+.interview-loading__dot:nth-child(2) {
+  animation-delay: 0.1s;
+}
+
+.interview-loading__dot:nth-child(3) {
+  animation-delay: 0.2s;
+}
+
+/* ============================================
+   Responsive Adjustments
+   ============================================ */
+
+@media (max-width: 640px) {
+  .interview-message {
+    @apply max-w-[95%];
+  }
+
+  .interview-welcome {
+    @apply p-4;
+  }
+
+  .interview-welcome__icon {
+    @apply w-12 h-12;
+  }
+
+  .interview-welcome__title {
+    @apply text-lg;
+  }
+}
+
+/* ============================================
+   Dark Mode Adjustments
+   ============================================ */
+
+.dark .interview-message__content--assistant {
+  @apply bg-dark border border-darkborder;
+}
+
+.dark .interview-input {
+  @apply bg-dark;
+}
+
+.dark .interview-option {
+  @apply bg-dark;
+}

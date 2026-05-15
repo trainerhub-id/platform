@@ -1,0 +1,16 @@
+.mobile-header-menu {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 200ms ease-out;
+}
+
+.mobile-header-menu.active {
+    max-height: 56px;
+    overflow: visible;
+}
+
+@media (min-width: 1300px) {
+    html[data-layout=vertical] .top-header {
+        width: calc(100% - 320px);
+    }
+}

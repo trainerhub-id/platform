@@ -1,0 +1,38 @@
+/* Custom Leaflet Marker Styles */
+.leaflet-container {
+  font-family: 'Manrope', sans-serif;
+}
+
+.leaflet-popup-content-wrapper {
+  border-radius: 16px;
+  padding: 0;
+  overflow: hidden;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+}
+
+.leaflet-popup-content {
+  margin: 0 !important;
+  width: 320px !important;
+}
+
+.leaflet-popup-close-button {
+  display: none;
+}
+
+.leaflet-popup-tip {
+  background: #AA8D55;
+}
+
+/* Custom marker color - gold/brown theme */
+.custom-marker-icon {
+  background-color: #C39341;
+  border: 3px solid white;
+  border-radius: 50%;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.custom-marker-icon.selected {
+  background-color: #A67C3D;
+  transform: scale(1.2);
+  box-shadow: 0 4px 12px rgba(195, 147, 65, 0.5);
+}

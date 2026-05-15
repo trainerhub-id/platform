@@ -1,0 +1,114 @@
+import { } from "react";
+import CardBox from "src/components/shared/CardBox";
+import { Icon } from "@iconify/react";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "src/components/ui/tabs";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "src/components/ui/select";
+import "src/views/training/training-map.css";
+
+// New Components
+import TrainingList from "src/components/training/TrainingList";
+import TrainingMap from "src/components/training/TrainingMap";
+import TrainingDetailTab from "src/components/training/TrainingDetailTab";
+import TrainingRundownTab from "src/components/training/TrainingRundownTab";
+import { useTrainingInfo } from "./hooks/useTrainingInfo";
+import { Loading } from 'src/components/ui/loading';
+
+const TrainingInformation = () => {
+  const { trainings, selectedTraining, setSelectedTraining, loading } = useTrainingInfo();
+
+  if (loading) {
+    return <Loading fullPage />
+  }
+
+  if (!selectedTraining) {
+    return <div className="p-6">Belum ada training yang tersedia.</div>
+  }
+
+  return (
+    <div>
+      {/* Main Content */}
+      <div className="grid grid-cols-12 gap-6 relative">
+        {/* Left Sidebar - Training List */}
+        <div className="lg:col-span-4 col-span-12 lg:sticky lg:top-[100px] lg:self-start">
+          <TrainingList
+            trainings={trainings}
+            selectedId={selectedTraining.id}
+            onSelect={setSelectedTraining}
+          />
+        </div>
+
+        {/* Right Side - Details */}
+        <div className="lg:col-span-8 col-span-12 space-y-6 pt-4">
+          {/* Map Section */}
+          <CardBox className="p-0 overflow-hidden">
+            <TrainingMap selectedTraining={selectedTraining} />
+          </CardBox>
+
+          {/* Details Content */}
+          <CardBox className="p-8">
+            {/* Header with Batch Selector */}
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
+              <h3 className="text-2xl font-bold text-[#1A2537]">Detail Training</h3>
+              <Select
+                value={selectedTraining.id}
+                onValueChange={(val) => {
+                  const selected = trainings.find(t => t.id === val);
+                  if (selected) setSelectedTraining(selected);
+                }}
+              >
+                <SelectTrigger className="w-full sm:w-[220px] rounded-xl border-gray-200">
+                  <SelectValue placeholder="Pilih Batch" />
+                </SelectTrigger>
+                <SelectContent>
+                  {trainings.map((training) => (
+                    <SelectItem key={training.id} value={training.id}>
+                      {training.title}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            {/* Tabs (Detail Training / Rundown) */}
+            <Tabs defaultValue="detail" className="w-full">
+              <TabsList className="bg-transparent h-auto p-0 gap-3 mb-8 w-full justify-start overflow-x-auto custom-scrollbar pb-2">
+                <TabsTrigger
+                  value="detail"
+                  className="data-[state=active]:bg-[#B58E36] data-[state=active]:text-white bg-[#F4F7FB] text-gray-500 rounded-xl px-4 py-2 h-auto text-sm font-semibold transition-all border-none flex items-center gap-2"
+                >
+                  <Icon icon="solar:folder-with-files-bold" height={18} />
+                  Detail Training
+                </TabsTrigger>
+                <TabsTrigger
+                  value="rundown"
+                  className="data-[state=active]:bg-[#B58E36] data-[state=active]:text-white bg-[#F4F7FB] text-gray-500 rounded-xl px-4 py-2 h-auto text-sm font-semibold transition-all border-none flex items-center gap-2"
+                >
+                  <Icon icon="solar:checklist-minimalistic-bold" height={18} />
+                  Rundown Acara
+                </TabsTrigger>
+              </TabsList>
+
+              <TabsContent value="detail" className="mt-0 outline-none">
+                <TrainingDetailTab selectedTraining={selectedTraining} />
+              </TabsContent>
+
+              <TabsContent value="rundown" className="mt-0 outline-none">
+                <TrainingRundownTab rundown={selectedTraining.rundown} />
+              </TabsContent>
+            </Tabs>
+          </CardBox>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default TrainingInformation;
+
+

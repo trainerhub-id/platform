@@ -1,0 +1,22 @@
+.page-wrapper {
+  margin-left: 0;
+  transition: 0.2s ease-in;
+}
+
+@media screen and (max-width: 1280px) {
+  .page-wrapper {
+    margin-left: 0;
+  }
+}
+
+@media (min-width: 1024px) {
+  .tables-position {
+    left: unset;
+    right: 100%;
+  }
+
+  html[dir="rtl"] .tables-position {
+    right: unset;
+    left: 100%;
+  }
+}
