@@ -7,6 +7,9 @@ type CreatePaymentSessionInput = {
 	whatsapp?: string | null;
 	batchId: string;
 	tierId: string;
+	pesertaId?: string | null;
+	batchNameSnapshot?: string | null;
+	tierNameSnapshot?: string | null;
 	amount: number;
 	status: string;
 	claimToken: string;
@@ -31,6 +34,9 @@ export type TierInput = {
 	scalevStoreUniqueId?: string | null | undefined;
 	scalevVariantUniqueId?: string | null | undefined;
 	scalevBundlePriceOptionUniqueId?: string | null | undefined;
+	scalevSyncStatus?: string | undefined;
+	scalevLastSyncedAt?: Date | null | undefined;
+	scalevSyncError?: string | null | undefined;
 };
 
 export type UpdateTierInput = Omit<Partial<TierInput>, "price"> & { price?: number | undefined };
@@ -113,6 +119,9 @@ export class PaymentRepository {
 				scalevStoreUniqueId: input.scalevStoreUniqueId ?? null,
 				scalevVariantUniqueId: input.scalevVariantUniqueId ?? null,
 				scalevBundlePriceOptionUniqueId: input.scalevBundlePriceOptionUniqueId ?? null,
+				scalevSyncStatus: input.scalevSyncStatus ?? "not_synced",
+				scalevLastSyncedAt: input.scalevLastSyncedAt ?? null,
+				scalevSyncError: input.scalevSyncError ?? null,
 			})
 			.returning();
 		if (!tier) throw new Error("TIER_CREATE_FAILED");
@@ -154,6 +163,9 @@ export class PaymentRepository {
 				whatsapp: input.whatsapp ?? null,
 				batchId: input.batchId,
 				tierId: input.tierId,
+				pesertaId: input.pesertaId ?? null,
+				batchNameSnapshot: input.batchNameSnapshot ?? null,
+				tierNameSnapshot: input.tierNameSnapshot ?? null,
 				amount: input.amount,
 				status: input.status,
 				claimToken: input.claimToken,

@@ -35,6 +35,10 @@ describe("PaymentService", () => {
 					updatedPaymentUrl = paymentUrl;
 				},
 			} as any,
+			enrollmentService: {
+				ensurePendingEnrollmentForPayment: async () => ({ id: "enroll_1", pesertaId: "peserta_1" }),
+				markPaid: async () => ({ id: "enroll_1" }),
+			} as any,
 			now: () => 1000,
 			createClaimToken: () => "token_1",
 			frontendUrl: "https://app.example",
@@ -58,6 +62,46 @@ describe("PaymentService", () => {
 			provider: "manual",
 		});
 		expect(updatedPaymentUrl).toBe(result.paymentUrl);
+	});
+
+	it("creates pending payment without activating enrollment access", async () => {
+		const calls: string[] = [];
+		const service = new PaymentService({
+			paymentProvider: "manual",
+			repository: {
+				getBatchBySlugOrId: async () => ({ id: "batch_1", namaBatch: "Batch 22 Mei" }),
+				getTierBySlugOrId: async () => ({ id: "tier_1", batchId: "batch_1", name: "Master", price: 2500000 }),
+				findPaymentByEmailAndBatch: async () => null,
+				createPaymentSession: async (input: any) => ({ id: "session_1", ...input }),
+				updatePaymentSessionUrl: async () => undefined,
+				getPublicBatchInfo: async () => ({ batch: {}, tiers: [] }),
+				getPublicTierInfo: async () => ({ batch: {}, tier: {} }),
+				getPaymentSessionById: async () => null,
+				markClaimTokenUsed: async () => undefined,
+				updateSessionFromScalev: async () => null,
+				getTiersByBatch: async () => [],
+				getTierById: async () => null,
+				getTierTemplateById: async () => null,
+				createTier: async () => ({ id: "tier_1", batchId: "batch_1", name: "Master", price: 2500000 }),
+				updateTier: async () => null,
+				deleteTier: async () => undefined,
+				getPaymentsByBatch: async () => [],
+			} as any,
+			enrollmentService: {
+				ensurePendingEnrollmentForPayment: async () => {
+					calls.push("pending-enrollment");
+					return { id: "enroll_1", pesertaId: "peserta_1" };
+				},
+				markPaid: async () => {
+					calls.push("mark-paid");
+					return { id: "enroll_1" };
+				},
+			} as any,
+		});
+
+		await service.createRegistration({ email: "budi@example.com", whatsapp: "081234567890", batchSlug: "batch-22-mei", tierSlug: "master" });
+
+		expect(calls).toEqual(["pending-enrollment"]);
 	});
 
 	it("creates a Scalev registration and stores provider checkout data", async () => {
@@ -92,6 +136,10 @@ describe("PaymentService", () => {
 					providerOrderCode: input.providerOrderCode,
 					providerReferenceId: input.providerReferenceId,
 				}),
+			} as any,
+			enrollmentService: {
+				ensurePendingEnrollmentForPayment: async () => ({ id: "enroll_1", pesertaId: "peserta_1" }),
+				markPaid: async () => ({ id: "enroll_1" }),
 			} as any,
 			scalev: {
 				createOrder: async () => {

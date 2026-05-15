@@ -1,10 +1,11 @@
-import { EnrollmentRepository, type EnrollmentAccessRow, type SetPaymentStatusInput } from "./enrollment.repository";
+import { EnrollmentRepository, type EnrollmentAccessRow, type EnsurePendingEnrollmentInput, type SetPaymentStatusInput } from "./enrollment.repository";
 
 type EnrollmentRepositoryLike = {
 	findAccessByPesertaId(pesertaId: string): Promise<EnrollmentAccessRow[]>;
 	listBatchEnrollments(batchId: string): Promise<unknown[]>;
 	search(query: string): Promise<unknown[]>;
 	setPaymentStatus(input: SetPaymentStatusInput): Promise<unknown>;
+	ensurePendingEnrollmentForPayment(input: EnsurePendingEnrollmentInput): Promise<{ id: string; pesertaId: string }>;
 };
 
 export type PaidAccess = {
@@ -49,6 +50,10 @@ export class EnrollmentService {
 
 	async markPaid(enrollmentId: string) {
 		return this.repository.setPaymentStatus({ enrollmentId, paymentStatus: "paid", enrollmentStatus: "active" });
+	}
+
+	async ensurePendingEnrollmentForPayment(input: EnsurePendingEnrollmentInput) {
+		return this.repository.ensurePendingEnrollmentForPayment(input);
 	}
 }
 

@@ -1,7 +1,28 @@
 import { randomBytes } from "node:crypto";
+import { AuditLogService } from "../audit/audit-log.service";
 import { env } from "../config/env";
+import { EnrollmentService } from "../enrollment/enrollment.service";
 import { PaymentRepository, type TierInput, type UpdateTierInput } from "./payment.repository";
 import { ScalevService, type ScalevPaymentSession } from "./scalev.service";
+
+type CreatePaymentSessionInput = {
+	email: string;
+	whatsapp?: string | null;
+	batchId: string;
+	tierId: string;
+	pesertaId?: string | null;
+	batchNameSnapshot?: string | null;
+	tierNameSnapshot?: string | null;
+	amount: number;
+	status: string;
+	claimToken: string;
+	paymentUrl: string;
+	referenceId: string;
+	provider: string;
+	providerPaymentMethod?: string | null;
+	providerSubPaymentMethod?: string | null;
+	expiredAt: Date;
+};
 
 type PaymentRepositoryLike = {
 	getBatchBySlugOrId(batchSlugOrId: string): Promise<{ id: string; namaBatch?: string | null } | null>;
@@ -9,7 +30,7 @@ type PaymentRepositoryLike = {
 	getPublicTierInfo(batchSlug: string, tierSlug: string): Promise<{ batch: Record<string, unknown>; tier: Record<string, unknown> }>;
 	getTierBySlugOrId(batchId: string, tierSlugOrId: string): Promise<TierRecord | null>;
 	findPaymentByEmailAndBatch(email: string, batchId: string): Promise<{ status: string } | null>;
-	createPaymentSession(input: { email: string; whatsapp?: string | null; batchId: string; tierId: string; amount: number; status: string; claimToken: string; paymentUrl: string; referenceId: string; provider: string; providerPaymentMethod?: string | null; providerSubPaymentMethod?: string | null; expiredAt: Date }): Promise<Record<string, unknown>>;
+	createPaymentSession(input: CreatePaymentSessionInput): Promise<Record<string, unknown>>;
 	getPaymentSessionById(sessionId: string): Promise<PaymentSessionRecord | null>;
 	markClaimTokenUsed(sessionId: string): Promise<void>;
 	updatePaymentSessionUrl(sessionId: string, paymentUrl: string): Promise<void>;
@@ -23,9 +44,15 @@ type PaymentRepositoryLike = {
 	getPaymentsByBatch(batchId: string): Promise<PaymentSessionRecord[]>;
 };
 
+type EnrollmentServiceLike = Pick<EnrollmentService, "ensurePendingEnrollmentForPayment" | "markPaid">;
+type AuditLogServiceLike = Pick<AuditLogService, "record">;
+
 type PaymentSessionRecord = {
 	id: string;
 	email: string;
+	batchId?: string | null;
+	tierId?: string | null;
+	pesertaId?: string | null;
 	amount?: number | null | undefined;
 	status: string;
 	provider?: string | null;
@@ -73,18 +100,36 @@ type TierRecord = {
 	scalevStoreUniqueId?: string | null;
 	scalevVariantUniqueId?: string | null;
 	scalevBundlePriceOptionUniqueId?: string | null;
+	scalevSyncStatus?: string | null;
+	scalevLastSyncedAt?: Date | string | null;
+	scalevSyncError?: string | null;
 };
 
 export class PaymentService {
 	private readonly repository: PaymentRepositoryLike;
+	private readonly enrollmentService: EnrollmentServiceLike;
+	private readonly auditLog: AuditLogServiceLike;
 	private readonly scalev: ScalevLike;
 	private readonly now: () => number;
 	private readonly createClaimToken: () => string;
 	private readonly frontendUrl: string;
 	private readonly paymentProvider: PaymentProvider;
 
-	constructor(deps: { repository?: PaymentRepositoryLike; scalev?: ScalevLike; now?: () => number; createClaimToken?: () => string; frontendUrl?: string; paymentProvider?: PaymentProvider } = {}) {
+	constructor(
+		deps: {
+			repository?: PaymentRepositoryLike;
+			enrollmentService?: EnrollmentServiceLike;
+			auditLog?: AuditLogServiceLike;
+			scalev?: ScalevLike;
+			now?: () => number;
+			createClaimToken?: () => string;
+			frontendUrl?: string;
+			paymentProvider?: PaymentProvider;
+		} = {},
+	) {
 		this.repository = deps.repository ?? new PaymentRepository();
+		this.enrollmentService = deps.enrollmentService ?? new EnrollmentService();
+		this.auditLog = deps.auditLog ?? new AuditLogService();
 		this.scalev = deps.scalev ?? new ScalevService();
 		this.now = deps.now ?? Date.now;
 		this.createClaimToken = deps.createClaimToken ?? (() => randomBytes(32).toString("hex"));
@@ -190,12 +235,21 @@ export class PaymentService {
 		});
 		const paymentMethod = input.paymentMethod || "qris";
 		const subPaymentMethod = paymentMethod === "va" ? input.subPaymentMethod || null : null;
+		const pendingEnrollment = await this.enrollmentService.ensurePendingEnrollmentForPayment({
+			email: input.email,
+			whatsapp: input.whatsapp,
+			batchId: batch.id,
+			tierId: tier.id,
+		});
 
 		const session = await this.repository.createPaymentSession({
 			email: input.email,
 			whatsapp: input.whatsapp,
 			batchId: batch.id,
 			tierId: tier.id,
+			pesertaId: pendingEnrollment.pesertaId,
+			batchNameSnapshot: batch.namaBatch ?? null,
+			tierNameSnapshot: tier.name ?? null,
 			amount: tier.price,
 			status: "pending",
 			claimToken,
@@ -344,23 +398,37 @@ export class PaymentService {
 
 	private async syncTierWithScalev(tier: TierRecord): Promise<TierRecord> {
 		if (this.paymentProvider !== "scalev") return tier;
-		const storeUniqueId = tier.scalevStoreUniqueId || env.SCALEV_STORE_UNIQUE_ID;
-		if (!storeUniqueId) throw new Error("SCALEV_STORE_NOT_CONFIGURED");
-		const existingProduct = tier.scalevVariantUniqueId ? await this.scalev.findProductByVariantUniqueId(tier.scalevVariantUniqueId) : null;
-		const existingVariant = existingProduct?.variants?.find((variant) => variant.unique_id === tier.scalevVariantUniqueId) ?? null;
-		const product = await this.scalev.upsertProduct({
-			name: tier.name ?? "Tier",
-			publicName: tier.name ?? "Tier",
-			description: tier.description ?? null,
-			price: tier.price,
-			existingProductId: existingProduct?.id ?? null,
-			existingVariantId: existingVariant?.id ?? null,
-		});
-		const syncedVariant = (product as { data?: { variants?: Array<{ unique_id?: string }> } })?.data?.variants?.[0];
-		if (!syncedVariant?.unique_id) throw new Error("SCALEV_PRODUCT_SYNC_FAILED");
-		const updated = await this.repository.updateTier(tier.id, { scalevStoreUniqueId: storeUniqueId, scalevVariantUniqueId: syncedVariant.unique_id });
-		if (!updated) throw new Error("TIER_NOT_FOUND");
-		return updated;
+		try {
+			const storeUniqueId = tier.scalevStoreUniqueId || env.SCALEV_STORE_UNIQUE_ID;
+			if (!storeUniqueId) throw new Error("SCALEV_STORE_NOT_CONFIGURED");
+			const existingProduct = tier.scalevVariantUniqueId ? await this.scalev.findProductByVariantUniqueId(tier.scalevVariantUniqueId) : null;
+			const existingVariant = existingProduct?.variants?.find((variant) => variant.unique_id === tier.scalevVariantUniqueId) ?? null;
+			const product = await this.scalev.upsertProduct({
+				name: tier.name ?? "Tier",
+				publicName: tier.name ?? "Tier",
+				description: tier.description ?? null,
+				price: tier.price,
+				existingProductId: existingProduct?.id ?? null,
+				existingVariantId: existingVariant?.id ?? null,
+			});
+			const syncedVariant = (product as { data?: { variants?: Array<{ unique_id?: string }> } })?.data?.variants?.[0];
+			if (!syncedVariant?.unique_id) throw new Error("SCALEV_PRODUCT_SYNC_FAILED");
+			const updated = await this.repository.updateTier(tier.id, {
+				scalevStoreUniqueId: storeUniqueId,
+				scalevVariantUniqueId: syncedVariant.unique_id,
+				scalevSyncStatus: "synced",
+				scalevLastSyncedAt: new Date(),
+				scalevSyncError: null,
+			});
+			if (!updated) throw new Error("TIER_NOT_FOUND");
+			return updated;
+		} catch (error) {
+			await this.repository.updateTier(tier.id, {
+				scalevSyncStatus: "failed",
+				scalevSyncError: error instanceof Error ? error.message : String(error),
+			});
+			throw error;
+		}
 	}
 
 	private createSlug(value: string) {

@@ -1,4 +1,5 @@
-import { desc, eq, getTableColumns, ilike, or } from "drizzle-orm";
+import { createHash } from "node:crypto";
+import { and, desc, eq, getTableColumns, ilike, or } from "drizzle-orm";
 import { db } from "../db/client";
 import { batchTiers, batchTraining, peserta, pesertaBatch } from "../db/schema";
 
@@ -15,6 +16,13 @@ export type SetPaymentStatusInput = {
 	enrollmentId: string;
 	paymentStatus: string;
 	enrollmentStatus?: string;
+};
+
+export type EnsurePendingEnrollmentInput = {
+	email: string;
+	whatsapp?: string | null;
+	batchId: string;
+	tierId: string;
 };
 
 export class EnrollmentRepository {
@@ -89,4 +97,70 @@ export class EnrollmentRepository {
 		if (!row) throw new Error("ENROLLMENT_NOT_FOUND");
 		return row;
 	}
+
+	async ensurePendingEnrollmentForPayment(input: EnsurePendingEnrollmentInput) {
+		const email = input.email.trim();
+		const [existingPeserta] = await db.select().from(peserta).where(eq(peserta.email, email)).limit(1);
+		const pesertaRow = existingPeserta ?? (await this.createPendingPeserta({ email, whatsapp: input.whatsapp ?? null }));
+
+		const [existingEnrollment] = await db
+			.select()
+			.from(pesertaBatch)
+			.where(and(eq(pesertaBatch.pesertaId, pesertaRow.id), eq(pesertaBatch.batchId, input.batchId)))
+			.limit(1);
+
+		if (existingEnrollment) {
+			const [updated] = await db
+				.update(pesertaBatch)
+				.set({
+					tierId: input.tierId,
+					paymentStatus: "pending",
+					status: "registered",
+					updatedAt: new Date(),
+				})
+				.where(eq(pesertaBatch.id, existingEnrollment.id))
+				.returning();
+			if (!updated) throw new Error("ENROLLMENT_NOT_FOUND");
+			return updated;
+		}
+
+		const [created] = await db
+			.insert(pesertaBatch)
+			.values({
+				pesertaId: pesertaRow.id,
+				batchId: input.batchId,
+				tierId: input.tierId,
+				paymentStatus: "pending",
+				status: "registered",
+			})
+			.returning();
+		if (!created) throw new Error("ENROLLMENT_CREATE_FAILED");
+		return created;
+	}
+
+	private async createPendingPeserta(input: { email: string; whatsapp: string | null }) {
+		const [created] = await db
+			.insert(peserta)
+			.values({
+				clerkId: pendingClerkIdForEmail(input.email),
+				nama: nameFromEmail(input.email),
+				email: input.email,
+				noWa: input.whatsapp,
+				paymentStatus: "pending",
+			})
+			.returning();
+		if (!created) throw new Error("PESERTA_CREATE_FAILED");
+		return created;
+	}
+}
+
+function nameFromEmail(email: string) {
+	return email.split("@")[0]?.trim() || email;
+}
+
+function pendingClerkIdForEmail(email: string) {
+	const normalizedEmail = email.toLowerCase();
+	const clerkId = `pending:${normalizedEmail}`;
+	if (clerkId.length <= 255) return clerkId;
+	return `pending:${createHash("sha256").update(normalizedEmail).digest("hex")}`;
 }
