@@ -22,6 +22,7 @@ import { useLocation } from "react-router";
 import NotificationButton from "./NotificationButton";
 import SidebarLayout from "../sidebar/Sidebar";
 import api from "src/api/axios";
+import { AdminGlobalSearch } from "src/views/admin/components/AdminGlobalSearch";
 
 interface HeaderPropsType {
   layoutType: string;
@@ -36,6 +37,7 @@ const Header = ({ layoutType }: HeaderPropsType) => {
     useContext(CustomizerContext);
 
   const [mobileMenu, setMobileMenu] = useState("");
+  const [adminSearch, setAdminSearch] = useState("");
 
   const [mounted, setMounted] = useState(false);
   useEffect(() => setMounted(true), []);
@@ -433,6 +435,11 @@ const Header = ({ layoutType }: HeaderPropsType) => {
             <div className="flex xl:hidden items-center justify-center">
               <FullLogo hideOnMobile={false} />
             </div>
+            {isAdmin && (
+              <div className="hidden xl:block flex-1 px-6">
+                <AdminGlobalSearch value={adminSearch} onChange={setAdminSearch} />
+              </div>
+            )}
             <div className="xl:!block !hidden md:!hidden">
               <div className="flex gap-3 items-center">
                 {/* Theme Toggle - Hidden for Admin if forced dark, but user might want to toggle. 
