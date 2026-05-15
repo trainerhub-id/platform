@@ -70,4 +70,5 @@ describe("normalizeExtractionObject", () => {
 		]);
 		expect(result.patches.every((patch) => patch.flow === "trainer")).toBe(true);
 	});
+
 });

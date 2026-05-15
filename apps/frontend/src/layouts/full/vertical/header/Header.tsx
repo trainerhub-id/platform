@@ -408,25 +408,45 @@ const Header = ({ layoutType }: HeaderPropsType) => {
                     {pathname === "/user/ai-hub" && (
                       <div>
                         <h2 className="text-xl font-semibold text-ld mb-0.5">
-                          AI Rebuild
+                          Pilih Asisten AI
                         </h2>
                         <p className="text-bodytext text-xs">
-                          Modul AI sedang dibangun ulang
+                          Pilih AI for Master, AI for Trainer, atau AI for Branding.
                         </p>
                       </div>
                     )}
-                    {pathname.startsWith("/user/ai-hub/") && (() => {
+                    {pathname === "/user/ai-hub/master-workspace" && (() => {
                       return (
                         <div>
                           <h2 className="text-xl font-semibold text-ld mb-0.5">
-                            AI Rebuild
+                            AI for Master
                           </h2>
                           <p className="text-bodytext text-xs">
-                            Modul AI sedang dibangun ulang
+                            Percakapan terarah untuk melengkapi master JSON dan checkpoint dokumen.
                           </p>
                         </div>
                       );
                     })()}
+                    {pathname === "/user/ai-hub/trainer-workspace" && (
+                      <div>
+                        <h2 className="text-xl font-semibold text-ld mb-0.5">
+                          AI for Trainer
+                        </h2>
+                        <p className="text-bodytext text-xs">
+                          Percakapan terarah untuk melengkapi field utama dan checkpoint dokumen trainer.
+                        </p>
+                      </div>
+                    )}
+                    {pathname === "/user/ai-hub/branding" && (
+                      <div>
+                        <h2 className="text-xl font-semibold text-ld mb-0.5">
+                          AI for Branding
+                        </h2>
+                        <p className="text-bodytext text-xs">
+                          Personal branding, konten promosi, dan komunikasi training.
+                        </p>
+                      </div>
+                    )}
                     {pathname === "/user/profile" && (
                       <div>
                         <h2 className="text-xl font-semibold text-ld mb-0.5">
@@ -496,6 +516,12 @@ const Header = ({ layoutType }: HeaderPropsType) => {
                 {/* Meassage Dropdown */}
 
                 {/* Notification Dropdown */}
+                {isAdmin && (
+                  <div className="hidden xl:block flex-1 px-6">
+                    <AdminGlobalSearch value={adminSearch} onChange={setAdminSearch} />
+                  </div>
+                )}
+
                 <NotificationButton />
 
                 {/* Profile Dropdown */}

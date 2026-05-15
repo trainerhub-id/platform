@@ -1,4 +1,4 @@
-import { desc, eq } from "drizzle-orm";
+import { asc, desc, eq } from "drizzle-orm";
 import { db } from "../db/client";
 import { conversationMessages } from "../db/schema";
 
@@ -20,7 +20,7 @@ export class ConversationRepository {
       .select()
       .from(conversationMessages)
       .where(eq(conversationMessages.documentId, documentId))
-      .orderBy(desc(conversationMessages.createdAt))
+      .orderBy(desc(conversationMessages.createdAt), asc(conversationMessages.role))
       .limit(limit);
   }
 }

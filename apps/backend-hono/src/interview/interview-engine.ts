@@ -61,7 +61,7 @@ export class InterviewEngine {
       return jsonErrorResponse(400, "FLOW_NOT_SUPPORTED", "Only master and trainer flows are supported");
     }
 
-    const result = await this.transactionRunner.run(async ({ documents, fieldStates, conversations }) => {
+    const responseInput = await this.transactionRunner.run(async ({ documents, fieldStates, conversations }) => {
       await conversations.addMessage({ documentId: input.documentId, role: "user", content: input.message });
       const recentMessages = await conversations.recentMessages(input.documentId, 20);
       const flow = doc.flow as "master" | "trainer";
@@ -129,24 +129,23 @@ export class InterviewEngine {
       const masterJson = flow === "master" ? compileMasterJson(stateSnapshot) : compileTrainerJson(stateSnapshot);
       await documents.updateInterviewState(input.documentId, { masterJson, readiness, currentPhase: nextPhase });
 
-      const assistantResponse = await this.response.stream({
+      return {
         message: input.message,
         phase: nextPhase,
         readiness,
         nextField: readiness.missing[0] ?? null,
-      });
-      const assistantText = await assistantResponse.clone().text();
-      await conversations.addMessage({
+      };
+    });
+
+    const assistantResponse = await this.response.stream(responseInput);
+    return persistAssistantMessageAfterStream(assistantResponse, async (assistantText) => {
+      await this.conversations.addMessage({
         documentId: input.documentId,
         role: "assistant",
         content: assistantText,
-        metadata: { phase: nextPhase, readiness },
+        metadata: { phase: responseInput.phase, readiness: responseInput.readiness },
       });
-
-      return assistantResponse;
     });
-
-    return result;
   }
 }
 
@@ -172,6 +171,44 @@ function getPendingSuggestionValue(pendingSuggestion: unknown): unknown {
     return undefined;
   }
   return (pendingSuggestion as { value: unknown }).value;
+}
+
+function persistAssistantMessageAfterStream(response: Response, save: (assistantText: string) => Promise<void>): Response {
+  if (!response.body) {
+    return response;
+  }
+
+  const reader = response.body.getReader();
+  const decoder = new TextDecoder();
+  let assistantText = "";
+
+  const stream = new ReadableStream<Uint8Array>({
+    async pull(controller) {
+      const { done, value } = await reader.read();
+      if (done) {
+        assistantText += decoder.decode();
+        try {
+          await save(assistantText);
+        } catch (error) {
+          console.error("Failed to persist assistant message", error);
+        }
+        controller.close();
+        return;
+      }
+
+      assistantText += decoder.decode(value, { stream: true });
+      controller.enqueue(value);
+    },
+    cancel(reason) {
+      void reader.cancel(reason);
+    },
+  });
+
+  return new Response(stream, {
+    status: response.status,
+    statusText: response.statusText,
+    headers: new Headers(response.headers),
+  });
 }
 
 function jsonErrorResponse(status: number, code: string, message: string): Response {

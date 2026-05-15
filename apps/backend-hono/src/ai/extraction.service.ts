@@ -1,4 +1,4 @@
-import { generateText } from "ai";
+import { generateText, Output } from "ai";
 import { extractionResultSchema, type ExtractionResult } from "../interview/extraction.schemas";
 import { ModelService } from "./model.service";
 import { extractorPrompt } from "./prompts/extractor.prompt";
@@ -89,13 +89,18 @@ export class ExtractionService implements ExtractionServiceLike {
 	constructor(private readonly modelService = new ModelService()) {}
 
 	async extract(input: ExtractionInput): Promise<ExtractionResult> {
-		const { text } = await generateText({
+		const { output } = await generateText({
 			model: this.modelService.getLanguageModel(),
+			output: Output.object({
+				schema: extractionResultSchema,
+				name: "interview_extraction",
+				description: "Structured field patches extracted from one Indonesian chat message.",
+			}),
 			system: extractorPrompt,
 			prompt: JSON.stringify(input),
 		});
 
 		const flow = input.phase === "brainstorming" || input.phase === "training_details" ? "trainer" : "master";
-		return normalizeExtractionObject(extractJson(text), flow);
+		return normalizeExtractionObject(output, flow);
 	}
 }
