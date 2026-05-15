@@ -10,7 +10,9 @@ const TrainingInformation = Loadable(lazy(() => import('../views/training/Traini
 const KelasArchive = Loadable(lazy(() => import('../views/kelas/KelasArchive')));
 const Kelas = Loadable(lazy(() => import('../views/kelas/Kelas')));
 const Sertifikat = Loadable(lazy(() => import('../views/sertifikat/Sertifikat')));
-const AiRebuild = Loadable(lazy(() => import('../views/ai-rebuild/AiRebuild')));
+const AiHubSelection = Loadable(lazy(() => import('../views/ai-workspace/AiHubSelection')));
+const AiWorkspace = Loadable(lazy(() => import('../views/ai-workspace/AiWorkspace')));
+const AiBrandingPlaceholder = Loadable(lazy(() => import('../views/ai-workspace/AiBrandingPlaceholder')));
 const AdminHome = Loadable(lazy(() => import('../views/admin/AdminHome')));
 const AdminBatchList = Loadable(lazy(() => import('../views/admin/batches/AdminBatchList')));
 const AdminBatchDetail = Loadable(lazy(() => import('../views/admin/batches/AdminBatchDetail')));
@@ -33,12 +35,16 @@ export const protectedRouteChildren = [
   { path: '/user/kelas/:id', exact: true, element: <UserRoute><Kelas /></UserRoute> },
   { path: '/user/dokumen', exact: true, element: <UserRoute><Dokumen /></UserRoute> },
   { path: '/user/sertifikat', exact: true, element: <UserRoute><Sertifikat /></UserRoute> },
-  { path: '/user/ai-generator', exact: true, element: <UserRoute><AiRebuild /></UserRoute> },
-  { path: '/user/ai-hub', exact: true, element: <UserRoute><AiRebuild /></UserRoute> },
-  { path: '/user/ai-hub/master-workspace', exact: true, element: <UserRoute><AiRebuild /></UserRoute> },
-  { path: '/user/ai-hub/:category', exact: true, element: <UserRoute><AiRebuild /></UserRoute> },
-  { path: '/user/documents', exact: true, element: <UserRoute><AiRebuild /></UserRoute> },
-  { path: '/trainer/documents', exact: true, element: <UserRoute><AiRebuild /></UserRoute> },
+  { path: '/user/ai-generator', exact: true, element: <Navigate to="/user/ai-hub/trainer-workspace" replace /> },
+  { path: '/user/ai-hub', exact: true, element: <UserRoute><AiHubSelection /></UserRoute> },
+  { path: '/user/ai-hub/master-workspace', exact: true, element: <UserRoute><AiWorkspace flow="master" /></UserRoute> },
+  { path: '/user/ai-hub/trainer-workspace', exact: true, element: <UserRoute><AiWorkspace flow="trainer" /></UserRoute> },
+  { path: '/user/ai-hub/branding', exact: true, element: <UserRoute><AiBrandingPlaceholder /></UserRoute> },
+  { path: '/user/ai-hub/master', exact: true, element: <Navigate to="/user/ai-hub/master-workspace" replace /> },
+  { path: '/user/ai-hub/trainer', exact: true, element: <Navigate to="/user/ai-hub/trainer-workspace" replace /> },
+  { path: '/user/ai-hub/:category', exact: true, element: <Navigate to="/user/ai-hub/trainer-workspace" replace /> },
+  { path: '/user/documents', exact: true, element: <Navigate to="/user/ai-hub/trainer-workspace" replace /> },
+  { path: '/trainer/documents', exact: true, element: <Navigate to="/user/ai-hub/trainer-workspace" replace /> },
   { path: '/user/profile', exact: true, element: <UserRoute><ProfilePage /></UserRoute> },
 
   { path: '/admin/home', exact: true, element: <AdminRoute><AdminHome /></AdminRoute> },
