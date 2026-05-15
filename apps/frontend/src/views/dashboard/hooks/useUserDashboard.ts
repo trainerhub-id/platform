@@ -69,7 +69,8 @@ export const useUserDashboard = () => {
                 }
 
                 // Keep dashboard usable even when non-critical endpoints fail.
-                const activeBatch = Array.isArray(batchesRes) && batchesRes.length > 0 ? batchesRes[0] : null;
+                const batches = Array.isArray(batchesRes) ? batchesRes : Array.isArray(batchesRes?.batches) ? batchesRes.batches : [];
+                const activeBatch = batches.length > 0 ? batches[0] : null;
 
                 if (isCancelled) {
                     return;
@@ -78,8 +79,8 @@ export const useUserDashboard = () => {
                 setData({
                     profile: profileRes,
                     activeBatch,
-                    tasks: Array.isArray(tasksRes) ? tasksRes : [],
-                    submissions: Array.isArray(submissionsRes) ? submissionsRes : [],
+                    tasks: Array.isArray(tasksRes) ? tasksRes : Array.isArray(tasksRes?.tasks) ? tasksRes.tasks : [],
+                    submissions: Array.isArray(submissionsRes) ? submissionsRes : Array.isArray(submissionsRes?.submissions) ? submissionsRes.submissions : [],
                     loading: false,
                     error: null,
                 });

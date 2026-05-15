@@ -10,9 +10,10 @@ const formatDate = (dateString?: string) => {
 
 interface TrainingCardProps {
   batch?: any;
+  paymentStatus?: string | null;
 }
 
-const TrainingCard = ({ batch }: TrainingCardProps) => {
+const TrainingCard = ({ batch, paymentStatus: profilePaymentStatus }: TrainingCardProps) => {
   // Calculate actual status based on real dates
   const getActualStatus = () => {
     if (!batch) return 'draft';
@@ -44,7 +45,7 @@ const TrainingCard = ({ batch }: TrainingCardProps) => {
       {/* Payment Status - Left Side */}
       <div className="lg:col-span-2 md:col-span-4 col-span-12">
         {(() => {
-          const paymentStatus = batch?.paymentStatus?.toLowerCase() || 'pending';
+          const paymentStatus = (batch?.paymentStatus || profilePaymentStatus || 'pending').toLowerCase();
           const isPaid = paymentStatus === 'paid' || paymentStatus === 'lunas';
 
           return (
@@ -214,4 +215,3 @@ const TrainingCard = ({ batch }: TrainingCardProps) => {
 };
 
 export default TrainingCard;
-

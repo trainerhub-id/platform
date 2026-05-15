@@ -18,7 +18,7 @@ export default function TrainerDashboard() {
   const { user, isLoaded } = useUser();
   const navigate = useNavigate();
   const [showPasswordDialog, setShowPasswordDialog] = useState(false);
-  const { activeBatch, loading } = useUserDashboard();
+  const { activeBatch, loading, profile } = useUserDashboard();
 
   const needsPasswordSetup = user?.publicMetadata?.needsPasswordSetup === true;
 
@@ -111,7 +111,7 @@ export default function TrainerDashboard() {
       
       {/* Training Banner & Progress */}
       <div className="mb-6">
-        <TrainingCard batch={activeBatch} />
+        <TrainingCard batch={activeBatch} paymentStatus={profile?.profile?.paymentStatus || profile?.paymentStatus} />
       </div>
 
       {/* Progress Journey + Quick Access (8 cols) & Todo List (4 cols) */}
