@@ -95,8 +95,48 @@ describe("InterviewEngine", () => {
     expect(documents.updated.masterJson.brainstorming_master.organization_name).toBe("PT Maju Jaya");
     expect(documents.updated.readiness.ready).toBe(false);
     expect(documents.updated.currentPhase).toBe("profile");
-    expect(conversations.messages.map((message) => message.role)).toEqual(["user", "assistant"]);
+    expect(conversations.messages.map((message) => message.role)).toEqual(["user"]);
     expect(await response.text()).toBe("Oke, nama lembaga saya catat. Siapa trainernya?");
+    expect(conversations.messages.map((message) => message.role)).toEqual(["user", "assistant"]);
+  });
+
+  it("returns the assistant stream before persisting the completed assistant message", async () => {
+    const fieldStates = new FakeFieldStateRepository();
+    const conversations = new FakeConversationRepository();
+    const documents = new FakeDocumentRepository();
+    let releaseStream: (() => void) | undefined;
+    const streamReleased = new Promise<void>((resolve) => {
+      releaseStream = resolve;
+    });
+    const streamingResponse: ResponseServiceLike = {
+      async stream() {
+        return new Response(
+          new ReadableStream({
+            async start(controller) {
+              controller.enqueue(new TextEncoder().encode("Mulai "));
+              await streamReleased;
+              controller.enqueue(new TextEncoder().encode("selesai"));
+              controller.close();
+            },
+          }),
+        );
+      },
+    };
+    const engine = new InterviewEngine({
+      documents: documents as any,
+      fieldStates: fieldStates as any,
+      conversations: conversations as any,
+      extraction: fakeExtraction,
+      response: streamingResponse,
+    });
+
+    const response = await engine.handleMessage({ documentId: "doc_1", userId: "user_1", message: "Lembaganya PT Maju Jaya" });
+
+    expect(conversations.messages.map((message) => message.role)).toEqual(["user"]);
+    releaseStream?.();
+    expect(await response.text()).toBe("Mulai selesai");
+    expect(conversations.messages.map((message) => message.role)).toEqual(["user", "assistant"]);
+    expect(conversations.messages[1].content).toBe("Mulai selesai");
   });
 
   it("confirms pending suggestions and compiles confirmed value into master_json", async () => {

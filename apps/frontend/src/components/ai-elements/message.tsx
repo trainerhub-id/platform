@@ -4,6 +4,7 @@ import type { UIMessage } from "ai";
 import type { HTMLAttributes } from "react";
 import { memo } from "react";
 import { cn } from "src/lib/utils";
+import { Streamdown } from "streamdown";
 
 export type MessageProps = HTMLAttributes<HTMLDivElement> & {
   from: UIMessage["role"];
@@ -40,8 +41,20 @@ export type MessageResponseProps = HTMLAttributes<HTMLDivElement>;
 
 export const MessageResponse = memo(
   ({ className, children, ...props }: MessageResponseProps) => (
-    <div className={cn("min-w-0 break-words", className)} {...props}>
-      {children}
+    <div
+      className={cn(
+        "min-w-0 break-words [&_ol]:my-2 [&_ol]:list-decimal [&_ol]:pl-5 [&_p]:mb-2 [&_p:last-child]:mb-0 [&_strong]:font-semibold [&_ul]:my-2 [&_ul]:list-disc [&_ul]:pl-5",
+        className,
+      )}
+      {...props}
+    >
+      {typeof children === "string" ? (
+        <Streamdown mode="streaming" parseIncompleteMarkdown>
+          {children}
+        </Streamdown>
+      ) : (
+        children
+      )}
     </div>
   ),
   (prevProps, nextProps) =>
