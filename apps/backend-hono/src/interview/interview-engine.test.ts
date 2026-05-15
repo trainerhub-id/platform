@@ -272,4 +272,76 @@ describe("InterviewEngine", () => {
 
     expect(transactionCalls).toBe(1);
   });
+
+  it("fills Trainer generated training details after core facts are captured", async () => {
+    const fieldStates = new FakeFieldStateRepository();
+    const documents = new FakeDocumentRepository();
+    documents.doc = { id: "doc_1", ownerUserId: "user_1", flow: "trainer", title: "Trainer Doc" };
+
+    const engine = new InterviewEngine({
+      documents: documents as any,
+      fieldStates: fieldStates as any,
+      conversations: new FakeConversationRepository() as any,
+      extraction: {
+        async extract() {
+          return {
+            patches: [
+              { flow: "trainer", phaseKey: "brainstorming", fieldKey: "trainer_name", value: "Ujang Abdus Salam", source: "user_explicit", confidence: 0.95 },
+              { flow: "trainer", phaseKey: "brainstorming", fieldKey: "institution", value: "Mandiri", source: "user_explicit", confidence: 0.95 },
+              { flow: "trainer", phaseKey: "brainstorming", fieldKey: "expertise", value: "Marketing", source: "user_explicit", confidence: 0.95 },
+              { flow: "trainer", phaseKey: "brainstorming", fieldKey: "audience", value: "UMKM yang mau naik kelas", source: "user_explicit", confidence: 0.95 },
+              { flow: "trainer", phaseKey: "brainstorming", fieldKey: "outcome", value: "UMKM bisa membuat strategi pemasaran sendiri", source: "user_explicit", confidence: 0.95 },
+            ],
+            pendingSuggestions: [],
+            confirmedPendingFields: [],
+            generateConfirmed: false,
+          };
+        },
+      },
+      response: { async stream() { return new Response("Data inti cukup. Saya bisa carikan unit SKKNI."); } },
+    });
+
+    await engine.handleMessage({ documentId: "doc_1", userId: "user_1", message: "Saya Ujang, mandiri, bidang marketing untuk UMKM." });
+
+    expect(documents.updated.masterJson.training_details.program_name).toBe("Pelatihan Marketing untuk UMKM yang mau naik kelas");
+    expect(documents.updated.masterJson.training_details.delivery_method).toBe("AI GENERATED");
+    expect(documents.updated.masterJson.training_details.duration_jp).toBe(0);
+  });
+
+  it("fills Master generated program_name from core facts", async () => {
+    const fieldStates = new FakeFieldStateRepository();
+    const documents = new FakeDocumentRepository();
+    documents.doc = { id: "doc_1", ownerUserId: "user_1", flow: "master", title: "Master Doc" };
+
+    const engine = new InterviewEngine({
+      documents: documents as any,
+      fieldStates: fieldStates as any,
+      conversations: new FakeConversationRepository() as any,
+      extraction: {
+        async extract() {
+          return {
+            patches: [
+              { flow: "master", phaseKey: "profile", fieldKey: "trainer_name", value: "Budi Santoso", source: "user_explicit", confidence: 0.95 },
+              { flow: "master", phaseKey: "profile", fieldKey: "organization_name", value: "PT LSP", source: "user_explicit", confidence: 0.95 },
+              { flow: "master", phaseKey: "profile", fieldKey: "organization_focus", value: "Digital Marketing", source: "user_explicit", confidence: 0.95 },
+              { flow: "master", phaseKey: "profile", fieldKey: "target_participants", value: "Owner UMKM", source: "user_explicit", confidence: 0.95 },
+              { flow: "master", phaseKey: "profile", fieldKey: "industry_problem", value: "Iklan boros tapi hasil minim", source: "user_explicit", confidence: 0.95 },
+              { flow: "master", phaseKey: "profile", fieldKey: "program_goal", value: "Meningkatkan penjualan UMKM melalui strategi digital", source: "user_explicit", confidence: 0.95 },
+              { flow: "master", phaseKey: "profile", fieldKey: "training_location", value: "Bekasi", source: "user_explicit", confidence: 0.95 },
+              { flow: "master", phaseKey: "profile", fieldKey: "training_duration", value: "2 hari", source: "user_explicit", confidence: 0.95 },
+            ],
+            pendingSuggestions: [],
+            confirmedPendingFields: [],
+            generateConfirmed: false,
+          };
+        },
+      },
+      response: { async stream() { return new Response("Data inti cukup. Saya bisa carikan unit SKKNI."); } },
+    });
+
+    await engine.handleMessage({ documentId: "doc_1", userId: "user_1", message: "Program digital marketing untuk owner UMKM di Bekasi." });
+
+    expect(documents.updated.masterJson.brainstorming_master.program_name).toBe("Pelatihan Digital Marketing untuk Owner UMKM");
+    expect(documents.updated.masterJson.brainstorming_master.organization_city).toBe("Bekasi");
+  });
 });

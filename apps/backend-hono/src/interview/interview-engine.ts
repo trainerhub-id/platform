@@ -5,6 +5,7 @@ import { DocumentRepository, isDocumentOwner } from "../documents/document.repos
 import { ConversationRepository } from "./conversation.repository";
 import { FieldStateRepository } from "./field-state.repository";
 import type { FieldStateSnapshot } from "./field-state.types";
+import { buildGeneratedFieldPatches } from "./generated-fields";
 import { buildMasterReadiness } from "./master/master-readiness";
 import { compileMasterJson } from "./master/master-json-compiler";
 import { getNextMasterPhase, getNextTrainerPhase } from "./phase-router";
@@ -119,6 +120,20 @@ export class InterviewEngine {
           status: "pending_confirmation",
           source: "ai_suggested",
           pendingSuggestion: { value: suggestion.value, reason: suggestion.reason },
+        });
+      }
+
+      const statesAfterExtraction = await fieldStates.list(input.documentId, flow);
+      for (const generated of buildGeneratedFieldPatches(flow, statesAfterExtraction as FieldStateSnapshot[])) {
+        await fieldStates.upsert({
+          documentId: input.documentId,
+          flow: generated.flow,
+          phaseKey: generated.phaseKey,
+          fieldKey: generated.fieldKey,
+          value: generated.value,
+          status: "captured",
+          source: "system",
+          pendingSuggestion: null,
         });
       }
 
