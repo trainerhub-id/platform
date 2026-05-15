@@ -66,13 +66,17 @@ describe("PaymentService", () => {
 
 	it("creates pending payment without activating enrollment access", async () => {
 		const calls: string[] = [];
+		let createdPaymentInput: any = null;
 		const service = new PaymentService({
 			paymentProvider: "manual",
 			repository: {
 				getBatchBySlugOrId: async () => ({ id: "batch_1", namaBatch: "Batch 22 Mei" }),
 				getTierBySlugOrId: async () => ({ id: "tier_1", batchId: "batch_1", name: "Master", price: 2500000 }),
 				findPaymentByEmailAndBatch: async () => null,
-				createPaymentSession: async (input: any) => ({ id: "session_1", ...input }),
+				createPaymentSession: async (input: any) => {
+					createdPaymentInput = input;
+					return { id: "session_1", ...input };
+				},
 				updatePaymentSessionUrl: async () => undefined,
 				getPublicBatchInfo: async () => ({ batch: {}, tiers: [] }),
 				getPublicTierInfo: async () => ({ batch: {}, tier: {} }),
@@ -102,6 +106,12 @@ describe("PaymentService", () => {
 		await service.createRegistration({ email: "budi@example.com", whatsapp: "081234567890", batchSlug: "batch-22-mei", tierSlug: "master" });
 
 		expect(calls).toEqual(["pending-enrollment"]);
+		expect(createdPaymentInput).toMatchObject({
+			pesertaId: "peserta_1",
+			enrollmentId: "enroll_1",
+			batchNameSnapshot: "Batch 22 Mei",
+			tierNameSnapshot: "Master",
+		});
 	});
 
 	it("creates a Scalev registration and stores provider checkout data", async () => {
@@ -221,6 +231,36 @@ describe("PaymentService", () => {
 		});
 	});
 
+	it("claimPayment marks linked enrollment paid", async () => {
+		const calls: string[] = [];
+		const service = new PaymentService({
+			repository: {
+				getPaymentSessionById: async () => ({
+					id: "session_1",
+					email: "budi@example.com",
+					status: "paid",
+					enrollmentId: "enroll_1",
+					claimToken: "token_1",
+					claimTokenUsed: false,
+				}),
+				markClaimTokenUsed: async (sessionId: string) => {
+					calls.push(`token-used:${sessionId}`);
+				},
+			} as any,
+			enrollmentService: {
+				ensurePendingEnrollmentForPayment: async () => ({ id: "enroll_1", pesertaId: "peserta_1" }),
+				markPaid: async (enrollmentId: string) => {
+					calls.push(`mark-paid:${enrollmentId}`);
+					return { id: enrollmentId };
+				},
+			} as any,
+		});
+
+		await service.claimPayment("session_1", "token_1");
+
+		expect(calls).toEqual(["mark-paid:enroll_1", "token-used:session_1"]);
+	});
+
 	it("claims a paid Better Auth payment session without requiring legacy Clerk token", async () => {
 		let markedSessionId: string | null = null;
 		const service = new PaymentService({
@@ -303,5 +343,64 @@ describe("PaymentService", () => {
 			providerOrderId: 42,
 			paymentUrl: "https://pay.example/checkout",
 		});
+	});
+
+	it("refreshScalevPaymentStatus marks linked enrollment paid when provider reports paid", async () => {
+		const calls: string[] = [];
+		const service = new PaymentService({
+			repository: {
+				getPaymentSessionById: async () => ({
+					id: "session_1",
+					email: "budi@example.com",
+					amount: 250000,
+					status: "pending",
+					enrollmentId: "enroll_1",
+					claimToken: "token_1",
+					provider: "scalev",
+					providerOrderId: 42,
+				}),
+				updateSessionFromScalev: async (_sessionId: string, input: any) => ({
+					id: "session_1",
+					email: "budi@example.com",
+					amount: 250000,
+					status: input.status,
+					provider: input.provider,
+					providerOrderId: input.providerOrderId,
+					providerOrderCode: input.providerOrderCode,
+					providerReferenceId: input.providerReferenceId,
+					providerPaymentMethod: input.providerPaymentMethod,
+					providerCheckoutUrl: input.providerCheckoutUrl,
+				}),
+			} as any,
+			enrollmentService: {
+				ensurePendingEnrollmentForPayment: async () => ({ id: "enroll_1", pesertaId: "peserta_1" }),
+				markPaid: async (enrollmentId: string) => {
+					calls.push(`mark-paid:${enrollmentId}`);
+					return { id: enrollmentId };
+				},
+			} as any,
+			scalev: {
+				getOrder: async () => ({ data: { id: 42, order_id: "ORD-42", payment_method: "qris", payment_status: "paid" } }),
+				checkOrderPayment: async () => ({ ok: true }),
+				normalizePaymentSession: () => ({
+					provider: "scalev",
+					providerOrderId: 42,
+					providerOrderCode: "ORD-42",
+					providerReferenceId: "REF-42",
+					channel: "qris",
+					subChannel: null,
+					status: "paid",
+					checkoutUrl: "https://pay.example/checkout",
+					qrString: null,
+					vaNumber: null,
+					expiresAt: null,
+					rawPayload: { ok: true },
+				}),
+			} as any,
+		});
+
+		await service.refreshScalevPaymentStatus("session_1", "token_1", true);
+
+		expect(calls).toEqual(["mark-paid:enroll_1"]);
 	});
 });
