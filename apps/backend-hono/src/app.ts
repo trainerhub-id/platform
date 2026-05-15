@@ -2,7 +2,6 @@ import { OpenAPIHono } from "@hono/zod-openapi";
 import { cors } from "hono/cors";
 import { auth } from "./auth/better-auth";
 import { sessionMiddleware, type AuthVariables } from "./auth/auth.middleware";
-import { createAiCompatRoutes } from "./ai-compat/ai-compat.routes";
 import { createBatchRoutes } from "./batch/batch.routes";
 import { createCertificateRoutes } from "./certificates/certificate.routes";
 import { handleAppError, errorResponse } from "./common/errors";
@@ -71,7 +70,6 @@ export function createApp(options: CreateAppOptions = {}) {
   app.route("/api", createInterviewRoutes());
   app.route("/api", createInterviewReadRoutes());
   app.route("/api", createGenerationRoutes());
-  app.route("/api", createAiCompatRoutes());
   app.route("/api", createSkkniRoutes());
   app.route("/api", createTodosRoutes());
   app.route("/api", createTugasRoutes());
@@ -85,7 +83,6 @@ export function createApp(options: CreateAppOptions = {}) {
   app.route("/", createInterviewRoutes());
   app.route("/", createInterviewReadRoutes());
   app.route("/", createGenerationRoutes());
-  app.route("/", createAiCompatRoutes());
   app.route("/", createSkkniRoutes());
   app.route("/", createTodosRoutes());
   app.route("/", createTugasRoutes());

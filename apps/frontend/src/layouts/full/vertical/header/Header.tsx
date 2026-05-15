@@ -356,10 +356,10 @@ const Header = ({ layoutType }: HeaderPropsType) => {
                     {pathname === "/user/ai-generator" && (
                       <div>
                         <h2 className="text-xl font-semibold text-ld mb-0.5">
-                          AI Dokumen Generator
+                          AI Rebuild
                         </h2>
                         <p className="text-bodytext text-xs">
-                          Buat dokumen pendukung materi dengan bantuan AI
+                          Modul AI sedang dibangun ulang
                         </p>
                       </div>
                     )}
@@ -386,66 +386,21 @@ const Header = ({ layoutType }: HeaderPropsType) => {
                     {pathname === "/user/ai-hub" && (
                       <div>
                         <h2 className="text-xl font-semibold text-ld mb-0.5">
-                          AI Mentor
+                          AI Rebuild
                         </h2>
                         <p className="text-bodytext text-xs">
-                          Pilih AI Assistant sesuai kebutuhan Anda
+                          Modul AI sedang dibangun ulang
                         </p>
                       </div>
                     )}
                     {pathname.startsWith("/user/ai-hub/") && (() => {
-                      // Extract category from path: /user/ai-hub/:category
-                      const pathParts = pathname.split('/');
-                      const category = pathParts[3]; // index 3 = category
-                      
-                      const categoryConfig: Record<string, { title: string; description: string; color: string }> = {
-                        trainer: {
-                          title: "AI for Trainer",
-                          description: "AI Assistant untuk membantu pembuatan materi training",
-                          color: "#4F75FF"
-                        },
-                        master: {
-                          title: "AI for Master",
-                          description: "AI Assistant untuk analisis dan coaching trainer",
-                          color: "#AA8D55"
-                        },
-                        branding: {
-                          title: "AI for Branding",
-                          description: "AI Assistant untuk content creation dan branding",
-                          color: "#10B981"
-                        }
-                      };
-                      
-                      const config = category ? categoryConfig[category] : null;
-                      
-                      if (config) {
-                        return (
-                          <div className="flex items-center gap-4">
-                            <a 
-                              href="/user/ai-hub"
-                              className="h-9 w-9 flex items-center justify-center rounded-lg hover:bg-gray-100 transition-colors"
-                            >
-                              <Icon icon="solar:arrow-left-outline" height={20} />
-                            </a>
-                            <div>
-                              <h2 className="text-xl font-semibold text-ld mb-0.5">
-                                {config.title}
-                              </h2>
-                              <p className="text-bodytext text-xs">
-                                {config.description}
-                              </p>
-                            </div>
-                          </div>
-                        );
-                      }
-                      
                       return (
                         <div>
                           <h2 className="text-xl font-semibold text-ld mb-0.5">
-                            AI Assistant
+                            AI Rebuild
                           </h2>
                           <p className="text-bodytext text-xs">
-                            Chat dengan AI untuk generate dokumen training
+                            Modul AI sedang dibangun ulang
                           </p>
                         </div>
                       );

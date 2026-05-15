@@ -77,7 +77,7 @@ export const PesertaMenuItems: MenuItem[] = [
           //   url: "/user/documents",
           // },
           {
-            name: "AI Mentor",
+            name: "AI Rebuild",
             icon: "solar:magic-stick-3-line-duotone",
             id: nextMenuId(),
             url: "/user/ai-hub",
@@ -173,7 +173,7 @@ export const TrainerMenuItems: MenuItem[] = [
             url: "/trainer/documents",
           },
           {
-            name: "AI Mentor",
+            name: "AI Rebuild",
             icon: "solar:magic-stick-3-line-duotone",
             id: nextMenuId(),
             url: "/user/ai-hub",
