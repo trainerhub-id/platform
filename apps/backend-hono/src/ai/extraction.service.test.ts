@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { normalizeExtractionObject } from "./extraction.service";
+import { extractExplicitMessagePatches, normalizeExtractionObject } from "./extraction.service";
 
 describe("normalizeExtractionObject", () => {
 	it("accepts schema-native extraction output", () => {
@@ -69,5 +69,24 @@ describe("normalizeExtractionObject", () => {
 			"training_details.duration_jp",
 		]);
 		expect(result.patches.every((patch) => patch.flow === "trainer")).toBe(true);
+	});
+
+	it("extracts explicit trainer name and expertise from Indonesian chat text", () => {
+		const result = extractExplicitMessagePatches("Nama pelatih Ujang. Bidang keahlian utama Digital Marketing.", "trainer");
+
+		expect(result).toMatchObject([
+			{
+				flow: "trainer",
+				phaseKey: "brainstorming",
+				fieldKey: "trainer_name",
+				value: "Ujang",
+			},
+			{
+				flow: "trainer",
+				phaseKey: "brainstorming",
+				fieldKey: "expertise",
+				value: "Digital Marketing",
+			},
+		]);
 	});
 });
