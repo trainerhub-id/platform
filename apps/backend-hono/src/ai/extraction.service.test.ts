@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { normalizeExtractionObject } from "./extraction.service";
+import { extractorPrompt } from "./prompts/extractor.prompt";
 
 describe("normalizeExtractionObject", () => {
 	it("accepts schema-native extraction output", () => {
@@ -71,4 +72,16 @@ describe("normalizeExtractionObject", () => {
 		expect(result.patches.every((patch) => patch.flow === "trainer")).toBe(true);
 	});
 
+	it("prompt names only core Master fields as explicit extraction targets", () => {
+		expect(extractorPrompt).toContain("Master flow profile core fields");
+		expect(extractorPrompt).toContain("trainer_name");
+		expect(extractorPrompt).toContain("organization_name");
+		expect(extractorPrompt).toContain("organization_focus");
+		expect(extractorPrompt).toContain("target_participants");
+		expect(extractorPrompt).toContain("industry_problem");
+		expect(extractorPrompt).toContain("program_goal");
+		expect(extractorPrompt).toContain("training_location");
+		expect(extractorPrompt).toContain("training_duration");
+		expect(extractorPrompt).toContain("Do not extract questions like aku belum mengerti");
+	});
 });
