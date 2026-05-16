@@ -417,7 +417,7 @@ export default function AiWorkspace({ flow }: AiWorkspaceProps) {
                   disabled={isSending}
                   placeholder={copy.emptyPrompt}
                   aria-label="Tulis pesan"
-                  className="max-h-[112px] min-h-10 resize-none border-0 bg-transparent px-1 py-1.5 text-sm leading-5 shadow-none focus-visible:ring-0"
+                  className="max-h-[112px] min-h-[40px] resize-none border-0 bg-transparent px-1 pt-2 pb-1.5 text-sm leading-5 shadow-none focus-visible:ring-0"
                 />
                 <Button
                   aria-label="Kirim pesan"
@@ -705,7 +705,7 @@ function MessageBubble({ message }: { message: UiMessage }) {
         className={cn(
           'max-w-[min(72ch,86vw)]',
           isUser
-            ? 'rounded-lg bg-primary px-4 py-3 text-sm font-medium text-white shadow-sm dark:bg-primary/90'
+            ? 'rounded-lg bg-primary px-4 py-3 text-sm font-medium !text-white shadow-sm dark:bg-primary/90 dark:!text-white'
             : 'rounded-none bg-transparent px-0 py-0 text-foreground shadow-none',
         )}
       >
