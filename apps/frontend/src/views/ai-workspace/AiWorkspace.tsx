@@ -404,7 +404,7 @@ export default function AiWorkspace({ flow }: AiWorkspaceProps) {
             </div>
 
             <div className="shrink-0 border-t border-border bg-white px-3 py-2 dark:bg-dark">
-              <div className="mx-auto flex max-w-3xl items-center gap-2 rounded-lg border border-border bg-white px-2 py-1.5 shadow-sm dark:bg-dark">
+              <div className="mx-auto flex max-w-3xl items-center gap-2 rounded-lg border border-border bg-white px-3 py-2 shadow-sm dark:bg-dark">
                 <Textarea
                   value={input}
                   onChange={(event) => setInput(event.target.value)}
@@ -417,15 +417,15 @@ export default function AiWorkspace({ flow }: AiWorkspaceProps) {
                   disabled={isSending}
                   placeholder={copy.emptyPrompt}
                   aria-label="Tulis pesan"
-                  className="max-h-[112px] min-h-11 resize-none border-0 bg-transparent px-2 py-2 text-sm leading-5 shadow-none focus-visible:ring-0"
+                  className="max-h-[112px] min-h-10 resize-none border-0 bg-transparent px-1 py-1.5 text-sm leading-5 shadow-none focus-visible:ring-0"
                 />
                 <Button
                   aria-label="Kirim pesan"
-                  className="h-9 w-9 shrink-0 rounded-lg p-0"
+                  className="h-8 w-8 shrink-0 rounded-md p-0"
                   onClick={() => void handleSend()}
                   disabled={!input.trim() || isSending}
                 >
-                  <Icon icon="solar:plain-bold" height={18} />
+                  <Icon icon="solar:plain-bold" height={16} />
                 </Button>
               </div>
             </div>
