@@ -802,3 +802,22 @@ body {
 .aui-thread-viewport-root:hover {
   scrollbar-color: #d1d5db transparent;
 }
+
+/* Force white text inside user chat bubbles */
+.is-user .bg-primary,
+.is-user .bg-primary *,
+.is-user .bg-primary p,
+.is-user .bg-primary span,
+.is-user .bg-primary div,
+.is-user .bg-primary li,
+.is-user .bg-primary strong,
+.is-user .bg-primary em,
+.is-user .bg-primary a,
+.is-user .bg-primary h1,
+.is-user .bg-primary h2,
+.is-user .bg-primary h3,
+.is-user .bg-primary h4,
+.is-user .bg-primary h5,
+.is-user .bg-primary h6 {
+  color: #ffffff !important;
+}
