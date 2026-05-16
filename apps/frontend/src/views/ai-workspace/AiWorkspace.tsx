@@ -404,7 +404,7 @@ export default function AiWorkspace({ flow }: AiWorkspaceProps) {
             </div>
 
             <div className="shrink-0 border-t border-border bg-white px-3 py-2 dark:bg-dark">
-              <div className="mx-auto flex max-w-3xl items-end gap-2 rounded-lg border border-border bg-white px-2 py-1.5 shadow-sm dark:bg-dark">
+              <div className="mx-auto flex max-w-3xl items-center gap-2 rounded-lg border border-border bg-white px-2 py-1.5 shadow-sm dark:bg-dark">
                 <Textarea
                   value={input}
                   onChange={(event) => setInput(event.target.value)}
@@ -421,7 +421,7 @@ export default function AiWorkspace({ flow }: AiWorkspaceProps) {
                 />
                 <Button
                   aria-label="Kirim pesan"
-                  className="mb-0.5 h-9 w-9 shrink-0 rounded-lg p-0"
+                  className="h-9 w-9 shrink-0 rounded-lg p-0"
                   onClick={() => void handleSend()}
                   disabled={!input.trim() || isSending}
                 >
@@ -705,8 +705,8 @@ function MessageBubble({ message }: { message: UiMessage }) {
         className={cn(
           'max-w-[min(72ch,86vw)]',
           isUser
-            ? 'bg-primary !text-white shadow-sm dark:bg-primary dark:!text-white'
-            : 'rounded-none bg-transparent px-0 py-0 text-ld shadow-none',
+            ? 'rounded-lg bg-primary px-4 py-3 text-sm font-medium text-white shadow-sm dark:bg-primary/90'
+            : 'rounded-none bg-transparent px-0 py-0 text-foreground shadow-none',
         )}
       >
         <MessageResponse>{message.content || '...'}</MessageResponse>
