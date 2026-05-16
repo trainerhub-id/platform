@@ -705,9 +705,10 @@ function MessageBubble({ message }: { message: UiMessage }) {
         className={cn(
           'max-w-[min(72ch,86vw)]',
           isUser
-            ? 'rounded-lg bg-primary px-4 py-3 text-sm font-medium !text-white shadow-sm dark:bg-primary/90 dark:!text-white'
+            ? 'rounded-lg bg-primary px-4 py-3 text-sm font-medium shadow-sm dark:bg-primary/90'
             : 'rounded-none bg-transparent px-0 py-0 text-foreground shadow-none',
         )}
+        style={isUser ? { color: '#ffffff' } : undefined}
       >
         <MessageResponse>{message.content || '...'}</MessageResponse>
       </MessageContent>
