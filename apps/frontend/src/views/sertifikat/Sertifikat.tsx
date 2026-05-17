@@ -1,33 +1,29 @@
-import { Icon } from "@iconify/react";
-import { useState } from "react";
-import CardBox from "src/components/shared/CardBox";
-import CertificateDetailCard from "src/components/shared/CertificateDetailCard";
-import { Button } from "src/components/ui/button";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "src/components/ui/select";
-import { useSertifikat } from "./hooks/useSertifikat";
-import { Loading } from 'src/components/ui/loading';
+import { Icon } from '@iconify/react'
+import { useState } from 'react'
+import CardBox from 'src/components/shared/CardBox'
+import CertificateDetailCard from 'src/components/shared/CertificateDetailCard'
+import { Button } from 'src/components/ui/button'
+import { Loading } from 'src/components/ui/loading'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from 'src/components/ui/select'
+import { useSertifikat } from './hooks/useSertifikat'
 
 const Sertifikat = () => {
-  const { certificates, eligibleCourses, loading, generating, generateCertificate } = useSertifikat();
-  const [selectedCourseId, setSelectedCourseId] = useState<string>('');
+  const { certificates, eligibleCourses, loading, generating, generateCertificate } =
+    useSertifikat()
+  const [selectedCourseId, setSelectedCourseId] = useState<string>('')
 
   if (loading) {
-    return <Loading fullPage />;
+    return <Loading fullPage />
   }
 
-  const bnspCerts = certificates.filter(c => c.certType === 'bnsp');
-  const trainerHubCerts = certificates.filter(c => c.certType === 'trainerhub');
-  
-  console.log('All certificates:', certificates);
-  console.log('BNSP certs:', bnspCerts);
-  console.log('TrainerHub certs:', trainerHubCerts);
-  
-  // Debug: Check if any cert is missing title
-  certificates.forEach((cert, idx) => {
-    if (!cert.title || cert.title.trim() === '') {
-      console.error(`⚠️ Certificate #${idx} missing title:`, cert);
-    }
-  });
+  const bnspCerts = certificates.filter((c) => c.certType === 'bnsp')
+  const trainerHubCerts = certificates.filter((c) => c.certType === 'trainerhub')
 
   return (
     <div className="space-y-6">
@@ -41,10 +37,14 @@ const Sertifikat = () => {
               </div>
               <div>
                 <p className="text-xs text-bodytext mb-0.5">Status Sertifikasi BNSP</p>
-                <h4 className="font-bold text-dark">{bnspCerts.length > 0 ? 'Terbit' : 'Belum Terbit'}</h4>
+                <h4 className="font-bold text-dark">
+                  {bnspCerts.length > 0 ? 'Terbit' : 'Belum Terbit'}
+                </h4>
               </div>
             </div>
-            <div className={`w-3 h-3 rounded-full ${bnspCerts.length > 0 ? 'bg-success' : 'bg-bodytext/30'}`}></div>
+            <div
+              className={`w-3 h-3 rounded-full ${bnspCerts.length > 0 ? 'bg-success' : 'bg-bodytext/30'}`}
+            ></div>
           </CardBox>
         </div>
         <div className="col-span-12 md:col-span-6">
@@ -58,7 +58,9 @@ const Sertifikat = () => {
                 <h4 className="font-bold text-dark">{trainerHubCerts.length} Sertifikat</h4>
               </div>
             </div>
-            <div className={`w-3 h-3 rounded-full ${trainerHubCerts.length > 0 ? 'bg-success' : 'bg-bodytext/30'}`}></div>
+            <div
+              className={`w-3 h-3 rounded-full ${trainerHubCerts.length > 0 ? 'bg-success' : 'bg-bodytext/30'}`}
+            ></div>
           </CardBox>
         </div>
       </div>
@@ -66,9 +68,9 @@ const Sertifikat = () => {
       {/* TrainerHub Certificates */}
       <div className="space-y-4">
         <h3 className="text-lg font-bold text-dark">Sertifikat Kelas</h3>
-        
+
         {/* Show Generate Certificate Option if there are eligible courses */}
-        {eligibleCourses.some(c => !c.hasCertificate) && (
+        {eligibleCourses.some((c) => !c.hasCertificate) && (
           <CardBox className="p-5 bg-blue-50 border border-blue-200">
             <div className="flex items-start gap-4">
               <div className="w-10 h-10 rounded-lg bg-blue-100 flex items-center justify-center shrink-0">
@@ -81,7 +83,7 @@ const Sertifikat = () => {
                     Kamu telah menyelesaikan kelas. Pilih kelas untuk membuat sertifikat:
                   </p>
                 </div>
-                
+
                 <div className="flex flex-col sm:flex-row gap-3">
                   <Select value={selectedCourseId} onValueChange={setSelectedCourseId}>
                     <SelectTrigger className="w-full sm:w-64">
@@ -89,7 +91,7 @@ const Sertifikat = () => {
                     </SelectTrigger>
                     <SelectContent>
                       {eligibleCourses
-                        .filter(c => !c.hasCertificate)
+                        .filter((c) => !c.hasCertificate)
                         .map((course) => (
                           <SelectItem key={course.courseId} value={course.courseId}>
                             {course.courseName}
@@ -97,7 +99,7 @@ const Sertifikat = () => {
                         ))}
                     </SelectContent>
                   </Select>
-                  
+
                   <Button
                     onClick={() => selectedCourseId && generateCertificate(selectedCourseId)}
                     disabled={!selectedCourseId || generating}
@@ -105,7 +107,11 @@ const Sertifikat = () => {
                   >
                     {generating ? (
                       <>
-                        <Icon icon="solar:refresh-linear" className="mr-2 animate-spin" height={18} />
+                        <Icon
+                          icon="solar:refresh-linear"
+                          className="mr-2 animate-spin"
+                          height={18}
+                        />
                         Membuat Sertifikat...
                       </>
                     ) : (
@@ -130,8 +136,8 @@ const Sertifikat = () => {
               status="Terbit"
               isReady={true}
               details={[
-                { label: "Nomor Sertifikat", value: cert.certificateNumber },
-                { label: "Tanggal Selesai", value: cert.date },
+                { label: 'Nomor Sertifikat', value: cert.certificateNumber },
+                { label: 'Tanggal Selesai', value: cert.date },
               ]}
               downloadUrl={cert.file}
               certificateUrl={cert.certificateUrl}
@@ -160,9 +166,9 @@ const Sertifikat = () => {
               isReady={true}
               isOfficial={true}
               details={[
-                { label: "Nomor Sertifikat", value: cert.certificateNumber || '-' },
-                { label: "LSP Penerbit", value: cert.issuer || 'BNSP' },
-                { label: "Tanggal Terbit", value: cert.date },
+                { label: 'Nomor Sertifikat', value: cert.certificateNumber || '-' },
+                { label: 'LSP Penerbit', value: cert.issuer || 'BNSP' },
+                { label: 'Tanggal Terbit', value: cert.date },
               ]}
               downloadUrl={cert.file}
               certificateUrl={cert.certificateUrl}
@@ -179,7 +185,7 @@ const Sertifikat = () => {
         )}
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default Sertifikat;
+export default Sertifikat

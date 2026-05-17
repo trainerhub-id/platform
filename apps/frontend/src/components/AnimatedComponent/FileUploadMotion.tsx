@@ -1,46 +1,46 @@
-import { cn } from 'src/lib/utils';
-import React, { useRef, useState } from 'react';
-import { motion } from 'motion/react';
-import { IconUpload } from '@tabler/icons-react';
-import { useDropzone } from 'react-dropzone';
+import { IconUpload } from '@tabler/icons-react'
+import { motion } from 'motion/react'
+import React, { useRef, useState } from 'react'
+import { useDropzone } from 'react-dropzone'
+import { cn } from 'src/lib/utils'
 
 const mainVariant = {
   initial: { x: 0, y: 0 },
   animate: { x: 20, y: -20, opacity: 0.9 },
-};
+}
 
 const secondaryVariant = {
   initial: { opacity: 0 },
   animate: { opacity: 1 },
-};
+}
 
 interface FileUploadProps {
-  onChange?: (files: File[]) => void;
+  onChange?: (files: File[]) => void
 }
 
 export const FileUploadStruc: React.FC<FileUploadProps> = ({ onChange }) => {
-  const [files, setFiles] = useState<File[]>([]);
-  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [files, setFiles] = useState<File[]>([])
+  const fileInputRef = useRef<HTMLInputElement>(null)
 
   const handleFileChange = (newFiles: File[]) => {
-    setFiles((prev) => [...prev, ...newFiles]);
-    onChange?.(newFiles);
-  };
+    setFiles((prev) => [...prev, ...newFiles])
+    onChange?.(newFiles)
+  }
 
   const handleClick = () => {
-    fileInputRef.current?.click();
-  };
+    fileInputRef.current?.click()
+  }
 
   const { getRootProps, isDragActive } = useDropzone({
     multiple: false,
     noClick: true,
     onDrop: handleFileChange,
     onDropRejected: console.error,
-  });
+  })
 
-  const formatFileSize = (size: number) => (size / (1024 * 1024)).toFixed(2);
+  const formatFileSize = (size: number) => (size / (1024 * 1024)).toFixed(2)
 
-  const formatDate = (timestamp: number) => new Date(timestamp).toLocaleDateString();
+  const formatDate = (timestamp: number) => new Date(timestamp).toLocaleDateString()
 
   return (
     <div className="w-full" {...getRootProps()}>
@@ -81,15 +81,15 @@ export const FileUploadStruc: React.FC<FileUploadProps> = ({ onChange }) => {
         </div>
       </motion.div>
     </div>
-  );
-};
+  )
+}
 
 // File Item Component
 interface FileItemProps {
-  file: File;
-  formatFileSize: (size: number) => string;
-  formatDate: (timestamp: number) => string;
-  isFirst: boolean;
+  file: File
+  formatFileSize: (size: number) => string
+  formatDate: (timestamp: number) => string
+  isFirst: boolean
 }
 const FileItem: React.FC<FileItemProps> = ({ file, formatFileSize, formatDate, isFirst }) => (
   <motion.div
@@ -130,11 +130,11 @@ const FileItem: React.FC<FileItemProps> = ({ file, formatFileSize, formatDate, i
       </motion.p>
     </div>
   </motion.div>
-);
+)
 
 // Empty State Component
 interface EmptyStateProps {
-  isDragActive: boolean;
+  isDragActive: boolean
 }
 const EmptyState: React.FC<EmptyStateProps> = ({ isDragActive }) => (
   <>
@@ -168,19 +168,18 @@ const EmptyState: React.FC<EmptyStateProps> = ({ isDragActive }) => (
       className="absolute opacity-0 border border-dashed border-primary inset-0 z-30 bg-transparent flex items-center justify-center h-28 mt-4 w-full max-w-[8rem] mx-auto rounded-md"
     />
   </>
-);
+)
 
 export default function FileUploadMotion() {
-  const [file, setFile] = useState<File[]>([]);
+  const [file, setFile] = useState<File[]>([])
   const handleFileUpload = (files: File[]) => {
-    setFile(files);
-    console.log(file);
-  };
+    setFile(files)
+  }
   return (
     <>
       <div className="w-full mx-auto min-h-72 border border-dashed bg-white dark:bg-dark border-ld rounded-lg">
         <FileUploadStruc onChange={handleFileUpload} />
       </div>
     </>
-  );
+  )
 }

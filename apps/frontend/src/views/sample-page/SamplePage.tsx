@@ -1,7 +1,5 @@
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
-import React from 'react';
-import CardBox from 'src/components/shared/CardBox';
+import React from 'react'
+import CardBox from 'src/components/shared/CardBox'
 
 const SamplePage = () => {
   return (
@@ -12,7 +10,7 @@ const SamplePage = () => {
         been the industry's standard dummy text ever since the 1500s
       </p>
     </CardBox>
-  );
-};
+  )
+}
 
-export default SamplePage;
+export default SamplePage
