@@ -344,4 +344,57 @@ describe("InterviewEngine", () => {
     expect(documents.updated.masterJson.brainstorming_master.program_name).toBe("Pelatihan Digital Marketing untuk Owner UMKM");
     expect(documents.updated.masterJson.brainstorming_master.organization_city).toBe("Bekasi");
   });
+
+  it("passes Trainer unit search confirmation to the response service", async () => {
+    const fieldStates = new FakeFieldStateRepository();
+    fieldStates.states = [
+      { flow: "trainer", phaseKey: "brainstorming", fieldKey: "trainer_name", status: "captured", source: "user_explicit", value: "Ujang Abdus Salam", pendingSuggestion: null },
+      { flow: "trainer", phaseKey: "brainstorming", fieldKey: "institution", status: "captured", source: "user_explicit", value: "Mandiri", pendingSuggestion: null },
+      { flow: "trainer", phaseKey: "brainstorming", fieldKey: "expertise", status: "captured", source: "user_explicit", value: "Marketing", pendingSuggestion: null },
+      { flow: "trainer", phaseKey: "brainstorming", fieldKey: "audience", status: "captured", source: "user_explicit", value: "Mahasiswa", pendingSuggestion: null },
+      { flow: "trainer", phaseKey: "brainstorming", fieldKey: "outcome", status: "captured", source: "user_explicit", value: "Membuat strategi pemasaran digital", pendingSuggestion: null },
+    ];
+    const conversations = new FakeConversationRepository();
+    const documents = new FakeDocumentRepository();
+    documents.doc = {
+      id: "doc_1",
+      ownerUserId: "user_1",
+      flow: "trainer",
+      title: "Trainer Doc",
+      masterJson: {
+        schema_key: "hono_trainer_alpha_v1",
+        brainstorming: {
+          trainer_name: "Ujang Abdus Salam",
+          institution: "Mandiri",
+          expertise: "Marketing",
+          audience: "Mahasiswa",
+          outcome: "Membuat strategi pemasaran digital",
+        },
+      },
+    };
+    let responseInput: any;
+    const engine = new InterviewEngine({
+      documents: documents as any,
+      fieldStates: fieldStates as any,
+      conversations: conversations as any,
+      extraction: {
+        async extract() {
+          return { patches: [], pendingSuggestions: [], confirmedPendingFields: [], generateConfirmed: false };
+        },
+      },
+      response: {
+        async stream(input) {
+          responseInput = input;
+          return new Response("1. M.70MKT00.001.1 - Mengelola Kampanye Digital");
+        },
+      },
+    });
+
+    const response = await engine.handleMessage({ documentId: "doc_1", userId: "user_1", message: "yaa" });
+
+    expect(responseInput.phase).toBe("unit_selection");
+    expect(responseInput.masterJson.brainstorming.expertise).toBe("Marketing");
+    expect(await response.text()).toContain("M.70MKT00.001.1");
+    expect(conversations.messages.map((message) => message.role)).toEqual(["user", "assistant"]);
+  });
 });

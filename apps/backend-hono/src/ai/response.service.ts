@@ -1,4 +1,6 @@
-import { streamText } from "ai";
+import { stepCountIs, streamText, tool } from "ai";
+import { z } from "zod";
+import { SkkniService } from "../skkni/skkni.service";
 import { ModelService } from "./model.service";
 import { interviewerPrompt } from "./prompts/interviewer.prompt";
 
@@ -10,6 +12,7 @@ export type ResponseInput = {
   capturedFields?: Array<{ phaseKey: string; fieldKey: string; value: unknown }>;
   missingFields?: string[];
   flow?: "master" | "trainer";
+  masterJson?: unknown;
 };
 
 export interface ResponseServiceLike {
@@ -62,7 +65,7 @@ function buildResponsePrompt(input: ResponseInput): string {
   if (missing.length > 0) {
     lines.push("Informasi yang masih dibutuhkan:");
     for (const key of missing) {
-      const fieldKey = key.includes(".") ? key.split(".")[1] : key;
+      const fieldKey = key.includes(".") ? (key.split(".")[1] ?? key) : key;
       const label = fieldLabels[fieldKey] ?? key;
       lines.push(`- ${label}`);
     }
@@ -80,15 +83,42 @@ function buildResponsePrompt(input: ResponseInput): string {
 }
 
 export class ResponseService implements ResponseServiceLike {
-  constructor(private readonly modelService = new ModelService()) {}
+  constructor(
+    private readonly modelService: Pick<ModelService, "getLanguageModel"> = new ModelService(),
+    private readonly skkni: Pick<SkkniService, "searchMaster"> = new SkkniService(),
+  ) {}
 
   async stream(input: ResponseInput): Promise<Response> {
+    const shouldSearchSkkni = input.phase === "unit_selection" && isSearchConfirmation(input.message);
     const result = streamText({
       model: this.modelService.getLanguageModel(),
       system: interviewerPrompt,
-      prompt: buildResponsePrompt(input),
+      prompt: shouldSearchSkkni
+        ? `${buildResponsePrompt(input)}\n\nUser sudah mengonfirmasi pencarian unit SKKNI. Panggil tool search_skkni_units, lalu tampilkan hasil sebagai daftar bernomor berisi kode unit, judul, dan skor singkat. Jika tidak ada hasil, minta kata kunci yang lebih spesifik.`
+        : buildResponsePrompt(input),
+      ...(shouldSearchSkkni
+        ? {
+            tools: {
+              search_skkni_units: tool({
+                description: "Mencari kandidat unit SKKNI yang relevan berdasarkan konteks program pelatihan yang sudah dikumpulkan.",
+                inputSchema: z.object({}),
+                execute: async () => ({
+                  candidates: await this.skkni.searchMaster(input.masterJson),
+                }),
+              }),
+            },
+            toolChoice: { type: "tool" as const, toolName: "search_skkni_units" },
+            stopWhen: stepCountIs(2),
+          }
+        : {}),
     });
 
     return result.toTextStreamResponse();
   }
+}
+
+function isSearchConfirmation(message: string): boolean {
+  return /^(?:ya+a*|iya+h*|yes+|y+|ok+e*|oke+y*|setuju|lanjut|lanjutkan|siap|gas|boleh)(?:\s+(?:ya+a*|iya+h*|ok+e*|oke+y*|lanjut|lanjutkan|dong|aja|saja|nih))?$/i.test(
+    message.trim(),
+  );
 }

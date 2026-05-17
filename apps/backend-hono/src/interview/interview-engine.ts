@@ -156,6 +156,7 @@ export class InterviewEngine {
         capturedFields,
         missingFields: readiness.missing,
         flow,
+        masterJson,
       };
     });
 

@@ -709,7 +709,7 @@ function MessageBubble({ message }: { message: UiMessage }) {
             : 'rounded-none bg-transparent px-0 py-0 text-foreground shadow-none',
         )}
       >
-        <MessageResponse>{message.content || '...'}</MessageResponse>
+        <MessageResponse whiteText={isUser}>{message.content || '...'}</MessageResponse>
       </MessageContent>
     </Message>
   )

@@ -37,10 +37,22 @@ export const MessageContent = ({ children, className, ...props }: MessageContent
   </div>
 );
 
-export type MessageResponseProps = HTMLAttributes<HTMLDivElement>;
+export type MessageResponseProps = HTMLAttributes<HTMLDivElement> & {
+  whiteText?: boolean;
+};
+
+const whiteComponents = {
+  p: (props: Record<string, unknown>) => <p {...props} style={{ color: "#ffffff" }} />,
+  li: (props: Record<string, unknown>) => <li {...props} style={{ color: "#ffffff" }} />,
+  strong: (props: Record<string, unknown>) => <strong {...props} style={{ color: "#ffffff" }} />,
+  em: (props: Record<string, unknown>) => <em {...props} style={{ color: "#ffffff" }} />,
+  a: (props: Record<string, unknown>) => <a {...props} style={{ color: "#ffffff" }} />,
+  span: (props: Record<string, unknown>) => <span {...props} style={{ color: "#ffffff" }} />,
+  div: (props: Record<string, unknown>) => <div {...props} style={{ color: "#ffffff" }} />,
+};
 
 export const MessageResponse = memo(
-  ({ className, children, ...props }: MessageResponseProps) => (
+  ({ className, children, whiteText, ...props }: MessageResponseProps) => (
     <div
       className={cn(
         "min-w-0 break-words text-[14px] leading-relaxed [&_ol]:my-1.5 [&_ol]:list-decimal [&_ol]:pl-5 [&_p]:mb-1 [&_p:last-child]:mb-0 [&_strong]:font-semibold [&_ul]:my-1.5 [&_ul]:list-disc [&_ul]:pl-5",
@@ -49,7 +61,7 @@ export const MessageResponse = memo(
       {...props}
     >
       {typeof children === "string" ? (
-        <Streamdown mode="streaming" parseIncompleteMarkdown>
+        <Streamdown mode="streaming" parseIncompleteMarkdown components={whiteText ? whiteComponents : undefined}>
           {children}
         </Streamdown>
       ) : (
@@ -58,7 +70,7 @@ export const MessageResponse = memo(
     </div>
   ),
   (prevProps, nextProps) =>
-    prevProps.children === nextProps.children && prevProps.className === nextProps.className,
+    prevProps.children === nextProps.children && prevProps.className === nextProps.className && prevProps.whiteText === nextProps.whiteText,
 );
 
 MessageResponse.displayName = "MessageResponse";
