@@ -90,18 +90,26 @@ function buildResponsePrompt(input: ResponseInput): string {
 export class ResponseService implements ResponseServiceLike {
   constructor(
     private readonly modelService: Pick<ModelService, 'getLanguageModel'> = new ModelService(),
-    private readonly skkni: Pick<SkkniService, 'searchMaster'> = new SkkniService(),
+    private readonly skkni: Pick<SkkniService, 'searchMaster' | 'getUnitDetail' | 'getCompetencyMap'> = new SkkniService(),
   ) {}
 
   async stream(input: ResponseInput): Promise<Response> {
     const shouldSearchSkkni =
       input.phase === 'unit_selection' && isSearchConfirmation(input.message)
+
+    // Fetch unit detail when entering competency_map phase and user confirms a unit code
+    const selectedUnitCode = getSelectedUnitCode(input)
+    const shouldFetchUnit =
+      input.phase === 'competency_map' && selectedUnitCode !== null && isConfirmation(input.message)
+
     const result = streamText({
       model: this.modelService.getLanguageModel(),
       system: interviewerPrompt,
       prompt: shouldSearchSkkni
         ? `${buildResponsePrompt(input)}\n\nUser sudah mengonfirmasi pencarian unit SKKNI. Panggil tool search_skkni_units, lalu tampilkan hasil sebagai daftar bernomor berisi kode unit, judul, dan skor singkat. Jika tidak ada hasil, minta kata kunci yang lebih spesifik.`
-        : buildResponsePrompt(input),
+        : shouldFetchUnit
+          ? `${buildResponsePrompt(input)}\n\nUser mengonfirmasi unit ${selectedUnitCode}. Panggil tool fetch_unit_detail sekarang untuk mengambil detail dan peta kompetensi unit tersebut, lalu tampilkan ringkasan elemen kompetensi dan KUK-nya.`
+          : buildResponsePrompt(input),
       ...(shouldSearchSkkni
         ? {
             tools: {
@@ -120,7 +128,28 @@ export class ResponseService implements ResponseServiceLike {
               deepseek: { thinking: { type: 'disabled' } },
             },
           }
-        : {}),
+        : shouldFetchUnit
+          ? {
+              tools: {
+                fetch_unit_detail: tool({
+                  description: 'Mengambil detail unit SKKNI dan peta kompetensinya dari WSP.',
+                  inputSchema: z.object({}),
+                  execute: async () => {
+                    const [detail, map] = await Promise.all([
+                      this.skkni.getUnitDetail(selectedUnitCode),
+                      this.skkni.getCompetencyMap(selectedUnitCode).catch(() => null),
+                    ])
+                    return { unitCode: selectedUnitCode, detail, map }
+                  },
+                }),
+              },
+              toolChoice: 'auto' as const,
+              stopWhen: stepCountIs(2),
+              providerOptions: {
+                deepseek: { thinking: { type: 'disabled' } },
+              },
+            }
+          : {}),
     })
 
     return result.toTextStreamResponse()
@@ -131,4 +160,18 @@ function isSearchConfirmation(message: string): boolean {
   return /^(?:ya+a*|iya+h*|yes+|y+|ok+e*|oke+y*|setuju|lanjut|lanjutkan|siap|gas|boleh)(?:\s+(?:ya+a*|iya+h*|ok+e*|oke+y*|lanjut|lanjutkan|dong|aja|saja|nih))?$/i.test(
     message.trim(),
   )
+}
+
+function isConfirmation(message: string): boolean {
+  return /^(?:ya+a*|iya+h*|yes+|y+|ok+e*|oke+y*|setuju|lanjut|lanjutkan|siap|gas|boleh|pakai|pake|gunakan|konfirmasi)(?:\s+\S*)?$/i.test(
+    message.trim(),
+  )
+}
+
+function getSelectedUnitCode(input: ResponseInput): string | null {
+  if (!input.capturedFields) return null
+  const field = input.capturedFields.find(
+    (f) => f.phaseKey === 'unit_selection' && f.fieldKey === 'selected_unit_code',
+  )
+  return typeof field?.value === 'string' ? field.value : null
 }
