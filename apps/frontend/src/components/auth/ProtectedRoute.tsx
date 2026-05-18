@@ -37,7 +37,7 @@ export const ProtectedRoute = ({ children, requireRole }: ProtectedRouteProps) =
 
     // Non-admin trying to access admin routes
     if (requireRole === 'admin' && userRole !== 'admin') {
-      return <Navigate to="/user/home" replace />
+      return <Navigate to="/" replace />
     }
   }
 

@@ -18,7 +18,7 @@ export const CourseCompletionModal: React.FC<CourseCompletionModalProps> = ({
   const navigate = useNavigate()
 
   const handleViewCertificate = () => {
-    navigate('/user/sertifikat')
+    navigate('../sertifikat')
     onClose()
   }
 

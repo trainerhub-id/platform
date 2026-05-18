@@ -31,8 +31,8 @@ export interface MenuItem {
 let menuIdCounter = 0
 const nextMenuId = () => 'menu-' + ++menuIdCounter
 
-// Menu untuk Peserta
-export const PesertaMenuItems: MenuItem[] = [
+// Menu untuk Peserta (dynamic slug)
+export const getPesertaMenuItems = (slug: string): MenuItem[] => [
   {
     id: 1,
     name: 'Menu Peserta',
@@ -44,55 +44,52 @@ export const PesertaMenuItems: MenuItem[] = [
             name: 'Home',
             icon: 'solar:home-smile-line-duotone',
             id: nextMenuId(),
-            url: '/user/home',
+            url: `/${slug}`,
           },
           {
             name: 'Info Training',
             icon: 'solar:book-bookmark-line-duotone',
             id: nextMenuId(),
-            url: '/user/training/info',
+            url: `/${slug}/training`,
           },
           {
             name: 'Profil',
             icon: 'solar:user-id-line-duotone',
             id: nextMenuId(),
-            url: '/user/profile',
+            url: `/${slug}/profile`,
           },
           {
             name: 'Kelas',
             icon: 'solar:bookmark-square-minimalistic-line-duotone',
             id: nextMenuId(),
-            url: '/user/kelas',
+            url: `/${slug}/kelas`,
           },
           {
             name: 'Dokumen',
             icon: 'solar:folder-with-files-line-duotone',
             id: nextMenuId(),
-            url: '/user/dokumen',
+            url: `/${slug}/dokumen`,
           },
-          // {
-          //   name: "Generator Dokumen",
-          //   icon: "solar:document-text-line-duotone",
-          //   id: nextMenuId(),
-          //   url: "/user/documents",
-          // },
           {
             name: 'AI Hub',
             icon: 'solar:magic-stick-3-line-duotone',
             id: nextMenuId(),
-            url: '/user/ai-hub',
+            url: `/${slug}/ai-hub`,
           },
           {
             name: 'Sertifikat',
             icon: 'solar:diploma-line-duotone',
             id: nextMenuId(),
-            url: '/user/sertifikat',
+            url: `/${slug}/sertifikat`,
           },
         ],
       },
     ],
   },
 ]
+
+// Static fallback (used when no slug available)
+export const PesertaMenuItems: MenuItem[] = getPesertaMenuItems('_')
 
 // Menu untuk Admin
 export const AdminMenuItems: MenuItem[] = [
@@ -146,7 +143,7 @@ export const AdminMenuItems: MenuItem[] = [
 ]
 
 // Menu untuk Trainer
-export const TrainerMenuItems: MenuItem[] = [
+export const getTrainerMenuItems = (slug: string): MenuItem[] => [
   {
     id: 1,
     name: 'Menu Trainer',
@@ -158,31 +155,33 @@ export const TrainerMenuItems: MenuItem[] = [
             name: 'Home',
             icon: 'solar:home-smile-line-duotone',
             id: nextMenuId(),
-            url: '/user/home',
+            url: `/${slug}`,
           },
           {
             name: 'Dokumen',
             icon: 'solar:document-text-line-duotone',
             id: nextMenuId(),
-            url: '/trainer/documents',
+            url: `/${slug}/ai-hub/trainer-workspace`,
           },
           {
             name: 'AI Hub',
             icon: 'solar:magic-stick-3-line-duotone',
             id: nextMenuId(),
-            url: '/user/ai-hub',
+            url: `/${slug}/ai-hub`,
           },
           {
             name: 'Profil',
             icon: 'solar:user-id-line-duotone',
             id: nextMenuId(),
-            url: '/user/profile',
+            url: `/${slug}/profile`,
           },
         ],
       },
     ],
   },
 ]
+
+export const TrainerMenuItems: MenuItem[] = getTrainerMenuItems('_')
 
 // Default export untuk backward compatibility
 const SidebarContent: MenuItem[] = PesertaMenuItems

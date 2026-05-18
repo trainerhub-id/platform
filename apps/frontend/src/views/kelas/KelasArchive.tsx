@@ -45,7 +45,7 @@ const KelasArchive = () => {
     if (!hasAccess) {
       return // Do nothing if no access
     }
-    navigate(`/user/kelas/${courseId}`)
+    navigate(`kelas/${courseId}`)
   }
 
   if (loading) {

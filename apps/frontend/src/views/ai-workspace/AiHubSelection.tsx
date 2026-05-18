@@ -20,7 +20,7 @@ const categories: AiCategory[] = [
       'Bantu buat lesson plan, design assessment, dan generate materi training dengan AI',
     icon: 'solar:presentation-graph-bold-duotone',
     color: '#4F75FF',
-    route: '/user/ai-hub/trainer-workspace',
+    route: 'ai-hub/trainer-workspace',
   },
   {
     id: 'master',
@@ -29,7 +29,7 @@ const categories: AiCategory[] = [
       'Analisis performa peserta, feedback otomatis, dan coaching tips untuk trainer master',
     icon: 'solar:diploma-verified-bold-duotone',
     color: '#AA8D55',
-    route: '/user/ai-hub/master-workspace',
+    route: 'ai-hub/master-workspace',
   },
   {
     id: 'branding',
@@ -38,7 +38,7 @@ const categories: AiCategory[] = [
       'Personal branding ToT dan promosi training dengan gaya hangat & membimbing. Support LinkedIn, Instagram, Email, Website.',
     icon: 'solar:star-bold-duotone',
     color: '#10B981',
-    route: '/user/ai-hub/branding',
+    route: 'ai-hub/branding',
   },
 ]
 

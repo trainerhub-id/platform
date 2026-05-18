@@ -14,7 +14,7 @@ import {
   MenubarTrigger,
 } from 'src/components/ui/menubar'
 import { useUserRole } from 'src/hooks/useUserRole'
-import { AdminHorizontalMenu, PesertaHorizontalMenu } from '../MenuData'
+import { AdminHorizontalMenu, getPesertaHorizontalMenu } from '../MenuData'
 
 const Navigation = () => {
   const location = useLocation()
@@ -22,9 +22,17 @@ const Navigation = () => {
   const { t } = useTranslation()
   const { role } = useUserRole()
 
+  const slug = useMemo(() => {
+    const parts = pathname.split('/').filter(Boolean)
+    if (parts[0] && parts[0] !== 'admin' && parts[0] !== 'auth' && parts[0] !== 'workspaces') {
+      return parts[0]
+    }
+    return '_'
+  }, [pathname])
+
   const Menuitems = useMemo(() => {
-    return role === 'admin' ? AdminHorizontalMenu : PesertaHorizontalMenu
-  }, [role])
+    return role === 'admin' ? AdminHorizontalMenu : getPesertaHorizontalMenu(slug)
+  }, [role, slug])
 
   const isActive = (href: string) => pathname === href
   const hasChildren = (item: any) => Array.isArray(item.children) && item.children.length > 0

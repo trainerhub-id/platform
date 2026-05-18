@@ -25,10 +25,21 @@ const Profile = () => {
   const isAdmin = location.pathname.startsWith('/admin')
   const menuItems = isAdmin ? profileData.adminProfileDD : profileData.profileDD
 
+  // Extract slug from current path
+  const slug = (() => {
+    const parts = location.pathname.split('/').filter(Boolean)
+    if (parts[0] && parts[0] !== 'admin' && parts[0] !== 'auth' && parts[0] !== 'workspaces') {
+      return parts[0]
+    }
+    return ''
+  })()
+
   const handleMenuClick = async (url: string) => {
     if (url === 'signout') {
       await signOut()
       navigate('/auth/login')
+    } else if (url.startsWith('/') && !url.startsWith('/admin') && !url.startsWith('/auth') && slug) {
+      navigate(`/${slug}${url}`)
     } else {
       navigate(url)
     }

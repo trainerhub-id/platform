@@ -194,7 +194,7 @@ const Kelas = () => {
         <div className="text-center">
           <h3 className="text-lg font-semibold text-dark mb-2">Kelas tidak ditemukan</h3>
           <p className="text-sm text-bodytext mb-4">Kelas yang Anda cari tidak tersedia.</p>
-          <Button onClick={() => navigate('/user/kelas')} variant="outline">
+          <Button onClick={() => navigate('../kelas')} variant="outline">
             <Icon icon="solar:arrow-left-outline" className="mr-2" height={16} />
             Kembali ke Daftar Kelas
           </Button>
@@ -267,7 +267,7 @@ const Kelas = () => {
               variant="ghost"
               size="sm"
               className="h-10 w-10 p-0 rounded-lg hover:bg-gray-100 shrink-0"
-              onClick={() => navigate('/user/kelas')}
+              onClick={() => navigate('../kelas')}
               title="Kembali ke Daftar Kelas"
             >
               <Icon icon="solar:arrow-left-outline" height={20} className="text-gray-600" />
