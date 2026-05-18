@@ -1,6 +1,9 @@
 import { Suspense } from 'react'
 import { createRoot } from 'react-dom/client'
+import { ensureWorkspaceAxiosInterceptor } from './api/workspace-axios'
 import { BetterAuthProvider } from './lib/better-auth'
+
+ensureWorkspaceAxiosInterceptor()
 import '../src/css/globals.css'
 import App from './App.tsx'
 import { Loading } from './components/ui/loading.tsx'

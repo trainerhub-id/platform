@@ -1,6 +1,7 @@
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { useCallback } from 'react'
-import api from 'src/api/axios'
+import api from 'src/api/workspace-axios'
+import { useOptionalWorkspace } from 'src/context/WorkspaceContext'
 
 export interface DocumentType {
   id: string
@@ -24,9 +25,6 @@ export interface DocumentStatus {
   catatan?: string
   updatedAt: string
 }
-
-const CATEGORIES_QUERY_KEY = ['dokumen', 'categories']
-const STATUSES_QUERY_KEY = ['dokumen', 'statuses']
 
 const fetchCategoriesWithTypes = async (): Promise<DocumentCategory[]> => {
   const catRes = await api.get('/dokumen/kategori')
@@ -79,17 +77,21 @@ const fetchDocumentStatuses = async (): Promise<Record<string, DocumentStatus>> 
 
 export const useDokumen = () => {
   const queryClient = useQueryClient()
+  const ws = useOptionalWorkspace()
+  const slug = ws?.slug ?? 'no-workspace'
 
   const categoriesQuery = useQuery({
-    queryKey: CATEGORIES_QUERY_KEY,
+    queryKey: ['dokumen', slug, 'categories'],
     queryFn: fetchCategoriesWithTypes,
     staleTime: 5 * 60 * 1000,
+    enabled: !!ws,
   })
 
   const statusesQuery = useQuery({
-    queryKey: STATUSES_QUERY_KEY,
+    queryKey: ['dokumen', slug, 'statuses'],
     queryFn: fetchDocumentStatuses,
     staleTime: 60 * 1000,
+    enabled: !!ws,
   })
 
   const fetchCategories = useCallback(async () => {
@@ -112,7 +114,7 @@ export const useDokumen = () => {
         },
       })
 
-      await queryClient.invalidateQueries({ queryKey: STATUSES_QUERY_KEY })
+      await queryClient.invalidateQueries({ queryKey: ['dokumen', slug, 'statuses'] })
       return response.data
     } catch (error: any) {
       throw new Error(error.response?.data?.message || 'Upload failed')
@@ -122,7 +124,7 @@ export const useDokumen = () => {
   const deleteDocument = async (dokumenId: string) => {
     try {
       await api.delete(`/dokumen/${dokumenId}`)
-      await queryClient.invalidateQueries({ queryKey: STATUSES_QUERY_KEY })
+      await queryClient.invalidateQueries({ queryKey: ['dokumen', slug, 'statuses'] })
       return true
     } catch (error: any) {
       throw new Error(error.response?.data?.message || 'Delete failed')
