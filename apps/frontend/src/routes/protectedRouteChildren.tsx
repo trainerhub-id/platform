@@ -4,6 +4,7 @@ import { AdminRoute } from '../components/auth/AdminRoute'
 import { UserRoute } from '../components/auth/UserRoute'
 import { RoleBasedRedirect } from '../components/RoleBasedRedirect'
 import Loadable from '../layouts/full/shared/loadable/Loadable'
+import { WorkspaceRouteWrapper } from '../components/workspace/WorkspaceRouteWrapper'
 
 const TrainerDashboard = Loadable(lazy(() => import('../views/dashboard/TrainerDashboard')))
 const TrainingInformation = Loadable(lazy(() => import('../views/training/TrainingInformation')))
@@ -28,6 +29,10 @@ const ProfilePage = Loadable(lazy(() => import('../views/profile/ProfilePage')))
 const ManageKelas = Loadable(lazy(() => import('../views/admin/ManageKelas')))
 const EditKelas = Loadable(lazy(() => import('../views/admin/EditKelas')))
 const Dokumen = Loadable(lazy(() => import('../views/dokumen/Dokumen')))
+const Workspaces = Loadable(lazy(() => import('../views/workspaces/Workspaces')))
+const WorkspaceDashboard = Loadable(
+  lazy(() => import('../views/workspace-dashboard/WorkspaceDashboard')),
+)
 
 export const protectedRouteChildren = [
   { path: '/', exact: true, element: <RoleBasedRedirect /> },
@@ -268,6 +273,24 @@ export const protectedRouteChildren = [
         <MuxVideoList />
       </AdminRoute>
     ),
+  },
+  {
+    path: '/workspaces',
+    exact: true,
+    element: (
+      <UserRoute>
+        <Workspaces />
+      </UserRoute>
+    ),
+  },
+  {
+    path: '/:slug',
+    element: (
+      <UserRoute>
+        <WorkspaceRouteWrapper />
+      </UserRoute>
+    ),
+    children: [{ index: true, element: <WorkspaceDashboard /> }],
   },
   { path: '*', element: <Navigate to="/auth/404" /> },
 ]
