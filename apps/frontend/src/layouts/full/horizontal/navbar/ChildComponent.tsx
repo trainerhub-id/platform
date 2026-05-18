@@ -1,9 +1,8 @@
-import { useState } from 'react';
-import { IconChevronDown } from '@tabler/icons-react';
-import { Icon } from '@iconify/react';
-import { useTranslation } from 'react-i18next';
-import { useLocation } from 'react-router';
-import { Link } from 'react-router';
+import { Icon } from '@iconify/react'
+import { IconChevronDown } from '@tabler/icons-react'
+import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
+import { Link, useLocation } from 'react-router'
 
 const ChildComponent = ({
   item,
@@ -13,19 +12,19 @@ const ChildComponent = ({
   onClick,
   title,
 }: any) => {
-  const [isSubMenuOpen, setIsSubMenuOpen] = useState(false);
+  const [isSubMenuOpen, setIsSubMenuOpen] = useState(false)
 
-  const location = useLocation();
-  const pathname = location.pathname;
+  const location = useLocation()
+  const pathname = location.pathname
 
   const handleSubMenuEnter = () => {
-    setIsSubMenuOpen(true);
-  };
+    setIsSubMenuOpen(true)
+  }
 
   const handleSubMenuLeave = () => {
-    setIsSubMenuOpen(false);
-  };
-  const { t } = useTranslation();
+    setIsSubMenuOpen(false)
+  }
+  const { t } = useTranslation()
 
   return (
     <div
@@ -91,7 +90,7 @@ const ChildComponent = ({
         </div>
       )}
     </div>
-  );
-};
+  )
+}
 
-export default ChildComponent;
+export default ChildComponent

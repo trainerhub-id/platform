@@ -1,17 +1,17 @@
 /**
  * Document Templates
- * 
+ *
  * Template dokumen dengan format HTML inline styles
  * Mirip dengan format output yang diinginkan
  */
 
 export interface DocumentTemplate {
-  id: string;
-  name: string;
-  category: string;
-  description: string;
-  thumbnail?: string;
-  content: string;
+  id: string
+  name: string
+  category: string
+  description: string
+  thumbnail?: string
+  content: string
 }
 
 export const documentTemplates: DocumentTemplate[] = [
@@ -92,7 +92,7 @@ export const documentTemplates: DocumentTemplate[] = [
 </div>
     `.trim(),
   },
-  
+
   {
     id: 'laporan-pelatihan',
     name: 'Laporan Pelatihan',
@@ -199,7 +199,7 @@ export const documentTemplates: DocumentTemplate[] = [
 </div>
     `.trim(),
   },
-  
+
   {
     id: 'sertifikat',
     name: 'Sertifikat Pelatihan',
@@ -260,7 +260,7 @@ export const documentTemplates: DocumentTemplate[] = [
 </div>
     `.trim(),
   },
-  
+
   {
     id: 'proposal',
     name: 'Proposal Kegiatan',
@@ -416,7 +416,7 @@ export const documentTemplates: DocumentTemplate[] = [
 </div>
     `.trim(),
   },
-  
+
   {
     id: 'blank',
     name: 'Dokumen Kosong',
@@ -430,17 +430,17 @@ export const documentTemplates: DocumentTemplate[] = [
 </div>
     `.trim(),
   },
-];
+]
 
 export const getTemplateById = (id: string): DocumentTemplate | undefined => {
-  return documentTemplates.find(template => template.id === id);
-};
+  return documentTemplates.find((template) => template.id === id)
+}
 
 export const getTemplatesByCategory = (category: string): DocumentTemplate[] => {
-  return documentTemplates.filter(template => template.category === category);
-};
+  return documentTemplates.filter((template) => template.category === category)
+}
 
 export const getAllCategories = (): string[] => {
-  const categories = documentTemplates.map(template => template.category);
-  return Array.from(new Set(categories));
-};
+  const categories = documentTemplates.map((template) => template.category)
+  return Array.from(new Set(categories))
+}

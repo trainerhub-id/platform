@@ -1,89 +1,89 @@
-import { useState, useEffect } from 'react';
-import { Icon } from '@iconify/react';
-import { Button } from 'src/components/ui/button';
-import { Badge } from 'src/components/ui/badge';
+import { Icon } from '@iconify/react'
+import { useEffect, useState } from 'react'
+import { toast } from 'react-toastify'
+import api from 'src/api/axios'
+import { Badge } from 'src/components/ui/badge'
+import { Button } from 'src/components/ui/button'
+import { Checkbox } from 'src/components/ui/checkbox'
 import {
   Dialog,
   DialogContent,
+  DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogFooter,
-} from 'src/components/ui/dialog';
-import { Input } from 'src/components/ui/input';
-import { Label } from 'src/components/ui/label';
-import { Textarea } from 'src/components/ui/textarea';
+} from 'src/components/ui/dialog'
+import { Input } from 'src/components/ui/input'
+import { Label } from 'src/components/ui/label'
+import { ButtonLoading } from 'src/components/ui/loading'
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from 'src/components/ui/select';
-import { Checkbox } from 'src/components/ui/checkbox';
-import api from 'src/api/axios';
-import { ButtonLoading } from 'src/components/ui/loading';
-import { AI_FEATURES } from 'src/constants/aiFeatures';
-import { toast } from 'react-toastify';
+} from 'src/components/ui/select'
+import { Textarea } from 'src/components/ui/textarea'
+import { AI_FEATURES } from 'src/constants/aiFeatures'
 
 interface TierTemplate {
-  id: string;
-  name: string;
-  defaultCourseIds: string[];
-  defaultAiFeatures: string[];
-  defaultBenefits: string[];
+  id: string
+  name: string
+  defaultCourseIds: string[]
+  defaultAiFeatures: string[]
+  defaultBenefits: string[]
 }
 
 interface BatchTier {
-  id: string;
-  tierTemplateId: string;
-  name: string;
-  slug: string;
-  price: number;
-  description?: string | null;
-  maxParticipants: number | null;
-  courseIds: string[] | null;
-  aiFeatures: string[] | null;
-  benefits: string[] | null;
-  scalevStoreUniqueId?: string | null;
-  scalevVariantUniqueId?: string | null;
-  tierTemplate?: TierTemplate;
+  id: string
+  tierTemplateId: string
+  name: string
+  slug: string
+  price: number
+  description?: string | null
+  maxParticipants: number | null
+  courseIds: string[] | null
+  aiFeatures: string[] | null
+  benefits: string[] | null
+  scalevStoreUniqueId?: string | null
+  scalevVariantUniqueId?: string | null
+  tierTemplate?: TierTemplate
 }
 
 interface Course {
-  id: string;
-  title: string;
+  id: string
+  title: string
 }
 
 interface ScalevStore {
-  id: number;
-  unique_id: string;
-  name: string;
-  payment_methods?: string[];
-  sub_payment_methods?: string[];
+  id: number
+  unique_id: string
+  name: string
+  payment_methods?: string[]
+  sub_payment_methods?: string[]
 }
 
 interface BatchTierSectionProps {
-  batchId?: string;
-  batchSlug?: string;
+  batchId?: string
+  batchSlug?: string
 }
 
 export const BatchTierSection = ({ batchId, batchSlug: batchSlugProp }: BatchTierSectionProps) => {
-  const [tiers, setTiers] = useState<BatchTier[]>([]);
-  const [templates, setTemplates] = useState<TierTemplate[]>([]);
-  const [courses, setCourses] = useState<Course[]>([]);
-  const [stores, setStores] = useState<ScalevStore[]>([]);
-  const [batchSlug, setBatchSlug] = useState<string>(batchSlugProp || '');
-  const [loading, setLoading] = useState(false);
-  const [resyncingTierId, setResyncingTierId] = useState<string | null>(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [editingTier, setEditingTier] = useState<BatchTier | null>(null);
-  const [isCreatingTemplate, setIsCreatingTemplate] = useState(false);
+  const [tiers, setTiers] = useState<BatchTier[]>([])
+  const [templates, setTemplates] = useState<TierTemplate[]>([])
+  const [courses, setCourses] = useState<Course[]>([])
+  const [stores, setStores] = useState<ScalevStore[]>([])
+  const [batchSlug, setBatchSlug] = useState<string>(batchSlugProp || '')
+  const [loading, setLoading] = useState(false)
+  const [resyncingTierId, setResyncingTierId] = useState<string | null>(null)
+  const [isModalOpen, setIsModalOpen] = useState(false)
+  const [editingTier, setEditingTier] = useState<BatchTier | null>(null)
+  const [isCreatingTemplate, setIsCreatingTemplate] = useState(false)
   const [templateFormData, setTemplateFormData] = useState({
     name: '',
     courseIds: [] as string[],
     aiFeatures: [] as string[],
     benefits: '',
-  });
+  })
 
   const [formData, setFormData] = useState({
     tierTemplateId: '',
@@ -96,68 +96,67 @@ export const BatchTierSection = ({ batchId, batchSlug: batchSlugProp }: BatchTie
     overrideBenefits: false,
     benefits: '',
     scalevStoreUniqueId: '',
-  });
+  })
 
   useEffect(() => {
     if (batchId) {
-      fetchBatchTiers();
+      fetchBatchTiers()
     }
-    fetchTierTemplates();
-    fetchCourses();
-    fetchScalevStores();
-  }, [batchId]);
+    fetchTierTemplates()
+    fetchCourses()
+    fetchScalevStores()
+  }, [batchId])
 
   useEffect(() => {
     if (batchSlugProp) {
-      setBatchSlug(batchSlugProp);
+      setBatchSlug(batchSlugProp)
     }
-  }, [batchSlugProp]);
+  }, [batchSlugProp])
 
   const fetchBatchTiers = async () => {
-    if (!batchId) return;
+    if (!batchId) return
     try {
-      const res = await api.get(`/admin/batches/${batchId}/tiers`);
-      setTiers(res.data);
+      const res = await api.get(`/admin/batches/${batchId}/tiers`)
+      setTiers(res.data)
     } catch (error) {
-      console.error('Error fetching batch tiers:', error);
+      console.error('Error fetching batch tiers:', error)
     }
-  };
+  }
 
   const fetchTierTemplates = async () => {
     try {
-      const res = await api.get('/admin/tier-templates');
-      setTemplates(res.data);
+      const res = await api.get('/admin/tier-templates')
+      setTemplates(res.data)
     } catch (error) {
-      console.error('Error fetching tier templates:', error);
+      console.error('Error fetching tier templates:', error)
     }
-  };
+  }
 
   const fetchCourses = async () => {
     try {
-      const res = await api.get('/kelas');
-      setCourses(res.data);
+      const res = await api.get('/kelas')
+      setCourses(res.data)
     } catch (error) {
-      console.error('Error fetching courses:', error);
+      console.error('Error fetching courses:', error)
     }
-  };
+  }
 
   const fetchScalevStores = async () => {
     try {
-      const res = await api.get('/admin/scalev/stores');
-      const fetchedStores = Array.isArray(res.data) ? res.data : [];
-      setStores(fetchedStores);
+      const res = await api.get('/admin/scalev/stores')
+      const fetchedStores = Array.isArray(res.data) ? res.data : []
+      setStores(fetchedStores)
       setFormData((prev) => ({
         ...prev,
-        scalevStoreUniqueId:
-          prev.scalevStoreUniqueId || fetchedStores[0]?.unique_id || '',
-      }));
+        scalevStoreUniqueId: prev.scalevStoreUniqueId || fetchedStores[0]?.unique_id || '',
+      }))
     } catch (error) {
-      console.error('Error fetching Scalev stores:', error);
+      console.error('Error fetching Scalev stores:', error)
     }
-  };
+  }
 
   const openAddModal = () => {
-    setEditingTier(null);
+    setEditingTier(null)
     setFormData({
       tierTemplateId: '',
       price: '',
@@ -169,12 +168,12 @@ export const BatchTierSection = ({ batchId, batchSlug: batchSlugProp }: BatchTie
       overrideBenefits: false,
       benefits: '',
       scalevStoreUniqueId: stores[0]?.unique_id || '',
-    });
-    setIsModalOpen(true);
-  };
+    })
+    setIsModalOpen(true)
+  }
 
   const openEditModal = (tier: BatchTier) => {
-    setEditingTier(tier);
+    setEditingTier(tier)
     setFormData({
       tierTemplateId: tier.tierTemplateId,
       price: tier.price.toString(),
@@ -186,129 +185,129 @@ export const BatchTierSection = ({ batchId, batchSlug: batchSlugProp }: BatchTie
       overrideBenefits: tier.benefits !== null,
       benefits: tier.benefits?.join('\n') || '',
       scalevStoreUniqueId: tier.scalevStoreUniqueId || stores[0]?.unique_id || '',
-    });
-    setIsModalOpen(true);
-  };
+    })
+    setIsModalOpen(true)
+  }
 
   const handleTemplateChange = (templateId: string) => {
     if (templateId === 'create-new') {
-      setIsCreatingTemplate(true);
-      return;
+      setIsCreatingTemplate(true)
+      return
     }
-    
-    const template = templates.find(t => t.id === templateId);
+
+    const template = templates.find((t) => t.id === templateId)
     if (template && !editingTier) {
       // Pre-fill with template defaults for new tiers
-      setFormData(prev => ({
+      setFormData((prev) => ({
         ...prev,
         tierTemplateId: templateId,
         courseIds: template.defaultCourseIds,
         aiFeatures: template.defaultAiFeatures,
         benefits: template.defaultBenefits.join('\n'),
-      }));
+      }))
     } else {
-      setFormData(prev => ({ ...prev, tierTemplateId: templateId }));
+      setFormData((prev) => ({ ...prev, tierTemplateId: templateId }))
     }
-  };
+  }
 
   const handleTemplateCourseToggle = (courseId: string) => {
-    setTemplateFormData(prev => ({
+    setTemplateFormData((prev) => ({
       ...prev,
       courseIds: prev.courseIds.includes(courseId)
-        ? prev.courseIds.filter(id => id !== courseId)
+        ? prev.courseIds.filter((id) => id !== courseId)
         : [...prev.courseIds, courseId],
-    }));
-  };
+    }))
+  }
 
   const handleTemplateAiFeatureToggle = (featureId: string) => {
-    setTemplateFormData(prev => ({
+    setTemplateFormData((prev) => ({
       ...prev,
       aiFeatures: prev.aiFeatures.includes(featureId)
-        ? prev.aiFeatures.filter(id => id !== featureId)
+        ? prev.aiFeatures.filter((id) => id !== featureId)
         : [...prev.aiFeatures, featureId],
-    }));
-  };
+    }))
+  }
 
   const handleCreateTemplate = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
+    e.preventDefault()
+    setLoading(true)
     try {
       const payload = {
         name: templateFormData.name,
         defaultCourseIds: templateFormData.courseIds,
         defaultAiFeatures: templateFormData.aiFeatures,
         defaultBenefits: templateFormData.benefits.split('\n').filter(Boolean),
-      };
+      }
 
-      const res = await api.post('/admin/tier-templates', payload);
-      const newTemplate = res.data;
-      
+      const res = await api.post('/admin/tier-templates', payload)
+      const newTemplate = res.data
+
       // Refresh templates
-      await fetchTierTemplates();
-      
+      await fetchTierTemplates()
+
       // Auto-select the newly created template
-      setFormData(prev => ({
+      setFormData((prev) => ({
         ...prev,
         tierTemplateId: newTemplate.id,
         courseIds: newTemplate.defaultCourseIds,
         aiFeatures: newTemplate.defaultAiFeatures,
         benefits: newTemplate.defaultBenefits.join('\n'),
-      }));
-      
+      }))
+
       // Reset template form
       setTemplateFormData({
         name: '',
         courseIds: [],
         aiFeatures: [],
         benefits: '',
-      });
-      
-      setIsCreatingTemplate(false);
+      })
+
+      setIsCreatingTemplate(false)
     } catch (error) {
-      console.error('Error creating tier template:', error);
-      alert('Gagal membuat tier template');
+      console.error('Error creating tier template:', error)
+      alert('Gagal membuat tier template')
     } finally {
-      setLoading(false);
+      setLoading(false)
     }
-  };
+  }
 
   const cancelCreateTemplate = () => {
-    setIsCreatingTemplate(false);
+    setIsCreatingTemplate(false)
     setTemplateFormData({
       name: '',
       courseIds: [],
       aiFeatures: [],
       benefits: '',
-    });
-    setFormData(prev => ({ ...prev, tierTemplateId: '' }));
-  };
+    })
+    setFormData((prev) => ({ ...prev, tierTemplateId: '' }))
+  }
 
   const handleCourseToggle = (courseId: string) => {
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
       courseIds: prev.courseIds.includes(courseId)
-        ? prev.courseIds.filter(id => id !== courseId)
+        ? prev.courseIds.filter((id) => id !== courseId)
         : [...prev.courseIds, courseId],
-    }));
-  };
+    }))
+  }
 
   const handleAiFeatureToggle = (featureId: string) => {
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
       aiFeatures: prev.aiFeatures.includes(featureId)
-        ? prev.aiFeatures.filter(id => id !== featureId)
+        ? prev.aiFeatures.filter((id) => id !== featureId)
         : [...prev.aiFeatures, featureId],
-    }));
-  };
+    }))
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+    e.preventDefault()
     if (!batchId) {
-      alert('Simpan batch terlebih dahulu sebelum menambah tier');
-      return;
+      alert('Simpan batch terlebih dahulu sebelum menambah tier')
+      return
     }
 
-    setLoading(true);
+    setLoading(true)
     try {
       const payload = {
         tierTemplateId: formData.tierTemplateId,
@@ -316,84 +315,83 @@ export const BatchTierSection = ({ batchId, batchSlug: batchSlugProp }: BatchTie
         maxParticipants: formData.maxParticipants ? parseInt(formData.maxParticipants) : null,
         courseIds: formData.overrideCourses ? formData.courseIds : null,
         aiFeatures: formData.overrideAiFeatures ? formData.aiFeatures : null,
-        benefits: formData.overrideBenefits 
-          ? formData.benefits.split('\n').filter(Boolean) 
-          : null,
+        benefits: formData.overrideBenefits ? formData.benefits.split('\n').filter(Boolean) : null,
         scalevStoreUniqueId: formData.scalevStoreUniqueId || null,
-      };
-
-      if (editingTier) {
-        await api.patch(`/admin/batches/${batchId}/tiers/${editingTier.id}`, payload);
-      } else {
-        await api.post(`/admin/batches/${batchId}/tiers`, payload);
       }
 
-      await fetchBatchTiers();
-      setIsModalOpen(false);
+      if (editingTier) {
+        await api.patch(`/admin/batches/${batchId}/tiers/${editingTier.id}`, payload)
+      } else {
+        await api.post(`/admin/batches/${batchId}/tiers`, payload)
+      }
+
+      await fetchBatchTiers()
+      setIsModalOpen(false)
     } catch (error) {
-      console.error('Error saving tier:', error);
-      alert('Gagal menyimpan tier');
+      console.error('Error saving tier:', error)
+      alert('Gagal menyimpan tier')
     } finally {
-      setLoading(false);
+      setLoading(false)
     }
-  };
+  }
 
   const handleDelete = async (tierId: string) => {
-    if (!confirm('Yakin ingin menghapus tier ini dari batch?')) return;
+    if (!confirm('Yakin ingin menghapus tier ini dari batch?')) return
 
     try {
-      await api.delete(`/admin/batches/${batchId}/tiers/${tierId}`);
-      await fetchBatchTiers();
+      await api.delete(`/admin/batches/${batchId}/tiers/${tierId}`)
+      await fetchBatchTiers()
     } catch (error) {
-      console.error('Error deleting tier:', error);
-      alert('Gagal menghapus tier');
+      console.error('Error deleting tier:', error)
+      alert('Gagal menghapus tier')
     }
-  };
+  }
 
   const handleResyncScalev = async (tierId: string) => {
-    if (!batchId) return;
+    if (!batchId) return
 
-    setResyncingTierId(tierId);
+    setResyncingTierId(tierId)
     try {
-      await api.post(`/admin/batches/${batchId}/tiers/${tierId}/resync-scalev`);
-      await fetchBatchTiers();
-      toast.success('Tier berhasil di-resync ke Scalev');
+      await api.post(`/admin/batches/${batchId}/tiers/${tierId}/resync-scalev`)
+      await fetchBatchTiers()
+      toast.success('Tier berhasil di-resync ke Scalev')
     } catch (error) {
-      console.error('Error resyncing tier to Scalev:', error);
-      toast.error('Gagal resync tier ke Scalev');
+      console.error('Error resyncing tier to Scalev:', error)
+      toast.error('Gagal resync tier ke Scalev')
     } finally {
-      setResyncingTierId(null);
+      setResyncingTierId(null)
     }
-  };
+  }
 
   const formatPrice = (price: number) => {
     return new Intl.NumberFormat('id-ID', {
       style: 'currency',
       currency: 'IDR',
       minimumFractionDigits: 0,
-    }).format(price);
-  };
+    }).format(price)
+  }
 
-  const selectedTemplate = templates.find(t => t.id === formData.tierTemplateId);
+  const selectedTemplate = templates.find((t) => t.id === formData.tierTemplateId)
 
   const copyToClipboard = async (text: string) => {
     try {
-      await navigator.clipboard.writeText(text);
+      await navigator.clipboard.writeText(text)
       // Simple notification - could use a toast library
-      const notification = document.createElement('div');
-      notification.className = 'fixed top-4 right-4 bg-green-500 text-white px-4 py-2 rounded-lg shadow-lg z-[10000]';
-      notification.textContent = 'URL copied to clipboard!';
-      document.body.appendChild(notification);
-      setTimeout(() => notification.remove(), 2000);
+      const notification = document.createElement('div')
+      notification.className =
+        'fixed top-4 right-4 bg-green-500 text-white px-4 py-2 rounded-lg shadow-lg z-[10000]'
+      notification.textContent = 'URL copied to clipboard!'
+      document.body.appendChild(notification)
+      setTimeout(() => notification.remove(), 2000)
     } catch (err) {
-      console.error('Failed to copy:', err);
+      console.error('Failed to copy:', err)
     }
-  };
+  }
 
   const getCheckoutUrl = (tierSlug: string) => {
-    const baseUrl = window.location.origin;
-    return `${baseUrl}/register?batch=${batchSlug}&tier=${tierSlug}`;
-  };
+    const baseUrl = window.location.origin
+    return `${baseUrl}/register?batch=${batchSlug}&tier=${tierSlug}`
+  }
 
   return (
     <div className="space-y-4">
@@ -430,11 +428,8 @@ export const BatchTierSection = ({ batchId, batchSlug: batchSlugProp }: BatchTie
         </div>
       ) : (
         <div className="space-y-3">
-          {tiers.map(tier => (
-            <div
-              key={tier.id}
-              className="border border-gray-200 rounded-lg p-4"
-            >
+          {tiers.map((tier) => (
+            <div key={tier.id} className="border border-gray-200 rounded-lg p-4">
               <div className="flex items-start justify-between mb-3">
                 <div className="flex-1">
                   <h5 className="font-semibold text-dark">{tier.name}</h5>
@@ -445,7 +440,14 @@ export const BatchTierSection = ({ batchId, batchSlug: batchSlugProp }: BatchTie
                     </p>
                   )}
                   <div className="mt-2 flex flex-wrap gap-2">
-                    <Badge variant="outline" className={tier.scalevVariantUniqueId ? 'border-green-300 text-green-700 bg-green-50' : 'border-amber-300 text-amber-700 bg-amber-50'}>
+                    <Badge
+                      variant="outline"
+                      className={
+                        tier.scalevVariantUniqueId
+                          ? 'border-green-300 text-green-700 bg-green-50'
+                          : 'border-amber-300 text-amber-700 bg-amber-50'
+                      }
+                    >
                       {tier.scalevVariantUniqueId ? 'Scalev synced' : 'Belum sync Scalev'}
                     </Badge>
                     {tier.scalevStoreUniqueId && (
@@ -498,11 +500,21 @@ export const BatchTierSection = ({ batchId, batchSlug: batchSlugProp }: BatchTie
                 <div className="bg-gray-50 rounded-lg p-2.5 mt-3">
                   <div className="flex items-center justify-between gap-3">
                     <div className="flex-1 min-w-0">
-                      <p className="text-[10px] text-bodytext/70 uppercase tracking-wide mb-0.5">Checkout Link</p>
+                      <p className="text-[10px] text-bodytext/70 uppercase tracking-wide mb-0.5">
+                        Checkout Link
+                      </p>
                       <div className="flex items-center gap-1.5">
-                        <Icon icon="solar:link-linear" height={14} className="text-gray-400 shrink-0" />
-                        <p className="text-xs text-dark/70 font-mono truncate" title={getCheckoutUrl(tier.slug)}>
-                          /register?batch={batchSlug.split('-').slice(0, 3).join('-')}...&tier={tier.slug}
+                        <Icon
+                          icon="solar:link-linear"
+                          height={14}
+                          className="text-gray-400 shrink-0"
+                        />
+                        <p
+                          className="text-xs text-dark/70 font-mono truncate"
+                          title={getCheckoutUrl(tier.slug)}
+                        >
+                          /register?batch={batchSlug.split('-').slice(0, 3).join('-')}...&tier=
+                          {tier.slug}
                         </p>
                       </div>
                     </div>
@@ -528,9 +540,7 @@ export const BatchTierSection = ({ batchId, batchSlug: batchSlugProp }: BatchTie
       <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
         <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto z-[9999]">
           <DialogHeader>
-            <DialogTitle>
-              {editingTier ? 'Edit Tier' : 'Tambah Tier ke Batch'}
-            </DialogTitle>
+            <DialogTitle>{editingTier ? 'Edit Tier' : 'Tambah Tier ke Batch'}</DialogTitle>
           </DialogHeader>
 
           <form onSubmit={handleSubmit} className="space-y-4">
@@ -555,7 +565,7 @@ export const BatchTierSection = ({ batchId, batchSlug: batchSlugProp }: BatchTie
                           <span>Create New Template</span>
                         </div>
                       </SelectItem>
-                      {templates.map(template => (
+                      {templates.map((template) => (
                         <SelectItem key={template.id} value={template.id}>
                           {template.name}
                         </SelectItem>
@@ -564,7 +574,8 @@ export const BatchTierSection = ({ batchId, batchSlug: batchSlugProp }: BatchTie
                   </Select>
                   {selectedTemplate && (
                     <p className="text-xs text-bodytext mt-1">
-                      Default: {selectedTemplate.defaultCourseIds.length} courses, {selectedTemplate.defaultAiFeatures.length} AI features
+                      Default: {selectedTemplate.defaultCourseIds.length} courses,{' '}
+                      {selectedTemplate.defaultAiFeatures.length} AI features
                     </p>
                   )}
                 </div>
@@ -578,7 +589,7 @@ export const BatchTierSection = ({ batchId, batchSlug: batchSlugProp }: BatchTie
                       id="price"
                       type="number"
                       value={formData.price}
-                      onChange={(e) => setFormData(prev => ({ ...prev, price: e.target.value }))}
+                      onChange={(e) => setFormData((prev) => ({ ...prev, price: e.target.value }))}
                       placeholder="3000000"
                       required
                     />
@@ -589,7 +600,9 @@ export const BatchTierSection = ({ batchId, batchSlug: batchSlugProp }: BatchTie
                       id="maxParticipants"
                       type="number"
                       value={formData.maxParticipants}
-                      onChange={(e) => setFormData(prev => ({ ...prev, maxParticipants: e.target.value }))}
+                      onChange={(e) =>
+                        setFormData((prev) => ({ ...prev, maxParticipants: e.target.value }))
+                      }
                       placeholder="Unlimited"
                     />
                   </div>
@@ -601,7 +614,9 @@ export const BatchTierSection = ({ batchId, batchSlug: batchSlugProp }: BatchTie
                   </Label>
                   <Select
                     value={formData.scalevStoreUniqueId}
-                    onValueChange={(value) => setFormData((prev) => ({ ...prev, scalevStoreUniqueId: value }))}
+                    onValueChange={(value) =>
+                      setFormData((prev) => ({ ...prev, scalevStoreUniqueId: value }))
+                    }
                     required
                   >
                     <SelectTrigger id="scalevStoreUniqueId">
@@ -616,7 +631,8 @@ export const BatchTierSection = ({ batchId, batchSlug: batchSlugProp }: BatchTie
                     </SelectContent>
                   </Select>
                   <p className="text-xs text-bodytext mt-1">
-                    Saat disimpan, TrainerHub akan otomatis create/update produk dan variant di store ini.
+                    Saat disimpan, TrainerHub akan otomatis create/update produk dan variant di
+                    store ini.
                   </p>
                 </div>
 
@@ -628,7 +644,9 @@ export const BatchTierSection = ({ batchId, batchSlug: batchSlugProp }: BatchTie
                       <Checkbox
                         id="overrideCourses"
                         checked={formData.overrideCourses}
-                        onCheckedChange={(checked) => setFormData(prev => ({ ...prev, overrideCourses: !!checked }))}
+                        onCheckedChange={(checked) =>
+                          setFormData((prev) => ({ ...prev, overrideCourses: !!checked }))
+                        }
                       />
                       <label htmlFor="overrideCourses" className="text-xs cursor-pointer">
                         Override dari template
@@ -637,7 +655,7 @@ export const BatchTierSection = ({ batchId, batchSlug: batchSlugProp }: BatchTie
                   </div>
                   {formData.overrideCourses ? (
                     <div className="max-h-32 overflow-y-auto space-y-2">
-                      {courses.map(course => (
+                      {courses.map((course) => (
                         <div key={course.id} className="flex items-center gap-2">
                           <Checkbox
                             id={`course-${course.id}`}
@@ -665,7 +683,9 @@ export const BatchTierSection = ({ batchId, batchSlug: batchSlugProp }: BatchTie
                       <Checkbox
                         id="overrideAiFeatures"
                         checked={formData.overrideAiFeatures}
-                        onCheckedChange={(checked) => setFormData(prev => ({ ...prev, overrideAiFeatures: !!checked }))}
+                        onCheckedChange={(checked) =>
+                          setFormData((prev) => ({ ...prev, overrideAiFeatures: !!checked }))
+                        }
                       />
                       <label htmlFor="overrideAiFeatures" className="text-xs cursor-pointer">
                         Override dari template
@@ -674,7 +694,7 @@ export const BatchTierSection = ({ batchId, batchSlug: batchSlugProp }: BatchTie
                   </div>
                   {formData.overrideAiFeatures ? (
                     <div className="max-h-40 overflow-y-auto space-y-2">
-                      {AI_FEATURES.map(feature => (
+                      {AI_FEATURES.map((feature) => (
                         <div key={feature.id} className="flex items-start gap-2">
                           <Checkbox
                             id={`ai-${feature.id}`}
@@ -704,7 +724,9 @@ export const BatchTierSection = ({ batchId, batchSlug: batchSlugProp }: BatchTie
                       <Checkbox
                         id="overrideBenefits"
                         checked={formData.overrideBenefits}
-                        onCheckedChange={(checked) => setFormData(prev => ({ ...prev, overrideBenefits: !!checked }))}
+                        onCheckedChange={(checked) =>
+                          setFormData((prev) => ({ ...prev, overrideBenefits: !!checked }))
+                        }
                       />
                       <label htmlFor="overrideBenefits" className="text-xs cursor-pointer">
                         Override dari template
@@ -714,7 +736,9 @@ export const BatchTierSection = ({ batchId, batchSlug: batchSlugProp }: BatchTie
                   {formData.overrideBenefits ? (
                     <Textarea
                       value={formData.benefits}
-                      onChange={(e) => setFormData(prev => ({ ...prev, benefits: e.target.value }))}
+                      onChange={(e) =>
+                        setFormData((prev) => ({ ...prev, benefits: e.target.value }))
+                      }
                       placeholder="Training 2 hari&#10;Sertifikat digital&#10;Akses course selamanya"
                       rows={4}
                     />
@@ -739,7 +763,9 @@ export const BatchTierSection = ({ batchId, batchSlug: batchSlugProp }: BatchTie
                   <Input
                     id="templateName"
                     value={templateFormData.name}
-                    onChange={(e) => setTemplateFormData(prev => ({ ...prev, name: e.target.value }))}
+                    onChange={(e) =>
+                      setTemplateFormData((prev) => ({ ...prev, name: e.target.value }))
+                    }
                     placeholder="e.g., Regular, Premium, VIP"
                     required
                   />
@@ -748,14 +774,17 @@ export const BatchTierSection = ({ batchId, batchSlug: batchSlugProp }: BatchTie
                 <div className="border rounded-lg p-3 space-y-2">
                   <Label>Default Akses Kelas</Label>
                   <div className="max-h-32 overflow-y-auto space-y-2">
-                    {courses.map(course => (
+                    {courses.map((course) => (
                       <div key={course.id} className="flex items-center gap-2">
                         <Checkbox
                           id={`template-course-${course.id}`}
                           checked={templateFormData.courseIds.includes(course.id)}
                           onCheckedChange={() => handleTemplateCourseToggle(course.id)}
                         />
-                        <label htmlFor={`template-course-${course.id}`} className="text-sm cursor-pointer">
+                        <label
+                          htmlFor={`template-course-${course.id}`}
+                          className="text-sm cursor-pointer"
+                        >
                           {course.title}
                         </label>
                       </div>
@@ -766,14 +795,17 @@ export const BatchTierSection = ({ batchId, batchSlug: batchSlugProp }: BatchTie
                 <div className="border rounded-lg p-3 space-y-2">
                   <Label>Default Fitur AI</Label>
                   <div className="max-h-40 overflow-y-auto space-y-2">
-                    {AI_FEATURES.map(feature => (
+                    {AI_FEATURES.map((feature) => (
                       <div key={feature.id} className="flex items-start gap-2">
                         <Checkbox
                           id={`template-ai-${feature.id}`}
                           checked={templateFormData.aiFeatures.includes(feature.id)}
                           onCheckedChange={() => handleTemplateAiFeatureToggle(feature.id)}
                         />
-                        <label htmlFor={`template-ai-${feature.id}`} className="text-sm cursor-pointer">
+                        <label
+                          htmlFor={`template-ai-${feature.id}`}
+                          className="text-sm cursor-pointer"
+                        >
                           {feature.name}
                         </label>
                       </div>
@@ -786,7 +818,9 @@ export const BatchTierSection = ({ batchId, batchSlug: batchSlugProp }: BatchTie
                   <Textarea
                     id="templateBenefits"
                     value={templateFormData.benefits}
-                    onChange={(e) => setTemplateFormData(prev => ({ ...prev, benefits: e.target.value }))}
+                    onChange={(e) =>
+                      setTemplateFormData((prev) => ({ ...prev, benefits: e.target.value }))
+                    }
                     placeholder="Training 2 hari&#10;Sertifikat digital&#10;Akses course selamanya"
                     rows={4}
                   />
@@ -858,5 +892,5 @@ export const BatchTierSection = ({ batchId, batchSlug: batchSlugProp }: BatchTie
         </DialogContent>
       </Dialog>
     </div>
-  );
-};
+  )
+}

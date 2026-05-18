@@ -1,45 +1,38 @@
-import React from 'react';
-import { useContext, useEffect } from 'react';
-import {
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-  Tooltip,
-} from 'src/components/ui/tooltip';
-import { Button } from 'src/components/ui/button';
-import { Slider } from 'src/components/ui/slider';
-import { Icon } from '@iconify/react';
-import { useState } from 'react';
-import { IconCheck, IconSettings } from '@tabler/icons-react';
-import SimpleBar from 'simplebar-react';
-import { CustomizerContext } from 'src/context/CustomizerContext';
-import "simplebar-react/dist/simplebar.min.css";
+import { Icon } from '@iconify/react'
+import { IconCheck, IconSettings } from '@tabler/icons-react'
+import React, { useContext, useEffect, useState } from 'react'
+import SimpleBar from 'simplebar-react'
+import { Button } from 'src/components/ui/button'
+import { Slider } from 'src/components/ui/slider'
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from 'src/components/ui/tooltip'
+import { CustomizerContext } from 'src/context/CustomizerContext'
+import 'simplebar-react/dist/simplebar.min.css'
+import { VisuallyHidden } from '@radix-ui/react-visually-hidden'
 import {
   Sheet,
-  SheetTrigger,
   SheetContent,
+  SheetDescription,
   SheetHeader,
   SheetTitle,
-  SheetDescription,
-} from 'src/components/ui/sheet';
-import { VisuallyHidden } from '@radix-ui/react-visually-hidden';
+  SheetTrigger,
+} from 'src/components/ui/sheet'
 
 export const Customizer = () => {
-  const [isOpen, setIsOpen] = useState(false);
-  const handleClose = () => setIsOpen(false);
+  const [isOpen, setIsOpen] = useState(false)
+  const handleClose = () => setIsOpen(false)
 
   // Optimized helper functions with memoization
   const addAttributeToDocEle = React.useCallback((cvalue: any) => {
     if (typeof window !== 'undefined') {
-      document.documentElement.setAttribute('data-color-theme', cvalue);
+      document.documentElement.setAttribute('data-color-theme', cvalue)
     }
-  }, []);
+  }, [])
 
   const removeAttributeToDocEle = React.useCallback((attribute: any) => {
     if (typeof window !== 'undefined') {
-      document.documentElement.removeAttribute(attribute);
+      document.documentElement.removeAttribute(attribute)
     }
-  }, []);
+  }, [])
 
   const {
     activeDir,
@@ -58,99 +51,99 @@ export const Customizer = () => {
     setIsLayout,
     isBorderRadius,
     setIsBorderRadius,
-  } = useContext(CustomizerContext);
+  } = useContext(CustomizerContext)
 
   const themeColors = [
     {
       id: 1,
-      bgColor: "#635BFF",
-      disp: "BLUE_THEME",
+      bgColor: '#635BFF',
+      disp: 'BLUE_THEME',
       isCustom: false,
     },
     {
       id: 2,
-      bgColor: "#0074BA",
-      disp: "AQUA_THEME",
+      bgColor: '#0074BA',
+      disp: 'AQUA_THEME',
     },
     {
       id: 3,
-      bgColor: "#763EBD",
-      disp: "PURPLE_THEME",
+      bgColor: '#763EBD',
+      disp: 'PURPLE_THEME',
     },
     {
       id: 4,
-      bgColor: "#0A7EA4",
-      disp: "GREEN_THEME",
+      bgColor: '#0A7EA4',
+      disp: 'GREEN_THEME',
     },
     {
       id: 5,
-      bgColor: "#01C0C8",
-      disp: "CYAN_THEME",
+      bgColor: '#01C0C8',
+      disp: 'CYAN_THEME',
     },
     {
       id: 6,
-      bgColor: "#FA896B",
-      disp: "ORANGE_THEME"
+      bgColor: '#FA896B',
+      disp: 'ORANGE_THEME',
     },
-  ];
+  ]
 
   // get value of custom theme color
-  const [colorPrimary, setColorPrimary] = useState('#5d87ff');
-  const [colorSecondary, setColorSecondary] = useState('#49beff');
+  const [colorPrimary, setColorPrimary] = useState('#5d87ff')
+  const [colorSecondary, setColorSecondary] = useState('#49beff')
 
   // Helper function to get CSS custom properties
   const getCustomColors = React.useCallback(() => {
-    if (typeof window === 'undefined') return { primary: null, secondary: null };
+    if (typeof window === 'undefined') return { primary: null, secondary: null }
 
-    const root = document.documentElement;
-    const computedStyle = getComputedStyle(root);
+    const root = document.documentElement
+    const computedStyle = getComputedStyle(root)
 
     return {
       primary: computedStyle.getPropertyValue('--color-primary').trim() || null,
       secondary: computedStyle.getPropertyValue('--color-secondary').trim() || null,
-    };
-  }, []);
+    }
+  }, [])
 
   // Update colors from CSS custom properties
   const updateColorsFromCSS = React.useCallback(() => {
-    const colors = getCustomColors();
+    const colors = getCustomColors()
 
     if (colors.primary) {
-      setColorPrimary(colors.primary);
+      setColorPrimary(colors.primary)
     }
     if (colors.secondary) {
-      setColorSecondary(colors.secondary);
+      setColorSecondary(colors.secondary)
     }
-  }, [getCustomColors]);
+  }, [getCustomColors])
 
   // Get initial colors on component mount and when theme changes
   useEffect(() => {
-    updateColorsFromCSS();
-  }, [updateColorsFromCSS, activeTheme]);
+    updateColorsFromCSS()
+  }, [updateColorsFromCSS, activeTheme])
 
   // Optimized color change handlers
   const handlePrimaryColorChange = React.useCallback((value: string) => {
     if (typeof window !== 'undefined') {
-      document.documentElement.style.setProperty('--color-primary', value);
+      document.documentElement.style.setProperty('--color-primary', value)
     }
-    setColorPrimary(value);
-  }, []);
+    setColorPrimary(value)
+  }, [])
 
   const handleSecondaryColorChange = React.useCallback((value: string) => {
     if (typeof window !== 'undefined') {
-      document.documentElement.style.setProperty('--color-secondary', value);
+      document.documentElement.style.setProperty('--color-secondary', value)
     }
-    setColorSecondary(value);
-  }, []);
+    setColorSecondary(value)
+  }, [])
 
   // Optimized function to remove custom color properties
   const removeCustomColorProperties = React.useCallback(() => {
     if (typeof window !== 'undefined') {
-      const root = document.documentElement.style;
-      root.removeProperty('--color-primary');
-      root.removeProperty('--color-secondary');
+      const root = document.documentElement.style
+      root.removeProperty('--color-primary')
+      root.removeProperty('--color-secondary')
     }
-  }, []);
+  }, [])
 
   return (
     <Sheet open={isOpen} onOpenChange={setIsOpen}>
@@ -200,10 +193,11 @@ export const Customizer = () => {
                 </span>
               </Button>
               <Button
-                className={`border bg-transparent hover:!bg-transparent border-ld text-ld hover:scale-105 transition-all hover:text-primary dark:hover:text-primary rounded-md py-3 h-15 px-6 ${activeMode === 'dark' ? 'active text-primary dark:text-primary' : ''
-                  }`}
+                className={`border bg-transparent hover:!bg-transparent border-ld text-ld hover:scale-105 transition-all hover:text-primary dark:hover:text-primary rounded-md py-3 h-15 px-6 ${
+                  activeMode === 'dark' ? 'active text-primary dark:text-primary' : ''
+                }`}
                 onClick={() => {
-                  setActiveMode('dark');
+                  setActiveMode('dark')
                 }}
               >
                 <span className="flex items-center">
@@ -216,10 +210,11 @@ export const Customizer = () => {
             <h4 className="text-base mb-2">Theme Direction</h4>
             <div className="flex gap-4 mb-7">
               <Button
-                className={`border bg-transparent hover:!bg-transparent text-lin border-ld  hover:scale-105 transition-all hover:text-primary dark:hover:text-primary rounded-md py-3 h-15 px-6  ${activeDir === 'ltr' ? 'text-primary dark:text-primary' : ''
-                  }`}
+                className={`border bg-transparent hover:!bg-transparent text-lin border-ld  hover:scale-105 transition-all hover:text-primary dark:hover:text-primary rounded-md py-3 h-15 px-6  ${
+                  activeDir === 'ltr' ? 'text-primary dark:text-primary' : ''
+                }`}
                 onClick={() => {
-                  setActiveDir('ltr');
+                  setActiveDir('ltr')
                 }}
               >
                 <span className="flex items-center">
@@ -227,10 +222,11 @@ export const Customizer = () => {
                 </span>
               </Button>
               <Button
-                className={`border bg-transparent hover:!bg-transparent btn-shadow border-ld text-ld  hover:scale-105 transition-all hover:text-primary dark:hover:text-primary rounded-md py-3 h-15 px-6 ${activeDir === 'rtl' ? 'text-primary dark:text-primary' : ''
-                  }`}
+                className={`border bg-transparent hover:!bg-transparent btn-shadow border-ld text-ld  hover:scale-105 transition-all hover:text-primary dark:hover:text-primary rounded-md py-3 h-15 px-6 ${
+                  activeDir === 'rtl' ? 'text-primary dark:text-primary' : ''
+                }`}
                 onClick={() => {
-                  setActiveDir('rtl');
+                  setActiveDir('rtl')
                 }}
               >
                 <span className="flex items-center">
@@ -247,13 +243,13 @@ export const Customizer = () => {
                   key={theme.id}
                   onClick={() => {
                     if (!theme.isCustom) {
-                      addAttributeToDocEle(theme.disp);
-                      setActiveTheme(theme.disp);
+                      addAttributeToDocEle(theme.disp)
+                      setActiveTheme(theme.disp)
 
-                      removeCustomColorProperties();
+                      removeCustomColorProperties()
                     } else {
-                      removeAttributeToDocEle('data-color-theme');
-                      setActiveTheme('CUSTOM_THEME');
+                      removeAttributeToDocEle('data-color-theme')
+                      setActiveTheme('CUSTOM_THEME')
                     }
                   }}
                   className="border bg-transparent hover:!bg-transparent text-lin border-ld py-5 px-6 rounded-md cursor-pointer"
@@ -347,8 +343,9 @@ export const Customizer = () => {
             <h4 className="text-base mb-2">Layout Type</h4>
             <div className="flex flex-wrap  gap-4 mb-7">
               <Button
-                className={`border bg-transparent hover:!bg-transparent btn-shadow border-ld text-ld hover:scale-105 transition-all hover:text-primary rounded-md py-3 h-15 px-6  dark:hover:text-primary ${activeLayout === 'vertical' ? 'text-primary dark:text-primary' : ''
-                  }`}
+                className={`border bg-transparent hover:!bg-transparent btn-shadow border-ld text-ld hover:scale-105 transition-all hover:text-primary rounded-md py-3 h-15 px-6  dark:hover:text-primary ${
+                  activeLayout === 'vertical' ? 'text-primary dark:text-primary' : ''
+                }`}
                 onClick={() => setActiveLayout('vertical')}
               >
                 <span className="flex items-center">
@@ -358,8 +355,9 @@ export const Customizer = () => {
               </Button>
               <Button
                 onClick={() => setActiveLayout('horizontal')}
-                className={`border bg-transparent hover:!bg-transparent border-ld text-ld hover:scale-105 transition-all hover:text-primary dark:hover:text-primary rounded-md py-3 h-15 px-6 ${activeLayout === 'horizontal' ? 'text-primary dark:text-primary' : ''
-                  }`}
+                className={`border bg-transparent hover:!bg-transparent border-ld text-ld hover:scale-105 transition-all hover:text-primary dark:hover:text-primary rounded-md py-3 h-15 px-6 ${
+                  activeLayout === 'horizontal' ? 'text-primary dark:text-primary' : ''
+                }`}
               >
                 <span className="flex items-center">
                   <Icon icon="tabler:layout-navbar" className="me-2 text-2xl" />
@@ -372,8 +370,9 @@ export const Customizer = () => {
             <h4 className="text-base mb-2">Container Option</h4>
             <div className="flex flex-wrap  gap-4 mb-7">
               <Button
-                className={`border bg-transparent hover:!bg-transparent btn-shadow border-ld text-ld hover:scale-105 transition-all hover:text-primary rounded-md py-3 h-15 px-6   dark:hover:text-primary ${isLayout === 'boxed' ? 'text-primary dark:text-primary' : ''
-                  }`}
+                className={`border bg-transparent hover:!bg-transparent btn-shadow border-ld text-ld hover:scale-105 transition-all hover:text-primary rounded-md py-3 h-15 px-6   dark:hover:text-primary ${
+                  isLayout === 'boxed' ? 'text-primary dark:text-primary' : ''
+                }`}
                 onClick={() => setIsLayout('boxed')}
               >
                 <span className="flex items-center">
@@ -382,8 +381,9 @@ export const Customizer = () => {
                 </span>
               </Button>
               <Button
-                className={`border bg-transparent hover:!bg-transparent border-ld text-ld hover:scale-105 transition-all hover:text-primary dark:hover:text-primary rounded-md py-3 h-15 px-6 ${isLayout === 'full' ? 'text-primary dark:text-primary' : ''
-                  }`}
+                className={`border bg-transparent hover:!bg-transparent border-ld text-ld hover:scale-105 transition-all hover:text-primary dark:hover:text-primary rounded-md py-3 h-15 px-6 ${
+                  isLayout === 'full' ? 'text-primary dark:text-primary' : ''
+                }`}
                 onClick={() => setIsLayout('full')}
               >
                 <span className="flex items-center">
@@ -397,8 +397,9 @@ export const Customizer = () => {
             <h4 className="text-base mb-2">Sidebar Type</h4>
             <div className="flex flex-wrap  gap-4 mb-7">
               <Button
-                className={`border bg-transparent hover:!bg-transparent btn-shadow border-ld text-ld hover:scale-105 transition-all hover:text-primary rounded-md py-3 h-15 px-6  dark:hover:text-primary ${isCollapse == 'full-sidebar' ? 'text-primary dark:text-primary' : ''
-                  }`}
+                className={`border bg-transparent hover:!bg-transparent btn-shadow border-ld text-ld hover:scale-105 transition-all hover:text-primary rounded-md py-3 h-15 px-6  dark:hover:text-primary ${
+                  isCollapse == 'full-sidebar' ? 'text-primary dark:text-primary' : ''
+                }`}
                 onClick={() => setIsCollapse('full-sidebar')}
               >
                 <span className="flex items-center">
@@ -407,8 +408,9 @@ export const Customizer = () => {
                 </span>
               </Button>
               <Button
-                className={`border bg-transparent hover:!bg-transparent border-ld text-ld hover:scale-105 transition-all hover:text-primary dark:hover:text-primary rounded-md py-3 h-15 px-6 ${isCollapse == 'mini-sidebar' ? 'text-primary dark:text-primary' : ''
-                  }`}
+                className={`border bg-transparent hover:!bg-transparent border-ld text-ld hover:scale-105 transition-all hover:text-primary dark:hover:text-primary rounded-md py-3 h-15 px-6 ${
+                  isCollapse == 'mini-sidebar' ? 'text-primary dark:text-primary' : ''
+                }`}
                 onClick={() => setIsCollapse('mini-sidebar')}
               >
                 <span className="flex items-center">
@@ -422,8 +424,9 @@ export const Customizer = () => {
             <h4 className="text-base mb-2">Card With</h4>
             <div className="flex flex-wrap  gap-4 mb-7">
               <Button
-                className={`border bg-transparent hover:!bg-transparent border-ld text-ld hover:scale-105 transition-all hover:text-primary dark:hover:text-primary rounded-md py-3 h-15 px-6  ${!isCardShadow ? 'text-primary dark:text-primary' : ''
-                  }`}
+                className={`border bg-transparent hover:!bg-transparent border-ld text-ld hover:scale-105 transition-all hover:text-primary dark:hover:text-primary rounded-md py-3 h-15 px-6  ${
+                  !isCardShadow ? 'text-primary dark:text-primary' : ''
+                }`}
                 onClick={() => setIsCardShadow(false)}
               >
                 <span className="flex items-center">
@@ -432,8 +435,9 @@ export const Customizer = () => {
                 </span>
               </Button>
               <Button
-                className={`border bg-transparent hover:!bg-transparent border-ld text-ld hover:scale-105 transition-all hover:text-primary dark:hover:text-primary rounded-md py-3 h-15 px-6 ${isCardShadow ? 'text-primary dark:text-primary' : ''
-                  }`}
+                className={`border bg-transparent hover:!bg-transparent border-ld text-ld hover:scale-105 transition-all hover:text-primary dark:hover:text-primary rounded-md py-3 h-15 px-6 ${
+                  isCardShadow ? 'text-primary dark:text-primary' : ''
+                }`}
                 onClick={() => setIsCardShadow(true)}
               >
                 <span className="flex items-center">
@@ -453,10 +457,10 @@ export const Customizer = () => {
               max={24}
               step={1}
             />
-            <div className='mt-3 text-ld'>Current Value: {isBorderRadius}</div>
+            <div className="mt-3 text-ld">Current Value: {isBorderRadius}</div>
           </div>
         </SimpleBar>
       </SheetContent>
     </Sheet>
-  );
-};
+  )
+}

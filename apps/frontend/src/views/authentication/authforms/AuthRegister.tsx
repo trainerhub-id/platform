@@ -1,18 +1,18 @@
-import { useState } from 'react';
-import { useNavigate } from 'react-router';
-import { useSignUp } from 'src/lib/better-auth';
-import { Label } from 'src/components/ui/label';
-import { Input } from 'src/components/ui/input';
-import { Button } from 'src/components/ui/button';
+import { useState } from 'react'
+import { useNavigate } from 'react-router'
+import { Button } from 'src/components/ui/button'
+import { Input } from 'src/components/ui/input'
+import { Label } from 'src/components/ui/label'
+import { useSignUp } from 'src/lib/better-auth'
 
 const AuthRegister = () => {
-  const { isLoaded, signUp, setActive } = useSignUp();
-  const [emailAddress, setEmailAddress] = useState("");
-  const [password, setPassword] = useState("");
-  const [firstName, setFirstName] = useState("");
-  const [error, setError] = useState("");
-  const [loading, setLoading] = useState(false);
-  const navigate = useNavigate();
+  const { isLoaded, signUp, setActive } = useSignUp()
+  const [emailAddress, setEmailAddress] = useState('')
+  const [password, setPassword] = useState('')
+  const [firstName, setFirstName] = useState('')
+  const [error, setError] = useState('')
+  const [loading, setLoading] = useState(false)
+  const navigate = useNavigate()
 
   const beginSignUp = async (): Promise<void> => {
     const signUpAttempt = await signUp.create({
@@ -20,32 +20,32 @@ const AuthRegister = () => {
       password,
       unsafeMetadata: {
         firstName,
-      }
-    });
+      },
+    })
 
-    if (signUpAttempt.status === "complete") {
-      await setActive({ session: signUpAttempt.createdSessionId });
-      navigate("/");
-      return;
+    if (signUpAttempt.status === 'complete') {
+      await setActive({ session: signUpAttempt.createdSessionId })
+      navigate('/')
+      return
     }
-  };
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!isLoaded) return;
+    e.preventDefault()
+    if (!isLoaded) return
 
-    setLoading(true);
-    setError("");
+    setLoading(true)
+    setError('')
 
     try {
-      await beginSignUp();
+      await beginSignUp()
     } catch (err: any) {
-      console.error(err);
-      setError(err?.errors?.[0]?.longMessage || "Sign up failed. Please try again.");
+      console.error(err)
+      setError(err?.errors?.[0]?.longMessage || 'Sign up failed. Please try again.')
     } finally {
-      setLoading(false);
+      setLoading(false)
     }
-  };
+  }
 
   return (
     <>
@@ -101,11 +101,11 @@ const AuthRegister = () => {
           />
         </div>
         <Button className="w-full bg-primary hover:bg-primary/90 text-white" disabled={loading}>
-          {loading ? "Signing up..." : "Sign Up"}
+          {loading ? 'Signing up...' : 'Sign Up'}
         </Button>
       </form>
     </>
-  );
-};
+  )
+}
 
-export default AuthRegister;
+export default AuthRegister

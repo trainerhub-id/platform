@@ -1,6 +1,6 @@
 /* Custom Leaflet Marker Styles */
 .leaflet-container {
-  font-family: 'Manrope', sans-serif;
+  font-family: "Manrope", sans-serif;
 }
 
 .leaflet-popup-content-wrapper {
@@ -20,19 +20,19 @@
 }
 
 .leaflet-popup-tip {
-  background: #AA8D55;
+  background: #aa8d55;
 }
 
 /* Custom marker color - gold/brown theme */
 .custom-marker-icon {
-  background-color: #C39341;
+  background-color: #c39341;
   border: 3px solid white;
   border-radius: 50%;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
 }
 
 .custom-marker-icon.selected {
-  background-color: #A67C3D;
+  background-color: #a67c3d;
   transform: scale(1.2);
   box-shadow: 0 4px 12px rgba(195, 147, 65, 0.5);
 }

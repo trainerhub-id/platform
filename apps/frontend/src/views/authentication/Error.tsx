@@ -1,6 +1,6 @@
-import { Link } from 'react-router';
-import { Button } from 'src/components/ui/button';
-import ErrorImg from "/src/assets/images/backgrounds/errorimg.svg";
+import { Link } from 'react-router'
+import { Button } from 'src/components/ui/button'
+import ErrorImg from '/src/assets/images/backgrounds/errorimg.svg'
 
 const Error = () => (
   <>
@@ -15,6 +15,6 @@ const Error = () => (
       </div>
     </div>
   </>
-);
+)
 
-export default Error;
+export default Error

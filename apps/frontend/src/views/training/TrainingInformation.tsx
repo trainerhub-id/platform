@@ -1,26 +1,26 @@
-import { } from "react";
-import CardBox from "src/components/shared/CardBox";
-import { Icon } from "@iconify/react";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "src/components/ui/tabs";
+import { Icon } from '@iconify/react'
+import {} from 'react'
+import CardBox from 'src/components/shared/CardBox'
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "src/components/ui/select";
-import "src/views/training/training-map.css";
+} from 'src/components/ui/select'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from 'src/components/ui/tabs'
+import 'src/views/training/training-map.css'
 
+import TrainingDetailTab from 'src/components/training/TrainingDetailTab'
 // New Components
-import TrainingList from "src/components/training/TrainingList";
-import TrainingMap from "src/components/training/TrainingMap";
-import TrainingDetailTab from "src/components/training/TrainingDetailTab";
-import TrainingRundownTab from "src/components/training/TrainingRundownTab";
-import { useTrainingInfo } from "./hooks/useTrainingInfo";
-import { Loading } from 'src/components/ui/loading';
+import TrainingList from 'src/components/training/TrainingList'
+import TrainingMap from 'src/components/training/TrainingMap'
+import TrainingRundownTab from 'src/components/training/TrainingRundownTab'
+import { Loading } from 'src/components/ui/loading'
+import { useTrainingInfo } from './hooks/useTrainingInfo'
 
 const TrainingInformation = () => {
-  const { trainings, selectedTraining, setSelectedTraining, loading } = useTrainingInfo();
+  const { trainings, selectedTraining, setSelectedTraining, loading } = useTrainingInfo()
 
   if (loading) {
     return <Loading fullPage />
@@ -31,15 +31,9 @@ const TrainingInformation = () => {
       <CardBox className="p-12 text-center">
         <div className="flex flex-col items-center justify-center">
           <div className="h-20 w-20 rounded-full bg-gray-100 flex items-center justify-center mb-4">
-            <Icon
-              icon="solar:calendar-minimalistic-linear"
-              className="text-gray-400"
-              height={40}
-            />
+            <Icon icon="solar:calendar-minimalistic-linear" className="text-gray-400" height={40} />
           </div>
-          <h3 className="text-lg font-semibold text-dark mb-2">
-            Belum Ada Training
-          </h3>
+          <h3 className="text-lg font-semibold text-dark mb-2">Belum Ada Training</h3>
           <p className="text-sm text-bodytext">
             Saat ini belum ada training yang tersedia untuk Anda.
           </p>
@@ -76,8 +70,8 @@ const TrainingInformation = () => {
               <Select
                 value={selectedTraining.id}
                 onValueChange={(val) => {
-                  const selected = trainings.find(t => t.id === val);
-                  if (selected) setSelectedTraining(selected);
+                  const selected = trainings.find((t) => t.id === val)
+                  if (selected) setSelectedTraining(selected)
                 }}
               >
                 <SelectTrigger className="w-full sm:w-[220px] rounded-xl border-gray-200">
@@ -124,8 +118,7 @@ const TrainingInformation = () => {
         </div>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default TrainingInformation;
-
+export default TrainingInformation

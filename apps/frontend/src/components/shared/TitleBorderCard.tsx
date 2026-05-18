@@ -1,31 +1,22 @@
-
-import React from "react";
-import  { useContext } from "react";
-import { Card } from "../ui/card";
-import { CustomizerContext } from "src/context/CustomizerContext";
+import React, { useContext } from 'react'
+import { CustomizerContext } from 'src/context/CustomizerContext'
+import { Card } from '../ui/card'
 
 interface TitleCardProps {
-  children: React.ReactNode;
-  className?: string;
-  title?: string;
-  icon?: string;
-  onDownload?: () => void;
+  children: React.ReactNode
+  className?: string
+  title?: string
+  icon?: string
+  onDownload?: () => void
 }
 
-const TitleCard: React.FC<TitleCardProps> = ({
-  children,
-  className,
-  title,
-}) => {
-  const { isCardShadow, isBorderRadius } =
-    useContext(CustomizerContext);
+const TitleCard: React.FC<TitleCardProps> = ({ children, className, title }) => {
+  const { isCardShadow, isBorderRadius } = useContext(CustomizerContext)
 
   return (
     <Card
       className={`card ${className} ${
-        isCardShadow
-          ? "dark:shadow-dark-md shadow-md p-0"
-          : "shadow-none border border-ld p-0"
+        isCardShadow ? 'dark:shadow-dark-md shadow-md p-0' : 'shadow-none border border-ld p-0'
       }`}
       style={{
         borderRadius: `${isBorderRadius}px`,
@@ -36,7 +27,7 @@ const TitleCard: React.FC<TitleCardProps> = ({
       </div>
       <div className="pt-4 p-6">{children}</div>
     </Card>
-  );
-};
+  )
+}
 
-export default TitleCard;
+export default TitleCard

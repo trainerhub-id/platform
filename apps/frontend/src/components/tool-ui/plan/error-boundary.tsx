@@ -1,12 +1,12 @@
-"use client";
+'use client'
 
-import * as React from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { AlertTriangle } from "lucide-react";
+import { AlertTriangle } from 'lucide-react'
+import * as React from 'react'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 
 interface ErrorBoundaryState {
-  hasError: boolean;
-  error?: Error;
+  hasError: boolean
+  error?: Error
 }
 
 export class PlanErrorBoundary extends React.Component<
@@ -14,16 +14,16 @@ export class PlanErrorBoundary extends React.Component<
   ErrorBoundaryState
 > {
   constructor(props: { children: React.ReactNode }) {
-    super(props);
-    this.state = { hasError: false };
+    super(props)
+    this.state = { hasError: false }
   }
 
   static getDerivedStateFromError(error: Error): ErrorBoundaryState {
-    return { hasError: true, error };
+    return { hasError: true, error }
   }
 
   componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
-    console.error("Plan Error Boundary caught an error:", error, errorInfo);
+    console.error('Plan Error Boundary caught an error:', error, errorInfo)
   }
 
   render() {
@@ -38,13 +38,13 @@ export class PlanErrorBoundary extends React.Component<
           </CardHeader>
           <CardContent>
             <p className="text-sm text-muted-foreground">
-              {this.state.error?.message || "Failed to render plan component"}
+              {this.state.error?.message || 'Failed to render plan component'}
             </p>
           </CardContent>
         </Card>
-      );
+      )
     }
 
-    return this.props.children;
+    return this.props.children
   }
 }

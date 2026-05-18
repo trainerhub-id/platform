@@ -33,7 +33,9 @@ html {
 .dropdown-enter-active {
   opacity: 1;
   transform: translate(0);
-  transition: opacity 150ms, transform 150ms;
+  transition:
+    opacity 150ms,
+    transform 150ms;
 }
 
 .dropdown-leave {
@@ -44,7 +46,9 @@ html {
 .dropdown-leave-active {
   opacity: 0;
   transform: scale(0.95);
-  transition: opacity 150ms, transform 150ms;
+  transition:
+    opacity 150ms,
+    transform 150ms;
 }
 
 .two-cols {
@@ -53,11 +57,17 @@ html {
   columns: 4;
 }
 
-[data-simplebar], .simplebar-offset, .simplebar-content,.simplebar-wrapper,.simplebar-mask,.simplebar-content-wrapper{
-  outline:none !important;
-  border:none !important;
+[data-simplebar],
+.simplebar-offset,
+.simplebar-content,
+.simplebar-wrapper,
+.simplebar-mask,
+.simplebar-content-wrapper {
+  outline: none !important;
+  border: none !important;
 }
 
-[type='checkbox'], [type='radio']{
+[type="checkbox"],
+[type="radio"] {
   color: var(--color-primary) !important;
 }

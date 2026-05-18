@@ -1,20 +1,19 @@
-import React from 'react';
-import { useContext } from 'react';
-import { Icon } from '@iconify/react';
-import { Card } from '../ui/card';
-import { Button } from '../ui/button';
-import { CustomizerContext } from 'src/context/CustomizerContext';
+import { Icon } from '@iconify/react'
+import React, { useContext } from 'react'
+import { CustomizerContext } from 'src/context/CustomizerContext'
+import { Button } from '../ui/button'
+import { Card } from '../ui/card'
 
 interface TitleCardProps {
-  children: React.ReactNode;
-  className?: string;
-  title?: string;
-  icon?: string;
-  onDownload?: () => void;
+  children: React.ReactNode
+  className?: string
+  title?: string
+  icon?: string
+  onDownload?: () => void
 }
 
 const TitleIconCard: React.FC<TitleCardProps> = ({ children, className, title, onDownload }) => {
-  const { isCardShadow, isBorderRadius } = useContext(CustomizerContext);
+  const { isCardShadow, isBorderRadius } = useContext(CustomizerContext)
 
   return (
     <Card
@@ -34,7 +33,7 @@ const TitleIconCard: React.FC<TitleCardProps> = ({ children, className, title, o
       </div>
       <div className="pt-4 p-6">{children}</div>
     </Card>
-  );
-};
+  )
+}
 
-export default TitleIconCard;
+export default TitleIconCard

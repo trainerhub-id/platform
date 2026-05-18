@@ -1,8 +1,8 @@
-import React from 'react';
-import Google from 'src/assets/images/svgs/google-icon.svg';
+import React from 'react'
+import Google from 'src/assets/images/svgs/google-icon.svg'
 
 interface MyAppProps {
-  title?: string;
+  title?: string
 }
 
 const SocialButtons: React.FC<MyAppProps> = ({ title }) => {
@@ -24,7 +24,7 @@ const SocialButtons: React.FC<MyAppProps> = ({ title }) => {
         <hr className="grow border-ld" />
       </div>
     </>
-  );
-};
+  )
+}
 
-export default SocialButtons;
+export default SocialButtons

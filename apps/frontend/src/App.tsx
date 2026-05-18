@@ -1,15 +1,15 @@
-import { lazy } from 'react';
-import { useAuthAxios } from './hooks/useAuthAxios';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { Toaster } from './components/ui/toaster';
-import { Toaster as SonnerToaster } from 'sonner';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { lazy } from 'react'
+import { Toaster as SonnerToaster } from 'sonner'
+import { Toaster } from './components/ui/toaster'
+import { useAuthAxios } from './hooks/useAuthAxios'
 
-const queryClient = new QueryClient();
-const AppRouterProvider = lazy(() => import('./routes/AppRouterProvider'));
+const queryClient = new QueryClient()
+const AppRouterProvider = lazy(() => import('./routes/AppRouterProvider'))
 
 function App() {
   // Initialize auth axios interceptor
-  useAuthAxios();
+  useAuthAxios()
 
   return (
     <QueryClientProvider client={queryClient}>
@@ -17,7 +17,7 @@ function App() {
       <Toaster />
       <SonnerToaster />
     </QueryClientProvider>
-  );
+  )
 }
 
-export default App;
+export default App

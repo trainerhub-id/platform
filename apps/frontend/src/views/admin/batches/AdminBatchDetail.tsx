@@ -1,13 +1,13 @@
-import { Link, useParams } from 'react-router';
-import { Icon } from '@iconify/react';
-import CardBox from 'src/components/shared/CardBox';
-import { Badge } from 'src/components/ui/badge';
-import { Button } from 'src/components/ui/button';
-import { Loading } from 'src/components/ui/loading';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from 'src/components/ui/tabs';
-import { useAdminBatchWorkspace } from './hooks/useAdminBatchWorkspace';
-import { EnrollmentTable } from './components/EnrollmentTable';
-import { ActivityLogPanel } from './components/ActivityLogPanel';
+import { Icon } from '@iconify/react'
+import { Link, useParams } from 'react-router'
+import CardBox from 'src/components/shared/CardBox'
+import { Badge } from 'src/components/ui/badge'
+import { Button } from 'src/components/ui/button'
+import { Loading } from 'src/components/ui/loading'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from 'src/components/ui/tabs'
+import { ActivityLogPanel } from './components/ActivityLogPanel'
+import { EnrollmentTable } from './components/EnrollmentTable'
+import { useAdminBatchWorkspace } from './hooks/useAdminBatchWorkspace'
 
 const tabs = [
   { value: 'overview', label: 'Overview', icon: 'solar:chart-square-linear' },
@@ -20,30 +20,30 @@ const tabs = [
   { value: 'checkout', label: 'Checkout Links', icon: 'solar:link-round-linear' },
   { value: 'activity', label: 'Activity Log', icon: 'solar:history-linear' },
   { value: 'export', label: 'Export', icon: 'solar:export-linear' },
-];
+]
 
 const formatDate = (value?: string | null) => {
-  if (!value) return 'Belum diatur';
-  const date = new Date(value);
-  if (Number.isNaN(date.getTime())) return 'Belum diatur';
+  if (!value) return 'Belum diatur'
+  const date = new Date(value)
+  if (Number.isNaN(date.getTime())) return 'Belum diatur'
   return date.toLocaleDateString('id-ID', {
     day: '2-digit',
     month: 'short',
     year: 'numeric',
-  });
-};
+  })
+}
 
 const getCount = (value: unknown) => {
-  const count = Number(value ?? 0);
-  return Number.isFinite(count) ? count : 0;
-};
+  const count = Number(value ?? 0)
+  return Number.isFinite(count) ? count : 0
+}
 
 const AdminBatchDetail = () => {
-  const { batchId } = useParams();
-  const { data: batch, isLoading, error, refetch } = useAdminBatchWorkspace(batchId);
+  const { batchId } = useParams()
+  const { data: batch, isLoading, error, refetch } = useAdminBatchWorkspace(batchId)
 
   if (isLoading) {
-    return <Loading fullPage />;
+    return <Loading fullPage />
   }
 
   if (error || !batch) {
@@ -70,20 +70,24 @@ const AdminBatchDetail = () => {
           </div>
         </CardBox>
       </div>
-    );
+    )
   }
 
-  const batchName = batch.namaBatch || batch.name || 'Batch tanpa nama';
-  const totalEnrollments = getCount(batch.totalEnrollments);
-  const paidEnrollments = getCount(batch.paidEnrollments);
-  const pendingPayments = getCount(batch.pendingPayments);
-  const unpaidEnrollments = Math.max(totalEnrollments - paidEnrollments - pendingPayments, 0);
+  const batchName = batch.namaBatch || batch.name || 'Batch tanpa nama'
+  const totalEnrollments = getCount(batch.totalEnrollments)
+  const paidEnrollments = getCount(batch.paidEnrollments)
+  const pendingPayments = getCount(batch.pendingPayments)
+  const unpaidEnrollments = Math.max(totalEnrollments - paidEnrollments - pendingPayments, 0)
 
   return (
     <div className="space-y-6">
       <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
         <div className="space-y-3">
-          <Button asChild variant="ghost" className="h-8 rounded-xl px-0 text-bodytext hover:text-primary">
+          <Button
+            asChild
+            variant="ghost"
+            className="h-8 rounded-xl px-0 text-bodytext hover:text-primary"
+          >
             <Link to="/admin/batches">
               <Icon icon="solar:arrow-left-linear" className="mr-2" height={18} />
               Kelola Batch
@@ -97,7 +101,8 @@ const AdminBatchDetail = () => {
               </Badge>
             </div>
             <p className="mt-1 text-sm text-bodytext">
-              {formatDate(batch.tanggal as string | null)} - {formatDate(batch.tanggalSelesai as string | null)}
+              {formatDate(batch.tanggal as string | null)} -{' '}
+              {formatDate(batch.tanggalSelesai as string | null)}
             </p>
           </div>
         </div>
@@ -108,7 +113,10 @@ const AdminBatchDetail = () => {
               Edit Batch
             </Link>
           </Button>
-          <Button onClick={() => refetch()} className="rounded-xl bg-primary text-white hover:bg-primary/90">
+          <Button
+            onClick={() => refetch()}
+            className="rounded-xl bg-primary text-white hover:bg-primary/90"
+          >
             <Icon icon="solar:refresh-linear" className="mr-2" height={16} />
             Refresh
           </Button>
@@ -171,7 +179,10 @@ const AdminBatchDetail = () => {
           </TabsContent>
 
           {tabs
-            .filter((tab) => tab.value !== 'overview' && tab.value !== 'member' && tab.value !== 'activity')
+            .filter(
+              (tab) =>
+                tab.value !== 'overview' && tab.value !== 'member' && tab.value !== 'activity',
+            )
             .map((tab) => (
               <TabsContent key={tab.value} value={tab.value} className="p-4">
                 <div className="rounded-xl border border-dashed border-gray-300 p-8 text-center">
@@ -186,7 +197,7 @@ const AdminBatchDetail = () => {
         </Tabs>
       </CardBox>
     </div>
-  );
-};
+  )
+}
 
-export default AdminBatchDetail;
+export default AdminBatchDetail

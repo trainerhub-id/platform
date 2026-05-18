@@ -1,7 +1,7 @@
-import { ProtectedRoute } from './ProtectedRoute';
+import { ProtectedRoute } from './ProtectedRoute'
 
 interface UserRouteProps {
-    children: React.ReactNode;
+  children: React.ReactNode
 }
 
 /**
@@ -9,9 +9,5 @@ interface UserRouteProps {
  * Requires authentication and peserta role (blocks admin)
  */
 export const UserRoute = ({ children }: UserRouteProps) => {
-    return (
-        <ProtectedRoute requireRole="peserta">
-            {children}
-        </ProtectedRoute>
-    );
-};
+  return <ProtectedRoute requireRole="peserta">{children}</ProtectedRoute>
+}

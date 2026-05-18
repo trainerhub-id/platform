@@ -1,33 +1,38 @@
-import { Icon } from "@iconify/react";
-import { useAuthActions, useUser } from "src/lib/better-auth";
-import { useNavigate, useLocation } from "react-router";
-import * as profileData from "./Data";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "src/components/ui/dropdown-menu";
-import { Badge } from "src/components/ui/badge";
-import { UserAvatar } from 'src/components/avatar';
+import { Icon } from '@iconify/react'
+import { useLocation, useNavigate } from 'react-router'
+import { UserAvatar } from 'src/components/avatar'
+import { Badge } from 'src/components/ui/badge'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from 'src/components/ui/dropdown-menu'
+import { useAuthActions, useUser } from 'src/lib/better-auth'
+import * as profileData from './Data'
 
 const Profile = () => {
-  const { user, isLoaded, isSignedIn } = useUser();
-  const { signOut } = useAuthActions();
-  const navigate = useNavigate();
-  const location = useLocation();
+  const { user, isLoaded, isSignedIn } = useUser()
+  const { signOut } = useAuthActions()
+  const navigate = useNavigate()
+  const location = useLocation()
 
-  const userName = user?.fullName || user?.username || "Peserta";
-  const userEmail = user?.primaryEmailAddress?.emailAddress || "info@trainerhub.com";
-  const isPro = false; // logic for pro status if needed
+  const userName = user?.fullName || user?.username || 'Peserta'
+  const userEmail = user?.primaryEmailAddress?.emailAddress || 'info@trainerhub.com'
+  const isPro = false // logic for pro status if needed
 
   // Check if current path is an Admin path
-  const isAdmin = location.pathname.startsWith("/admin");
-  const menuItems = isAdmin ? profileData.adminProfileDD : profileData.profileDD;
+  const isAdmin = location.pathname.startsWith('/admin')
+  const menuItems = isAdmin ? profileData.adminProfileDD : profileData.profileDD
 
   const handleMenuClick = async (url: string) => {
-    if (url === "signout") {
-      await signOut();
-      navigate("/auth/login");
+    if (url === 'signout') {
+      await signOut()
+      navigate('/auth/login')
     } else {
-      navigate(url);
+      navigate(url)
     }
-  };
+  }
 
   return (
     <div className="relative">
@@ -36,7 +41,7 @@ const Profile = () => {
         <DropdownMenuTrigger asChild>
           <div className="flex items-center gap-1 cursor-pointer">
             <span className="h-10 w-10 hover:text-primary rounded-full flex justify-center items-center group-hover/menu:bg-lightprimary group-hover/menu:text-primary overflow-hidden">
-              <UserAvatar 
+              <UserAvatar
                 userId={user?.id || 'guest'}
                 size={35}
                 alt={userName}
@@ -87,7 +92,7 @@ const Profile = () => {
         </DropdownMenuContent>
       </DropdownMenu>
     </div>
-  );
-};
+  )
+}
 
-export default Profile;
+export default Profile

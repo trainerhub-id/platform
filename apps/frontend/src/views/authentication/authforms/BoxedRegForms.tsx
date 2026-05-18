@@ -1,33 +1,22 @@
-import { Link } from "react-router";
-import { Button } from "src/components/ui/button";
-import { Checkbox } from "src/components/ui/checkbox";
-import { Input } from "src/components/ui/input";
-import { Label } from "src/components/ui/label";
+import { Link } from 'react-router'
+import { Button } from 'src/components/ui/button'
+import { Checkbox } from 'src/components/ui/checkbox'
+import { Input } from 'src/components/ui/input'
+import { Label } from 'src/components/ui/label'
 
 const BoxedAuthRegister = () => {
   return (
     <form className="mt-6 space-y-5">
-
       {/* Name */}
       <div className="space-y-2">
         <Label htmlFor="name">Name</Label>
-        <Input
-          id="name"
-          type="text"
-          placeholder="Enter your name"
-          className="form-control"
-        />
+        <Input id="name" type="text" placeholder="Enter your name" className="form-control" />
       </div>
 
       {/* Email */}
       <div className="space-y-2">
         <Label htmlFor="email">Email Address</Label>
-        <Input
-          id="email"
-          type="text"
-          placeholder="Enter your email"
-          className="form-control"
-        />
+        <Input id="email" type="text" placeholder="Enter your email" className="form-control" />
       </div>
 
       {/* Password */}
@@ -63,7 +52,7 @@ const BoxedAuthRegister = () => {
         <Link to="/">Sign Up</Link>
       </Button>
     </form>
-  );
-};
+  )
+}
 
-export default BoxedAuthRegister;
+export default BoxedAuthRegister

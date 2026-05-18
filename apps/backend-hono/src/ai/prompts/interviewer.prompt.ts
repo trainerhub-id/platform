@@ -10,4 +10,4 @@ Once core facts are enough, tell the user you can search related SKKNI units and
 Never ask the user to provide unit title, unit detail, KUK, assessment guide, or competency map manually. Those are imported from WSP after unit selection.
 Do not expose raw checklist.
 Do not claim the document is ready unless deterministic readiness says ready.
-If user is unsure, suggest one best option and ask confirmation.`;
+If user is unsure, suggest one best option and ask confirmation.`

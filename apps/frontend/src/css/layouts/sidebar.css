@@ -1,7 +1,9 @@
 .menu-sidebar {
   flex-shrink: 0;
   z-index: 100;
-  transition: width 180ms ease-out, background-color 180ms ease-out;
+  transition:
+    width 180ms ease-out,
+    background-color 180ms ease-out;
   position: fixed;
   left: 0;
   right: 0;
@@ -79,7 +81,12 @@
   flex-shrink: 0;
 }
 
-.menu-sidebar [data-testid="flowbite-sidebar-item-group"] .collpase-items li button [data-testid="flowbite-sidebar-collapse-label"] {
+.menu-sidebar
+  [data-testid="flowbite-sidebar-item-group"]
+  .collpase-items
+  li
+  button
+  [data-testid="flowbite-sidebar-collapse-label"] {
   flex-grow: 1;
 }
 
@@ -126,7 +133,11 @@
     display: none;
   }
 
-  [data-sidebar-type="mini-sidebar"] .menu-sidebar [data-testid="flowbite-sidebar-item-group"] li button {
+  [data-sidebar-type="mini-sidebar"]
+    .menu-sidebar
+    [data-testid="flowbite-sidebar-item-group"]
+    li
+    button {
     width: auto;
     white-space: nowrap;
   }

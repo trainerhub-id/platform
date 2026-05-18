@@ -1,22 +1,22 @@
-import React, { useState } from 'react';
+import { AlertCircle, CheckCircle, Loader2, Upload } from 'lucide-react'
+import React, { useState } from 'react'
+import { certificateTemplateApi } from 'src/api/certificate-template.api'
+import { Alert, AlertDescription } from 'src/components/ui/alert'
+import { Button } from 'src/components/ui/button'
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
-  DialogDescription,
-} from 'src/components/ui/dialog';
-import { Button } from 'src/components/ui/button';
-import { Input } from 'src/components/ui/input';
-import { Label } from 'src/components/ui/label';
-import { Alert, AlertDescription } from 'src/components/ui/alert';
-import { certificateTemplateApi } from 'src/api/certificate-template.api';
-import { Loader2, Upload, AlertCircle, CheckCircle } from 'lucide-react';
+} from 'src/components/ui/dialog'
+import { Input } from 'src/components/ui/input'
+import { Label } from 'src/components/ui/label'
 
 interface UploadTemplateModalProps {
-  isOpen: boolean;
-  onClose: () => void;
-  onSuccess: () => void;
+  isOpen: boolean
+  onClose: () => void
+  onSuccess: () => void
 }
 
 export const UploadTemplateModal: React.FC<UploadTemplateModalProps> = ({
@@ -24,75 +24,75 @@ export const UploadTemplateModal: React.FC<UploadTemplateModalProps> = ({
   onClose,
   onSuccess,
 }) => {
-  const [templateName, setTemplateName] = useState('');
-  const [htmlFile, setHtmlFile] = useState<File | null>(null);
-  const [htmlContent, setHtmlContent] = useState('');
-  const [errors, setErrors] = useState<string[]>([]);
-  const [isValidating, setIsValidating] = useState(false);
-  const [isUploading, setIsUploading] = useState(false);
-  const [isValid, setIsValid] = useState(false);
+  const [templateName, setTemplateName] = useState('')
+  const [htmlFile, setHtmlFile] = useState<File | null>(null)
+  const [htmlContent, setHtmlContent] = useState('')
+  const [errors, setErrors] = useState<string[]>([])
+  const [isValidating, setIsValidating] = useState(false)
+  const [isUploading, setIsUploading] = useState(false)
+  const [isValid, setIsValid] = useState(false)
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
+    const file = e.target.files?.[0]
+    if (!file) return
 
     if (!file.name.endsWith('.html')) {
-      setErrors(['File harus berformat .html']);
-      setIsValid(false);
-      return;
+      setErrors(['File harus berformat .html'])
+      setIsValid(false)
+      return
     }
 
-    setHtmlFile(file);
-    setErrors([]);
-    setIsValid(false);
+    setHtmlFile(file)
+    setErrors([])
+    setIsValid(false)
 
     // Read file content
-    const content = await file.text();
-    setHtmlContent(content);
+    const content = await file.text()
+    setHtmlContent(content)
 
     // Validate
-    setIsValidating(true);
+    setIsValidating(true)
     try {
-      const validation = await certificateTemplateApi.validateTemplate(content);
+      const validation = await certificateTemplateApi.validateTemplate(content)
       if (!validation.isValid) {
-        setErrors(validation.errors);
-        setIsValid(false);
+        setErrors(validation.errors)
+        setIsValid(false)
       } else {
-        setIsValid(true);
+        setIsValid(true)
       }
     } catch (error) {
-      setErrors(['Gagal memvalidasi template']);
-      setIsValid(false);
+      setErrors(['Gagal memvalidasi template'])
+      setIsValid(false)
     } finally {
-      setIsValidating(false);
+      setIsValidating(false)
     }
-  };
+  }
 
   const handleUpload = async () => {
     if (!htmlFile || !htmlContent || !templateName || !isValid) {
-      return;
+      return
     }
 
-    setIsUploading(true);
+    setIsUploading(true)
     try {
       await certificateTemplateApi.uploadTemplate({
         name: templateName,
         htmlContent,
-      });
-      onSuccess();
+      })
+      onSuccess()
       // Reset form
-      setTemplateName('');
-      setHtmlFile(null);
-      setHtmlContent('');
-      setErrors([]);
-      setIsValid(false);
-      onClose();
+      setTemplateName('')
+      setHtmlFile(null)
+      setHtmlContent('')
+      setErrors([])
+      setIsValid(false)
+      onClose()
     } catch (error: any) {
-      setErrors([error?.response?.data?.message || 'Gagal mengupload template']);
+      setErrors([error?.response?.data?.message || 'Gagal mengupload template'])
     } finally {
-      setIsUploading(false);
+      setIsUploading(false)
     }
-  };
+  }
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
@@ -171,5 +171,5 @@ export const UploadTemplateModal: React.FC<UploadTemplateModalProps> = ({
         </div>
       </DialogContent>
     </Dialog>
-  );
-};
+  )
+}

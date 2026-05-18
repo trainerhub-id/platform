@@ -1,5 +1,5 @@
-import { z } from "zod";
-import type { ReactNode } from "react";
+import type { ReactNode } from 'react'
+import { z } from 'zod'
 
 /**
  * Tool UI conventions:
@@ -21,31 +21,20 @@ import type { ReactNode } from "react";
  * Format recommendation: `{component-type}-{semantic-identifier}`
  * Examples: "data-table-expenses-q3", "option-list-deploy-target"
  */
-export const ToolUIIdSchema = z.string().min(1);
+export const ToolUIIdSchema = z.string().min(1)
 
-export type ToolUIId = z.infer<typeof ToolUIIdSchema>;
+export type ToolUIId = z.infer<typeof ToolUIIdSchema>
 
 /**
  * Primary role of a Tool UI surface in a chat context.
  */
-export const ToolUIRoleSchema = z.enum([
-  "information",
-  "decision",
-  "control",
-  "state",
-  "composite",
-]);
+export const ToolUIRoleSchema = z.enum(['information', 'decision', 'control', 'state', 'composite'])
 
-export type ToolUIRole = z.infer<typeof ToolUIRoleSchema>;
+export type ToolUIRole = z.infer<typeof ToolUIRoleSchema>
 
-export const ToolUIReceiptOutcomeSchema = z.enum([
-  "success",
-  "partial",
-  "failed",
-  "cancelled",
-]);
+export const ToolUIReceiptOutcomeSchema = z.enum(['success', 'partial', 'failed', 'cancelled'])
 
-export type ToolUIReceiptOutcome = z.infer<typeof ToolUIReceiptOutcomeSchema>;
+export type ToolUIReceiptOutcome = z.infer<typeof ToolUIReceiptOutcomeSchema>
 
 /**
  * Optional receipt metadata: a durable summary of an outcome.
@@ -55,9 +44,9 @@ export const ToolUIReceiptSchema = z.object({
   summary: z.string().min(1),
   identifiers: z.record(z.string(), z.string()).optional(),
   at: z.string().datetime(),
-});
+})
 
-export type ToolUIReceipt = z.infer<typeof ToolUIReceiptSchema>;
+export type ToolUIReceipt = z.infer<typeof ToolUIReceiptSchema>
 
 /**
  * Base schema for Tool UI payloads (id + optional role/receipt).
@@ -66,9 +55,9 @@ export const ToolUISurfaceSchema = z.object({
   id: ToolUIIdSchema,
   role: ToolUIRoleSchema.optional(),
   receipt: ToolUIReceiptSchema.optional(),
-});
+})
 
-export type ToolUISurface = z.infer<typeof ToolUISurfaceSchema>;
+export type ToolUISurface = z.infer<typeof ToolUISurfaceSchema>
 
 export const ActionSchema = z.object({
   id: z.string().min(1),
@@ -80,43 +69,39 @@ export const ActionSchema = z.object({
    */
   sentence: z.string().optional(),
   confirmLabel: z.string().optional(),
-  variant: z
-    .enum(["default", "destructive", "secondary", "ghost", "outline"])
-    .optional(),
+  variant: z.enum(['default', 'destructive', 'secondary', 'ghost', 'outline']).optional(),
   icon: z.custom<ReactNode>().optional(),
   loading: z.boolean().optional(),
   disabled: z.boolean().optional(),
   shortcut: z.string().optional(),
-});
+})
 
-export type Action = z.infer<typeof ActionSchema>;
+export type Action = z.infer<typeof ActionSchema>
 
 export const ActionButtonsPropsSchema = z.object({
   actions: z.array(ActionSchema).min(1),
-  align: z.enum(["left", "center", "right"]).optional(),
+  align: z.enum(['left', 'center', 'right']).optional(),
   confirmTimeout: z.number().positive().optional(),
   className: z.string().optional(),
-});
+})
 
-export const SerializableActionSchema = ActionSchema.omit({ icon: true });
+export const SerializableActionSchema = ActionSchema.omit({ icon: true })
 export const SerializableActionsSchema = ActionButtonsPropsSchema.extend({
   actions: z.array(SerializableActionSchema),
-}).omit({ className: true });
+}).omit({ className: true })
 
 export interface ActionsConfig {
-  items: Action[];
-  align?: "left" | "center" | "right";
-  confirmTimeout?: number;
+  items: Action[]
+  align?: 'left' | 'center' | 'right'
+  confirmTimeout?: number
 }
 
 export const SerializableActionsConfigSchema = z.object({
   items: z.array(SerializableActionSchema).min(1),
-  align: z.enum(["left", "center", "right"]).optional(),
+  align: z.enum(['left', 'center', 'right']).optional(),
   confirmTimeout: z.number().positive().optional(),
-});
+})
 
-export type SerializableActionsConfig = z.infer<
-  typeof SerializableActionsConfigSchema
->;
+export type SerializableActionsConfig = z.infer<typeof SerializableActionsConfigSchema>
 
-export type SerializableAction = z.infer<typeof SerializableActionSchema>;
+export type SerializableAction = z.infer<typeof SerializableActionSchema>

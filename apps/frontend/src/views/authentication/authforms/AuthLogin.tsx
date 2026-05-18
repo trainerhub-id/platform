@@ -1,46 +1,46 @@
-import { useState } from "react";
-import { Link, useNavigate, useSearchParams } from "react-router";
-import { useSignIn } from "src/lib/better-auth";
-import { Checkbox } from "src/components/ui/checkbox";
-import { Input } from "src/components/ui/input";
-import { Label } from "src/components/ui/label";
-import { Button } from "src/components/ui/button";
+import { useState } from 'react'
+import { Link, useNavigate, useSearchParams } from 'react-router'
+import { Button } from 'src/components/ui/button'
+import { Checkbox } from 'src/components/ui/checkbox'
+import { Input } from 'src/components/ui/input'
+import { Label } from 'src/components/ui/label'
+import { useSignIn } from 'src/lib/better-auth'
 
 const AuthLogin = () => {
-  const { isLoaded, signIn, setActive } = useSignIn();
-  const [searchParams] = useSearchParams();
-  const [email, setEmail] = useState(searchParams.get("email") ?? "");
-  const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
-  const [loading, setLoading] = useState(false);
-  const navigate = useNavigate();
+  const { isLoaded, signIn, setActive } = useSignIn()
+  const [searchParams] = useSearchParams()
+  const [email, setEmail] = useState(searchParams.get('email') ?? '')
+  const [password, setPassword] = useState('')
+  const [error, setError] = useState('')
+  const [loading, setLoading] = useState(false)
+  const navigate = useNavigate()
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!isLoaded) return;
+    e.preventDefault()
+    if (!isLoaded) return
 
-    setLoading(true);
-    setError("");
+    setLoading(true)
+    setError('')
 
     try {
       const result = await signIn.create({
         identifier: email,
         password,
-      });
+      })
 
-      if (result.status === "complete") {
-        await setActive({ session: result.createdSessionId });
-        navigate("/");
+      if (result.status === 'complete') {
+        await setActive({ session: result.createdSessionId })
+        navigate('/')
       } else {
-        setError("Login incomplete. Please try again.");
+        setError('Login incomplete. Please try again.')
       }
     } catch (err: any) {
-      console.error("error", err);
-      setError(err.errors?.[0]?.longMessage || "An error occurred during sign in.");
+      console.error('error', err)
+      setError(err.errors?.[0]?.longMessage || 'An error occurred during sign in.')
     } finally {
-      setLoading(false);
+      setLoading(false)
     }
-  };
+  }
 
   return (
     <>
@@ -79,14 +79,14 @@ const AuthLogin = () => {
         <div className="flex justify-between my-5">
           <div className="flex items-center gap-2">
             <Checkbox id="accept" />
-            <Label
-              htmlFor="accept"
-              className="opacity-90 font-normal cursor-pointer"
-            >
+            <Label htmlFor="accept" className="opacity-90 font-normal cursor-pointer">
               Remember this Device
             </Label>
           </div>
-          <Link to={"/auth/forgot-password"} className="text-[#CFA15A] text-sm font-medium hover:underline">
+          <Link
+            to={'/auth/forgot-password'}
+            className="text-[#CFA15A] text-sm font-medium hover:underline"
+          >
             Forgot Password ?
           </Link>
         </div>
@@ -95,11 +95,11 @@ const AuthLogin = () => {
           className="w-full bg-[#CFA15A] hover:bg-[#b0884b] text-white border-none"
           disabled={loading}
         >
-          {loading ? "Signing in..." : "Sign in"}
+          {loading ? 'Signing in...' : 'Sign in'}
         </Button>
       </form>
     </>
-  );
-};
+  )
+}
 
-export default AuthLogin;
+export default AuthLogin

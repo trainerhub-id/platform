@@ -1,22 +1,22 @@
-import { useState } from 'react';
-import { Link } from 'react-router';
-import { Icon } from '@iconify/react';
-import SimpleBar from 'simplebar-react';
-import * as SearchData from './Data';
-import AnimatedItem from 'src/components/AnimatedComponent/ListAnimation';
-import InputPlaceholderAnimate from 'src/components/AnimatedComponent/AnimatedInputPlaceholder';
-import { Dialog, DialogContent, DialogTrigger } from 'src/components/ui/dialog';
+import { Icon } from '@iconify/react'
+import { useState } from 'react'
+import { Link } from 'react-router'
+import SimpleBar from 'simplebar-react'
+import InputPlaceholderAnimate from 'src/components/AnimatedComponent/AnimatedInputPlaceholder'
+import AnimatedItem from 'src/components/AnimatedComponent/ListAnimation'
+import { Dialog, DialogContent, DialogTrigger } from 'src/components/ui/dialog'
+import * as SearchData from './Data'
 
 const Search = () => {
-  const [openModal, setOpenModal] = useState(false);
-  const [searchLink, setSearchLink] = useState('');
+  const [openModal, setOpenModal] = useState(false)
+  const [searchLink, setSearchLink] = useState('')
 
   // Filter the data based on search input
   const filteredLinks = SearchData.SearchLinks.filter(
     (link) =>
       link.title.toLowerCase().includes(searchLink.toLowerCase()) ||
       link.href.toLowerCase().includes(searchLink.toLowerCase()),
-  );
+  )
 
   return (
     <Dialog open={openModal} onOpenChange={setOpenModal}>
@@ -58,7 +58,7 @@ const Search = () => {
         </div>
       </DialogContent>
     </Dialog>
-  );
-};
+  )
+}
 
-export default Search;
+export default Search

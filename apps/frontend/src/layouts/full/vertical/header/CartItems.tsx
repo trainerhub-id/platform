@@ -1,50 +1,41 @@
-
 import { Icon } from '@iconify/react/dist/iconify.js'
 import { useState } from 'react'
 import { Link } from 'react-router'
 import SimpleBar from 'simplebar-react'
-import product1 from "src/assets/images/products/product-1.jpg"
-import product2 from "src/assets/images/products/product-2.jpg"
-import product3 from "src/assets/images/products/product-3.jpg"
+import product1 from 'src/assets/images/products/product-1.jpg'
+import product2 from 'src/assets/images/products/product-2.jpg'
+import product3 from 'src/assets/images/products/product-3.jpg'
 import { Badge } from 'src/components/ui/badge'
 import { Button } from 'src/components/ui/button'
 import { Sheet, SheetContent } from 'src/components/ui/sheet'
 
-
 const CartItems = () => {
-
-  const [isOpen, setIsOpen] = useState(false);
-  const [prodQuant1, SetProdQuant1] = useState(5);
-  const [prodQuant2, SetProdQuant2] = useState(2);
-  const [prodQuant3, SetProdQuant3] = useState(4);
-
+  const [isOpen, setIsOpen] = useState(false)
+  const [prodQuant1, SetProdQuant1] = useState(5)
+  const [prodQuant2, SetProdQuant2] = useState(2)
+  const [prodQuant3, SetProdQuant3] = useState(4)
 
   const handleQuantity = (productType: string, actionType: string) => {
-    if (productType === "product1") {
-      if (actionType === "inc") {
+    if (productType === 'product1') {
+      if (actionType === 'inc') {
         SetProdQuant1(prodQuant1 + 1)
-      }
-      else {
+      } else {
         if (prodQuant1 > 0) {
           SetProdQuant1(prodQuant1 - 1)
         }
       }
-    }
-    else if (productType === "product2") {
-      if (actionType === "inc") {
+    } else if (productType === 'product2') {
+      if (actionType === 'inc') {
         SetProdQuant2(prodQuant2 + 1)
-      }
-      else {
+      } else {
         if (prodQuant1 > 0) {
           SetProdQuant2(prodQuant2 - 1)
         }
       }
-    }
-    else {
-      if (actionType === "inc") {
+    } else {
+      if (actionType === 'inc') {
         SetProdQuant3(prodQuant3 + 1)
-      }
-      else {
+      } else {
         if (prodQuant1 > 0) {
           SetProdQuant3(prodQuant3 - 1)
         }
@@ -53,47 +44,46 @@ const CartItems = () => {
   }
 
   interface cartProductProps {
-    key: string;
-    img: string;
-    title: string;
-    desc: string;
-    price: string;
-    quantity: number;
-    productType: string;
+    key: string
+    img: string
+    title: string
+    desc: string
+    price: string
+    quantity: number
+    productType: string
   }
 
   const CartProducts: cartProductProps[] = [
     {
-      key: "prod1",
+      key: 'prod1',
       img: product1,
-      title: "Supreme toys cooker",
-      desc: "Kitchenware Item",
-      price: "$250",
+      title: 'Supreme toys cooker',
+      desc: 'Kitchenware Item',
+      price: '$250',
       quantity: prodQuant1,
-      productType: "product1"
+      productType: 'product1',
     },
     {
-      key: "prod2",
+      key: 'prod2',
       img: product2,
-      title: "Supreme toys cooker",
-      desc: "Kitchenware Item",
-      price: "$250",
+      title: 'Supreme toys cooker',
+      desc: 'Kitchenware Item',
+      price: '$250',
       quantity: prodQuant2,
-      productType: "product2"
+      productType: 'product2',
     },
     {
-      key: "prod3",
+      key: 'prod3',
       img: product3,
-      title: "Supreme toys cooker",
-      desc: "Kitchenware Item",
-      price: "$250",
+      title: 'Supreme toys cooker',
+      desc: 'Kitchenware Item',
+      price: '$250',
       quantity: prodQuant3,
-      productType: "product3"
-    }
+      productType: 'product3',
+    },
   ]
 
   return (
-
     <>
       <button
         onClick={() => setIsOpen(true)}
@@ -118,11 +108,7 @@ const CartItems = () => {
               {CartProducts.map((item) => (
                 <div key={item.key} className="grid grid-cols-12 gap-5 mb-6">
                   <div className="col-span-5">
-                    <img
-                      src={item.img}
-                      alt="product"
-                      className="rounded-md w-full max-w-full"
-                    />
+                    <img src={item.img} alt="product" className="rounded-md w-full max-w-full" />
                   </div>
                   <div className="col-span-7">
                     <h4 className="text-sm font-medium mb-1">{item.title}</h4>
@@ -133,7 +119,7 @@ const CartItems = () => {
                       </p>
                       <div className="flex">
                         <button
-                          onClick={() => handleQuantity(item.productType, "dec")}
+                          onClick={() => handleQuantity(item.productType, 'dec')}
                           className="w-5 h-5 bg-lightsuccess hover:bg-success hover:text-white text-success flex cursor-pointer justify-center items-center rounded-l-md"
                         >
                           <Icon icon="tabler:minus" width={12} />
@@ -142,7 +128,7 @@ const CartItems = () => {
                           {item.quantity}
                         </div>
                         <button
-                          onClick={() => handleQuantity(item.productType, "inc")}
+                          onClick={() => handleQuantity(item.productType, 'inc')}
                           className="w-5 h-5 bg-lightsuccess text-success hover:bg-success hover:text-white flex cursor-pointer justify-center items-center rounded-r-md"
                         >
                           <Icon icon="tabler:plus" width={12} />

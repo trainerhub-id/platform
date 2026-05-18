@@ -1,31 +1,31 @@
 /* Custom MuxPlayer Styling */
 mux-player {
   /* Primary accent color - for progress bar, buttons, hover states */
-  --media-accent-color: #C39341;
-  --media-primary-color: #C39341;
-  
+  --media-accent-color: #c39341;
+  --media-primary-color: #c39341;
+
   /* Control bar background */
   --media-control-background: rgba(0, 0, 0, 0.7);
   --media-control-hover-background: rgba(195, 147, 65, 0.92);
-  
+
   /* Icon colors */
-  --media-icon-color: #FFFFFF;
+  --media-icon-color: #ffffff;
   --media-secondary-color: rgba(255, 255, 255, 0.7);
-  
+
   /* Range/Progress colors */
   --media-range-track-background: rgba(255, 255, 255, 0.3);
-  --media-range-bar-color: #C39341;
-  --media-range-thumb-background: #C39341;
-  
+  --media-range-bar-color: #c39341;
+  --media-range-thumb-background: #c39341;
+
   /* Time display */
-  --media-time-display-color: #FFFFFF;
-  
+  --media-time-display-color: #ffffff;
+
   /* Focus ring */
-  --media-focus-ring-color: #C39341;
-  
+  --media-focus-ring-color: #c39341;
+
   /* Tooltip background */
   --media-tooltip-background: rgba(0, 0, 0, 0.9);
-  --media-tooltip-color: #FFFFFF;
+  --media-tooltip-color: #ffffff;
 }
 
 /* Hover state for controls */
@@ -36,7 +36,7 @@ mux-player::part(bottom) {
 /* Play button in center */
 mux-player::part(play button) {
   background: rgba(195, 147, 65, 0.92) !important;
-  border-color: #C39341 !important;
+  border-color: #c39341 !important;
 }
 
 mux-player::part(play button):hover {
@@ -46,7 +46,7 @@ mux-player::part(play button):hover {
 
 /* Loading spinner color */
 mux-player::part(loading-indicator) {
-  --media-loading-indicator-color: #C39341;
+  --media-loading-indicator-color: #c39341;
 }
 
 /* Custom styling for better visibility */
@@ -65,7 +65,7 @@ mux-player {
 
 /* Block top-right controls area (download, pop-out buttons) */
 .google-drive-player-wrapper::before {
-  content: '';
+  content: "";
   position: absolute;
   top: 0;
   right: 0;
@@ -80,7 +80,7 @@ mux-player {
 
 /* Block bottom-right controls area (more options) */
 .google-drive-player-wrapper::after {
-  content: '';
+  content: "";
   position: absolute;
   bottom: 0;
   right: 0;

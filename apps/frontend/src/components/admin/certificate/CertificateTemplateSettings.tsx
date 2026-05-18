@@ -1,77 +1,75 @@
-import React, { useState } from 'react';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { Button } from 'src/components/ui/button';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from 'src/components/ui/card';
-import { certificateTemplateApi } from 'src/api/certificate-template.api';
-import { UploadTemplateModal } from './UploadTemplateModal';
-import { PreviewTemplateModal } from './PreviewTemplateModal';
-import { Upload, Download, RotateCcw, FileText } from 'lucide-react';
-import { toast } from 'src/hooks/use-toast';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { Download, FileText, RotateCcw, Upload } from 'lucide-react'
+import React, { useState } from 'react'
+import { certificateTemplateApi } from 'src/api/certificate-template.api'
+import { Button } from 'src/components/ui/button'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from 'src/components/ui/card'
+import { toast } from 'src/hooks/use-toast'
+import { PreviewTemplateModal } from './PreviewTemplateModal'
+import { UploadTemplateModal } from './UploadTemplateModal'
 
 export const CertificateTemplateSettings: React.FC = () => {
-  const queryClient = useQueryClient();
-  const [uploadModalOpen, setUploadModalOpen] = useState(false);
-  const [previewModalOpen, setPreviewModalOpen] = useState(false);
-  const [previewHtml, setPreviewHtml] = useState('');
+  const queryClient = useQueryClient()
+  const [uploadModalOpen, setUploadModalOpen] = useState(false)
+  const [previewModalOpen, setPreviewModalOpen] = useState(false)
+  const [previewHtml, setPreviewHtml] = useState('')
 
-  const { data: templateInfo, isLoading, error } = useQuery({
+  const {
+    data: templateInfo,
+    isLoading,
+    error,
+  } = useQuery({
     queryKey: ['activeTemplate'],
     queryFn: certificateTemplateApi.getActiveTemplate,
     retry: 3,
     retryDelay: 1000,
-  });
+  })
 
   const resetMutation = useMutation({
     mutationFn: certificateTemplateApi.resetToDefault,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['activeTemplate'] });
+      queryClient.invalidateQueries({ queryKey: ['activeTemplate'] })
       toast({
         title: 'Berhasil',
         description: 'Template dikembalikan ke default',
-      });
+      })
     },
     onError: () => {
       toast({
         title: 'Gagal',
         description: 'Gagal mereset template',
         variant: 'destructive',
-      });
+      })
     },
-  });
+  })
 
   const handleDownload = async () => {
-    if (!templateInfo?.id) return;
+    if (!templateInfo?.id) return
 
     try {
-      const blob = await certificateTemplateApi.downloadTemplate(templateInfo.id);
-      const url = URL.createObjectURL(blob);
-      const link = document.createElement('a');
-      link.href = url;
-      link.download = `${templateInfo.name}.html`;
-      link.click();
-      URL.revokeObjectURL(url);
+      const blob = await certificateTemplateApi.downloadTemplate(templateInfo.id)
+      const url = URL.createObjectURL(blob)
+      const link = document.createElement('a')
+      link.href = url
+      link.download = `${templateInfo.name}.html`
+      link.click()
+      URL.revokeObjectURL(url)
     } catch (error) {
       toast({
         title: 'Gagal',
         description: 'Gagal mendownload template',
         variant: 'destructive',
-      });
+      })
     }
-  };
+  }
 
   const handleUploadSuccess = () => {
-    queryClient.invalidateQueries({ queryKey: ['activeTemplate'] });
+    queryClient.invalidateQueries({ queryKey: ['activeTemplate'] })
     toast({
       title: 'Berhasil',
       description: 'Template berhasil diupload',
-    });
-  };
+    })
+  }
 
   return (
     <>
@@ -87,7 +85,12 @@ export const CertificateTemplateSettings: React.FC = () => {
             <div className="text-red-500">
               Error: {error instanceof Error ? error.message : 'Failed to load template info'}
               <br />
-              <Button variant="outline" size="sm" onClick={() => queryClient.invalidateQueries({ queryKey: ['activeTemplate'] })} className="mt-2">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => queryClient.invalidateQueries({ queryKey: ['activeTemplate'] })}
+                className="mt-2"
+              >
                 Retry
               </Button>
             </div>
@@ -99,8 +102,7 @@ export const CertificateTemplateSettings: React.FC = () => {
                   <div>
                     <p className="font-medium">{templateInfo.name}</p>
                     <p className="text-sm text-muted-foreground">
-                      Diupload pada{' '}
-                      {new Date(templateInfo.createdAt!).toLocaleDateString('id-ID')}
+                      Diupload pada {new Date(templateInfo.createdAt!).toLocaleDateString('id-ID')}
                     </p>
                   </div>
                 </div>
@@ -152,5 +154,5 @@ export const CertificateTemplateSettings: React.FC = () => {
         htmlContent={previewHtml}
       />
     </>
-  );
-};
+  )
+}

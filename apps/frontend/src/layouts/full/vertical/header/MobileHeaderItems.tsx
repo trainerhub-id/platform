@@ -1,16 +1,14 @@
-import { Icon } from "@iconify/react";
-import Profile from "./Profile";
-import { useContext } from "react";
-import NotificationButton from "./NotificationButton";
-import { CustomizerContext } from "src/context/CustomizerContext";
+import { Icon } from '@iconify/react'
+import { useContext } from 'react'
+import { CustomizerContext } from 'src/context/CustomizerContext'
+import NotificationButton from './NotificationButton'
+import Profile from './Profile'
 
 const MobileHeaderItems = () => {
-  const { setActiveMode, activeMode } = useContext(CustomizerContext);
+  const { setActiveMode, activeMode } = useContext(CustomizerContext)
   const toggleMode = () => {
-    setActiveMode((prevMode: string) =>
-      prevMode === "light" ? "dark" : "light"
-    );
-  };
+    setActiveMode((prevMode: string) => (prevMode === 'light' ? 'dark' : 'light'))
+  }
   return (
     <nav className="flex h-14 items-center justify-center rounded-none bg-white px-4 dark:bg-darkgray">
       {/* Toggle Icon   */}
@@ -18,7 +16,7 @@ const MobileHeaderItems = () => {
       <div className="block w-full xl:hidden">
         <div className="flex h-14 items-center justify-center gap-4">
           {/* Theme Toggle */}
-          {activeMode === "light" ? (
+          {activeMode === 'light' ? (
             <button
               type="button"
               className="group flex size-11 shrink-0 items-center justify-center rounded-full text-link hover:bg-lightprimary hover:text-primary focus:ring-0 dark:text-darklink dark:hover:text-primary"
@@ -26,11 +24,7 @@ const MobileHeaderItems = () => {
               aria-label="Switch to dark mode"
             >
               <span className="flex items-center justify-center text-darklink dark:text-white">
-                <Icon
-                  icon="solar:moon-line-duotone"
-                  width={20}
-                  height={20}
-                />
+                <Icon icon="solar:moon-line-duotone" width={20} height={20} />
               </span>
             </button>
           ) : (
@@ -70,7 +64,7 @@ const MobileHeaderItems = () => {
         </div>
       </div>
     </nav>
-  );
-};
+  )
+}
 
-export default MobileHeaderItems;
+export default MobileHeaderItems

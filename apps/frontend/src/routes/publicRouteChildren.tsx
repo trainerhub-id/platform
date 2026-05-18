@@ -1,23 +1,25 @@
-import { lazy } from 'react';
-import { Navigate } from 'react-router';
-import Loadable from '../layouts/full/shared/loadable/Loadable';
+import { lazy } from 'react'
+import { Navigate } from 'react-router'
+import Loadable from '../layouts/full/shared/loadable/Loadable'
 
-const Login = Loadable(lazy(() => import('../views/authentication/auth1/Login')));
-const AuthRegister = Loadable(lazy(() => import('../views/authentication/auth1/Register')));
-const ForgotPassword = Loadable(lazy(() => import('../views/authentication/auth1/ForgotPassword')));
-const PasswordResetRedirect = Loadable(lazy(() => import('../views/authentication/PasswordResetRedirect')));
+const Login = Loadable(lazy(() => import('../views/authentication/auth1/Login')))
+const AuthRegister = Loadable(lazy(() => import('../views/authentication/auth1/Register')))
+const ForgotPassword = Loadable(lazy(() => import('../views/authentication/auth1/ForgotPassword')))
+const PasswordResetRedirect = Loadable(
+  lazy(() => import('../views/authentication/PasswordResetRedirect')),
+)
 
-const PublicRegister = Loadable(lazy(() => import('../views/public/Register')));
-const PaymentCheckout = Loadable(lazy(() => import('../views/public/PaymentCheckout')));
-const PaymentStatus = Loadable(lazy(() => import('../views/public/PaymentStatus')));
-const PaymentCallback = Loadable(lazy(() => import('../views/public/PaymentCallback')));
-const PaymentSuccess = Loadable(lazy(() => import('../views/public/PaymentSuccess')));
-const PaymentFailed = Loadable(lazy(() => import('../views/public/PaymentFailed')));
-const TwoSteps = Loadable(lazy(() => import('../views/authentication/auth1/TwoSteps')));
-const SSOCallback = Loadable(lazy(() => import('../views/authentication/SSOCallback')));
-const Maintainance = Loadable(lazy(() => import('../views/authentication/Maintainance')));
-const Error = Loadable(lazy(() => import('../views/authentication/Error')));
-const ValidateCertificate = Loadable(lazy(() => import('../views/certificate/ValidateCertificate')));
+const PublicRegister = Loadable(lazy(() => import('../views/public/Register')))
+const PaymentCheckout = Loadable(lazy(() => import('../views/public/PaymentCheckout')))
+const PaymentStatus = Loadable(lazy(() => import('../views/public/PaymentStatus')))
+const PaymentCallback = Loadable(lazy(() => import('../views/public/PaymentCallback')))
+const PaymentSuccess = Loadable(lazy(() => import('../views/public/PaymentSuccess')))
+const PaymentFailed = Loadable(lazy(() => import('../views/public/PaymentFailed')))
+const TwoSteps = Loadable(lazy(() => import('../views/authentication/auth1/TwoSteps')))
+const SSOCallback = Loadable(lazy(() => import('../views/authentication/SSOCallback')))
+const Maintainance = Loadable(lazy(() => import('../views/authentication/Maintainance')))
+const Error = Loadable(lazy(() => import('../views/authentication/Error')))
+const ValidateCertificate = Loadable(lazy(() => import('../views/certificate/ValidateCertificate')))
 
 export const publicRouteChildren = [
   { path: '/auth/login', element: <Login /> },
@@ -38,4 +40,4 @@ export const publicRouteChildren = [
   { path: '404', element: <Error /> },
   { path: '/auth/404', element: <Error /> },
   { path: '*', element: <Navigate to="/auth/404" /> },
-];
+]

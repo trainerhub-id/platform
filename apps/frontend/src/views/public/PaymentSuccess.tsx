@@ -1,13 +1,13 @@
-import { useNavigate, useSearchParams } from 'react-router';
-import { CheckCircle2 } from 'lucide-react';
-import { Button } from 'src/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from 'src/components/ui/card';
+import { CheckCircle2 } from 'lucide-react'
+import { useNavigate, useSearchParams } from 'react-router'
+import { Button } from 'src/components/ui/button'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from 'src/components/ui/card'
 
 export default function PaymentSuccess() {
-  const navigate = useNavigate();
-  const [searchParams] = useSearchParams();
-  const sessionId = searchParams.get('session');
-  const claimToken = searchParams.get('token');
+  const navigate = useNavigate()
+  const [searchParams] = useSearchParams()
+  const sessionId = searchParams.get('session')
+  const claimToken = searchParams.get('token')
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 p-4">
@@ -38,5 +38,5 @@ export default function PaymentSuccess() {
         </CardContent>
       </Card>
     </div>
-  );
+  )
 }

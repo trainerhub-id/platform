@@ -1,81 +1,81 @@
-import { useState } from 'react';
-import { useSignIn } from 'src/lib/better-auth';
-import { Label } from 'src/components/ui/label';
-import { Input } from 'src/components/ui/input';
-import { Button } from 'src/components/ui/button';
+import { useState } from 'react'
+import { Button } from 'src/components/ui/button'
+import { Input } from 'src/components/ui/input'
+import { Label } from 'src/components/ui/label'
+import { useSignIn } from 'src/lib/better-auth'
 
 const AuthForgotPassword = () => {
-  const { isLoaded, signIn } = useSignIn();
-  const [email, setEmail] = useState('');
-  const [code, setCode] = useState('');
-  const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
-  const [error, setError] = useState('');
-  const [success, setSuccess] = useState('');
-  const [loading, setLoading] = useState(false);
-  const [step, setStep] = useState<'email' | 'reset'>('email');
+  const { isLoaded, signIn } = useSignIn()
+  const [email, setEmail] = useState('')
+  const [code, setCode] = useState('')
+  const [password, setPassword] = useState('')
+  const [confirmPassword, setConfirmPassword] = useState('')
+  const [error, setError] = useState('')
+  const [success, setSuccess] = useState('')
+  const [loading, setLoading] = useState(false)
+  const [step, setStep] = useState<'email' | 'reset'>('email')
 
   const handleEmailSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!isLoaded) return;
+    e.preventDefault()
+    if (!isLoaded) return
 
-    setLoading(true);
-    setError('');
-    setSuccess('');
+    setLoading(true)
+    setError('')
+    setSuccess('')
 
     try {
       await signIn.create({
         strategy: 'reset_password_email_code',
         identifier: email,
-      });
+      })
 
-      setSuccess('Password reset code sent to your email!');
-      setStep('reset');
+      setSuccess('Password reset code sent to your email!')
+      setStep('reset')
     } catch (err: any) {
-      console.error('Error:', err);
-      setError(err.errors?.[0]?.longMessage || 'Failed to send reset code. Please try again.');
+      console.error('Error:', err)
+      setError(err.errors?.[0]?.longMessage || 'Failed to send reset code. Please try again.')
     } finally {
-      setLoading(false);
+      setLoading(false)
     }
-  };
+  }
 
   const handlePasswordReset = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!isLoaded) return;
+    e.preventDefault()
+    if (!isLoaded) return
 
     if (password !== confirmPassword) {
-      setError('Passwords do not match');
-      return;
+      setError('Passwords do not match')
+      return
     }
 
     if (password.length < 8) {
-      setError('Password must be at least 8 characters long');
-      return;
+      setError('Password must be at least 8 characters long')
+      return
     }
 
-    setLoading(true);
-    setError('');
+    setLoading(true)
+    setError('')
 
     try {
       const result = await signIn.attemptFirstFactor({
         strategy: 'reset_password_email_code',
         code,
         password,
-      });
+      })
 
       if (result.status === 'complete') {
-        setSuccess('Password reset successfully! You can now login with your new password.');
+        setSuccess('Password reset successfully! You can now login with your new password.')
         setTimeout(() => {
-          window.location.href = '/auth/login';
-        }, 2000);
+          window.location.href = '/auth/login'
+        }, 2000)
       }
     } catch (err: any) {
-      console.error('Error:', err);
-      setError(err.errors?.[0]?.longMessage || 'Failed to reset password. Please check your code.');
+      console.error('Error:', err)
+      setError(err.errors?.[0]?.longMessage || 'Failed to reset password. Please check your code.')
     } finally {
-      setLoading(false);
+      setLoading(false)
     }
-  };
+  }
 
   if (step === 'email') {
     return (
@@ -109,7 +109,7 @@ const AuthForgotPassword = () => {
           </Button>
         </form>
       </>
-    );
+    )
   }
 
   return (
@@ -177,7 +177,7 @@ const AuthForgotPassword = () => {
         </Button>
       </form>
     </>
-  );
-};
+  )
+}
 
-export default AuthForgotPassword;
+export default AuthForgotPassword

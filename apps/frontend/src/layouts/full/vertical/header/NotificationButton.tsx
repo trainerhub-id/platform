@@ -1,4 +1,4 @@
-import { Icon } from '@iconify/react';
+import { Icon } from '@iconify/react'
 
 const NotificationButton = () => {
   return (
@@ -10,7 +10,7 @@ const NotificationButton = () => {
     >
       <Icon icon="solar:bell-bing-line-duotone" width={20} height={20} />
     </button>
-  );
-};
+  )
+}
 
-export default NotificationButton;
+export default NotificationButton

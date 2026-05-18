@@ -1,7 +1,7 @@
-import { ProtectedRoute } from './ProtectedRoute';
+import { ProtectedRoute } from './ProtectedRoute'
 
 interface AdminRouteProps {
-    children: React.ReactNode;
+  children: React.ReactNode
 }
 
 /**
@@ -9,9 +9,5 @@ interface AdminRouteProps {
  * Requires both authentication and admin role
  */
 export const AdminRoute = ({ children }: AdminRouteProps) => {
-    return (
-        <ProtectedRoute requireRole="admin">
-            {children}
-        </ProtectedRoute>
-    );
-};
+  return <ProtectedRoute requireRole="admin">{children}</ProtectedRoute>
+}

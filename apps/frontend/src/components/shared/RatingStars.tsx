@@ -13,7 +13,7 @@ const RatingStars = ({ rating }: { rating: number }) => {
         </svg>
       ))}
     </div>
-  );
-};
+  )
+}
 
-export default RatingStars;
+export default RatingStars

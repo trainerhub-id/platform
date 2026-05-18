@@ -1,16 +1,15 @@
-
-import { Icon } from "@iconify/react";
-import { useState } from "react";
-import * as AppsData from "./Data";
-import SimpleBar from "simplebar-react";
-import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
-import { Sheet, SheetClose, SheetContent, SheetTitle } from "src/components/ui/sheet";
-import MegamenuImg from "/src/assets/images/backgrounds/mega-dd-bg.jpg";
-import { Link } from "react-router";
+import { Icon } from '@iconify/react'
+import { VisuallyHidden } from '@radix-ui/react-visually-hidden'
+import { useState } from 'react'
+import { Link } from 'react-router'
+import SimpleBar from 'simplebar-react'
+import { Sheet, SheetClose, SheetContent, SheetTitle } from 'src/components/ui/sheet'
+import MegamenuImg from '/src/assets/images/backgrounds/mega-dd-bg.jpg'
+import * as AppsData from './Data'
 
 const AppLinks = () => {
-  const [isOpen, setIsOpen] = useState(false);
-  const handleClose = () => setIsOpen(false);
+  const [isOpen, setIsOpen] = useState(false)
+  const handleClose = () => setIsOpen(false)
 
   return (
     <div className="relative group">
@@ -42,19 +41,13 @@ const AppLinks = () => {
                       <span
                         className={`h-12 w-12 flex justify-center items-center rounded-tw ${links.iconbg}`}
                       >
-                        <Icon
-                          icon={links.icon}
-                          height={24}
-                          className={`${links.iconcolor}`}
-                        />
+                        <Icon icon={links.icon} height={24} className={`${links.iconcolor}`} />
                       </span>
                       <div>
                         <h6 className="font-semibold text-15 text-ld hover:text-primary">
                           {links.title}
                         </h6>
-                        <p className="text-13 text-bodytext">
-                          {links.subtext}
-                        </p>
+                        <p className="text-13 text-bodytext">{links.subtext}</p>
                       </div>
                     </Link>
                   </div>
@@ -96,19 +89,13 @@ const AppLinks = () => {
                         <span
                           className={`h-12 w-12 flex justify-center items-center rounded-tw ${links.iconbg}`}
                         >
-                          <Icon
-                            icon={links.icon}
-                            height={24}
-                            className={`${links.iconcolor}`}
-                          />
+                          <Icon icon={links.icon} height={24} className={`${links.iconcolor}`} />
                         </span>
                         <div>
                           <h6 className="font-semibold text-15 text-ld hover:text-primary">
                             {links.title}
                           </h6>
-                          <p className="text-13 text-bodytext">
-                            {links.subtext}
-                          </p>
+                          <p className="text-13 text-bodytext">{links.subtext}</p>
                         </div>
                       </Link>
                     </div>
@@ -130,7 +117,7 @@ const AppLinks = () => {
         </SheetContent>
       </Sheet>
     </div>
-  );
-};
+  )
+}
 
-export default AppLinks;
+export default AppLinks

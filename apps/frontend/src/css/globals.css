@@ -1,21 +1,21 @@
-@import 'tailwindcss';
+@import "tailwindcss";
 @import url("https://fonts.googleapis.com/css2?family=Manrope:wght@200..800&display=swap");
 
-@import './layouts/container.css';
-@import './layouts/sidebar.css';
-@import './layouts/horizontal.css';
-@import './layouts/header.css';
+@import "./layouts/container.css";
+@import "./layouts/sidebar.css";
+@import "./layouts/horizontal.css";
+@import "./layouts/header.css";
 
-@import './pages/auth.css';
-@import './pages/interview-assistant.css';
+@import "./pages/auth.css";
+@import "./pages/interview-assistant.css";
 
-@import './theme/default-colors.css';
-@import './theme/dark.css';
+@import "./theme/default-colors.css";
+@import "./theme/dark.css";
 
-@import './override/reboot.css';
-@import './layouts/rtl.css';
-@import 'tw-animate-css';
-@import 'tw-shimmer';
+@import "./override/reboot.css";
+@import "./layouts/rtl.css";
+@import "tw-animate-css";
+@import "tw-shimmer";
 
 @custom-variant dark (&:is(.dark *));
 
@@ -144,7 +144,7 @@
   --accent-foreground: var(--color-primary);
   --destructive: var(--color-error);
   --border: #e5e5e5;
-  --darkborder: #333F55;
+  --darkborder: #333f55;
   --input: var(--color-input);
   --ring: var(--color-lightprimary);
   --chart-1: var(--color-primary);
@@ -152,7 +152,7 @@
   --chart-3: var(--color-success);
   --chart-4: var(--color-warning);
   --chart-5: var(--color-error);
-  --sidebar: #E8EDF2;
+  --sidebar: #e8edf2;
   --sidebar-foreground: var(--color-link);
   --sidebar-primary: var(--color-primary);
   --sidebar-primary-foreground: var(--color-white);
@@ -162,20 +162,20 @@
   --sidebar-ring: #a1a1a1;
 
   /* ----------------------------------- custom color variable ----------------------------------- */
-  --info: #3C88FE;
-  --success: #2EA95C;
+  --info: #3c88fe;
+  --success: #2ea95c;
   --warning: #f8c20a;
-  --error: #FF6692;
+  --error: #ff6692;
   --white: #fff;
-  --dark: #1F2A3D;
+  --dark: #1f2a3d;
   --darkinfo: #223662;
-  --lightgray: #F4F7FB;
+  --lightgray: #f4f7fb;
   --bgmuted: #eff4fa;
-  --darkgray: #1A2537;
-  --bodytext: #98A4AE;
-  --lightmuted: #98A4AE;
+  --darkgray: #1a2537;
+  --bodytext: #98a4ae;
+  --lightmuted: #98a4ae;
   --link: #2a3547;
-  --sky: #0A2540;
+  --sky: #0a2540;
   --light-emphasis: #dfe5ef;
   --lighthover: #f5f7fb;
   --destructive-foreground: var(--color-white);
@@ -184,9 +184,7 @@
 
   /* Lighter/opacity-like versions */
   --lightprimary: color-mix(in oklab, var(--color-primary) 12%, transparent);
-  --lightsecondary: color-mix(in oklab,
-      var(--color-secondary) 12%,
-      transparent);
+  --lightsecondary: color-mix(in oklab, var(--color-secondary) 12%, transparent);
   --lightsuccess: color-mix(in oklab, var(--color-success) 12%, transparent);
   --lightinfo: color-mix(in oklab, var(--color-info) 12%, transparent);
   --lightwarning: color-mix(in oklab, var(--color-warning) 12%, transparent);
@@ -205,8 +203,8 @@
   /* shadow */
   --shadow-md: 0px 2px 4px -1px rgba(175, 182, 201, 0.2);
   --shadow-lg: 0 1rem 3rem rgba(0, 0, 0, 0.175);
-  --shadow-dark-md: rgba(145, 158, 171, 0.3) 0px 0px 2px 0px,
-    rgba(145, 158, 171, 0.02) 0px 12px 24px -4px;
+  --shadow-dark-md:
+    rgba(145, 158, 171, 0.3) 0px 0px 2px 0px, rgba(145, 158, 171, 0.02) 0px 12px 24px -4px;
   --shadow-sm: 0 6px 24.2px -10px rgba(41, 52, 61, 0.22);
   --shadow-btn-shadow: rgba(0, 0, 0, 0.05) 0 9px 17.5px;
   --shadow-btnshdw: 0 17px 20px -8px rgba(77, 91, 236, 0.231372549);
@@ -230,7 +228,7 @@
 }
 
 .dark {
-  --background: #1C2536;
+  --background: #1c2536;
   --foreground: var(--color-white);
   --card: var(--color-darkgray);
   --card-foreground: var(--color-white);
@@ -263,22 +261,22 @@
   --sidebar-ring: var(--color-sidebar-ring);
 
   /* custom color variable */
-  --info: #46CAEB;
-  --success: #2EA95C;
+  --info: #46caeb;
+  --success: #2ea95c;
   --warning: #f8c20a;
-  --error: #FF6692;
+  --error: #ff6692;
   --white: #fff;
-  --dark: #1F2A3D;
+  --dark: #1f2a3d;
   --darkinfo: #223662;
-  --lightgray: #F4F7FB;
+  --lightgray: #f4f7fb;
   --bgmuted: #eff4fa;
-  --darkgray: #1A2537;
-  --bodytext: #98A4AE;
-  --lightmuted: #98A4AE;
+  --darkgray: #1a2537;
+  --bodytext: #98a4ae;
+  --lightmuted: #98a4ae;
   --link: #2a3547;
-  --sky: #0A2540;
+  --sky: #0a2540;
   --light-emphasis: #dfe5ef;
-  --muted-foreground: #98A4AE;
+  --muted-foreground: #98a4ae;
   --destructive-foreground: var(--color-white);
 
   /* ----------- generate emphasis and lighter color of primary and secondary -------------- */
@@ -300,9 +298,6 @@
   --error-emphasis: color-mix(in oklab, var(--error) 80%, black);
 }
 
-
-
-
 @utility container {
   margin-inline: auto;
   padding-inline: 30px;
@@ -317,7 +312,6 @@
   color utility to any element that depends on these defaults.
 */
 @layer base {
-
   *,
   ::after,
   ::before,
@@ -422,7 +416,6 @@ body {
 }
 
 @utility form-control-group-left {
-
   /* Input group */
   & input {
     @apply border rounded-r-md border-border dark:border-darkborder bg-transparent ring-transparent dark:ring-transparent dark:bg-transparent w-full text-sm;
@@ -654,11 +647,11 @@ body {
     @apply text-bodytext;
   }
 
-  input[type='radio']:focus {
+  input[type="radio"]:focus {
     @apply ring-primary;
   }
 
-  input[type='radio']:checked {
+  input[type="radio"]:checked {
     @apply bg-primary;
   }
 
@@ -773,7 +766,6 @@ body {
     display: none;
   }
 }
-
 
 /* Hide scrollbar for AI chat viewport when not needed */
 .aui-thread-viewport-root::-webkit-scrollbar {

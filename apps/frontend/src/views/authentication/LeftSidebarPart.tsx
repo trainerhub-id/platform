@@ -1,4 +1,4 @@
-import TrainerPhoto from "/src/assets/images/logos/trisnalesmana.webp"
+import TrainerPhoto from '/src/assets/images/logos/trisnalesmana.webp'
 
 const LeftSidebarPart = () => {
   return (
@@ -12,21 +12,22 @@ const LeftSidebarPart = () => {
             TrainerHub
           </h2>
           <p className="text-white/70 text-sm leading-relaxed">
-            TrainerHub menyederhanakan proses training, upload berkas, dan penyusunan dokumen BNSP lewat dashboard terintegrasi.
+            TrainerHub menyederhanakan proses training, upload berkas, dan penyusunan dokumen BNSP
+            lewat dashboard terintegrasi.
           </p>
         </div>
       </div>
-      
+
       {/* Right side - Photo */}
       <div className="relative flex-1 flex items-end justify-center">
-        <img 
-          src={TrainerPhoto} 
-          alt="Trainer" 
+        <img
+          src={TrainerPhoto}
+          alt="Trainer"
           className="relative z-10 h-[85%] w-auto object-contain object-bottom"
         />
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default LeftSidebarPart;
+export default LeftSidebarPart

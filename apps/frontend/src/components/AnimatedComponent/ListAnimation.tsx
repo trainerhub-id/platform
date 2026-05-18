@@ -1,16 +1,16 @@
-import { motion, useInView } from 'framer-motion';
-import { useRef } from 'react';
+import { motion, useInView } from 'framer-motion'
+import { useRef } from 'react'
 
 // AnimatedItem wrapper
 interface AnimatedItemProps {
-  children: React.ReactNode;
-  index: number;
-  delay?: number;
+  children: React.ReactNode
+  index: number
+  delay?: number
 }
 
 const AnimatedItem: React.FC<AnimatedItemProps> = ({ children, index, delay = 0 }) => {
-  const ref = useRef<HTMLDivElement>(null);
-  const isInView = useInView(ref, { once: true, amount: 0.2 });
+  const ref = useRef<HTMLDivElement>(null)
+  const isInView = useInView(ref, { once: true, amount: 0.2 })
 
   return (
     <motion.div
@@ -21,7 +21,7 @@ const AnimatedItem: React.FC<AnimatedItemProps> = ({ children, index, delay = 0 
     >
       {children}
     </motion.div>
-  );
-};
+  )
+}
 
-export default AnimatedItem;
+export default AnimatedItem

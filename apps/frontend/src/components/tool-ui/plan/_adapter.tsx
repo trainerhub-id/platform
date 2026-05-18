@@ -3,7 +3,13 @@
  * Re-exports all required components from the ui directory
  */
 
-export { cn } from "@/lib/utils";
+export {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from '@/components/ui/accordion'
+export { Button } from '@/components/ui/button'
 export {
   Card,
   CardContent,
@@ -11,17 +17,11 @@ export {
   CardFooter,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
-export {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordion";
+} from '@/components/ui/card'
 export {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
-} from "@/components/ui/collapsible";
-export { Button } from "@/components/ui/button";
-export { Progress } from "@/components/ui/progress";
+} from '@/components/ui/collapsible'
+export { Progress } from '@/components/ui/progress'
+export { cn } from '@/lib/utils'

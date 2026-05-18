@@ -1,90 +1,90 @@
-import { useState, useEffect } from 'react';
-import { useAuth } from 'src/lib/better-auth';
-import { Card, CardContent, CardHeader, CardTitle } from 'src/components/ui/card';
-import { Button } from 'src/components/ui/button';
-import { Input } from 'src/components/ui/input';
-import { Label } from 'src/components/ui/label';
-import { Textarea } from 'src/components/ui/textarea';
+import { Link, Pencil, Plus, Trash2 } from 'lucide-react'
+import { useEffect, useState } from 'react'
+import { toast } from 'react-toastify'
+import { Button } from 'src/components/ui/button'
+import { Card, CardContent, CardHeader, CardTitle } from 'src/components/ui/card'
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from 'src/components/ui/dialog';
-import { Plus, Pencil, Trash2, Link } from 'lucide-react';
-import { toast } from 'react-toastify';
+} from 'src/components/ui/dialog'
+import { Input } from 'src/components/ui/input'
+import { Label } from 'src/components/ui/label'
+import { Textarea } from 'src/components/ui/textarea'
+import { useAuth } from 'src/lib/better-auth'
 
-const API_URL = import.meta.env.VITE_API_URL || '/api';
+const API_URL = import.meta.env.VITE_API_URL || '/api'
 
 interface Tier {
-  id: string;
-  name: string;
-  price: number;
-  description: string | null;
-  benefits: string[] | null;
-  maxParticipants: number | null;
-  orderIndex: number;
+  id: string
+  name: string
+  price: number
+  description: string | null
+  benefits: string[] | null
+  maxParticipants: number | null
+  orderIndex: number
 }
 
 interface TierManagementProps {
-  batchId: string;
+  batchId: string
 }
 
 export default function TierManagement({ batchId }: TierManagementProps) {
-  const { getToken } = useAuth();
-  const [tiers, setTiers] = useState<Tier[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [dialogOpen, setDialogOpen] = useState(false);
-  const [editingTier, setEditingTier] = useState<Tier | null>(null);
+  const { getToken } = useAuth()
+  const [tiers, setTiers] = useState<Tier[]>([])
+  const [loading, setLoading] = useState(true)
+  const [dialogOpen, setDialogOpen] = useState(false)
+  const [editingTier, setEditingTier] = useState<Tier | null>(null)
 
-  const [name, setName] = useState('');
-  const [price, setPrice] = useState('');
-  const [description, setDescription] = useState('');
-  const [benefits, setBenefits] = useState('');
-  const [maxParticipants, setMaxParticipants] = useState('');
+  const [name, setName] = useState('')
+  const [price, setPrice] = useState('')
+  const [description, setDescription] = useState('')
+  const [benefits, setBenefits] = useState('')
+  const [maxParticipants, setMaxParticipants] = useState('')
 
   useEffect(() => {
-    fetchTiers();
-  }, [batchId]);
+    fetchTiers()
+  }, [batchId])
 
   const fetchTiers = async () => {
     try {
-      const token = await getToken();
+      const token = await getToken()
       const res = await fetch(`${API_URL}/admin/batches/${batchId}/tiers`, {
         headers: { Authorization: `Bearer ${token}` },
-      });
-      const data = await res.json();
-      setTiers(data);
+      })
+      const data = await res.json()
+      setTiers(data)
     } catch (err) {
-      console.error('Error fetching tiers:', err);
+      console.error('Error fetching tiers:', err)
     } finally {
-      setLoading(false);
+      setLoading(false)
     }
-  };
+  }
 
   const resetForm = () => {
-    setName('');
-    setPrice('');
-    setDescription('');
-    setBenefits('');
-    setMaxParticipants('');
-    setEditingTier(null);
-  };
+    setName('')
+    setPrice('')
+    setDescription('')
+    setBenefits('')
+    setMaxParticipants('')
+    setEditingTier(null)
+  }
 
   const openEditDialog = (tier: Tier) => {
-    setEditingTier(tier);
-    setName(tier.name);
-    setPrice(tier.price.toString());
-    setDescription(tier.description || '');
-    setBenefits(tier.benefits?.join('\n') || '');
-    setMaxParticipants(tier.maxParticipants?.toString() || '');
-    setDialogOpen(true);
-  };
+    setEditingTier(tier)
+    setName(tier.name)
+    setPrice(tier.price.toString())
+    setDescription(tier.description || '')
+    setBenefits(tier.benefits?.join('\n') || '')
+    setMaxParticipants(tier.maxParticipants?.toString() || '')
+    setDialogOpen(true)
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    const token = await getToken();
+    e.preventDefault()
+    const token = await getToken()
 
     const payload = {
       name,
@@ -92,10 +92,10 @@ export default function TierManagement({ batchId }: TierManagementProps) {
       description: description || undefined,
       benefits: benefits ? benefits.split('\n').filter(Boolean) : undefined,
       maxParticipants: maxParticipants ? parseInt(maxParticipants) : undefined,
-    };
+    }
 
     try {
-      let res: Response;
+      let res: Response
       if (editingTier) {
         res = await fetch(`${API_URL}/admin/tiers/${editingTier.id}`, {
           method: 'PATCH',
@@ -104,7 +104,7 @@ export default function TierManagement({ batchId }: TierManagementProps) {
             Authorization: `Bearer ${token}`,
           },
           body: JSON.stringify(payload),
-        });
+        })
       } else {
         res = await fetch(`${API_URL}/admin/batches/${batchId}/tiers`, {
           method: 'POST',
@@ -113,67 +113,70 @@ export default function TierManagement({ batchId }: TierManagementProps) {
             Authorization: `Bearer ${token}`,
           },
           body: JSON.stringify(payload),
-        });
+        })
       }
 
       if (!res.ok) {
-        throw new Error('Failed to save');
+        throw new Error('Failed to save')
       }
 
-      toast.success(editingTier ? 'Tier berhasil diupdate' : 'Tier berhasil ditambahkan');
-      setDialogOpen(false);
-      resetForm();
-      fetchTiers();
+      toast.success(editingTier ? 'Tier berhasil diupdate' : 'Tier berhasil ditambahkan')
+      setDialogOpen(false)
+      resetForm()
+      fetchTiers()
     } catch (err) {
-      console.error('Error saving tier:', err);
-      toast.error('Gagal menyimpan tier');
+      console.error('Error saving tier:', err)
+      toast.error('Gagal menyimpan tier')
     }
-  };
+  }
 
   const handleDelete = async (tierId: string) => {
-    if (!confirm('Yakin ingin menghapus tier ini?')) return;
+    if (!confirm('Yakin ingin menghapus tier ini?')) return
 
     try {
-      const token = await getToken();
+      const token = await getToken()
       const res = await fetch(`${API_URL}/admin/tiers/${tierId}`, {
         method: 'DELETE',
         headers: { Authorization: `Bearer ${token}` },
-      });
+      })
 
       if (!res.ok) {
-        throw new Error('Failed to delete');
+        throw new Error('Failed to delete')
       }
 
-      toast.success('Tier berhasil dihapus');
-      fetchTiers();
+      toast.success('Tier berhasil dihapus')
+      fetchTiers()
     } catch (err) {
-      console.error('Error deleting tier:', err);
-      toast.error('Gagal menghapus tier');
+      console.error('Error deleting tier:', err)
+      toast.error('Gagal menghapus tier')
     }
-  };
+  }
 
   const copyRegistrationLink = (tierId: string) => {
-    const link = `${window.location.origin}/register/${batchId}/${tierId}`;
-    navigator.clipboard.writeText(link);
-    toast.success('Link pendaftaran berhasil disalin');
-  };
+    const link = `${window.location.origin}/register/${batchId}/${tierId}`
+    navigator.clipboard.writeText(link)
+    toast.success('Link pendaftaran berhasil disalin')
+  }
 
   const formatPrice = (price: number) => {
     return new Intl.NumberFormat('id-ID', {
       style: 'currency',
       currency: 'IDR',
       minimumFractionDigits: 0,
-    }).format(price);
-  };
+    }).format(price)
+  }
 
   return (
     <Card>
       <CardHeader className="flex flex-row items-center justify-between">
         <CardTitle>Tier / Paket Harga</CardTitle>
-        <Dialog open={dialogOpen} onOpenChange={(open: boolean) => {
-          setDialogOpen(open);
-          if (!open) resetForm();
-        }}>
+        <Dialog
+          open={dialogOpen}
+          onOpenChange={(open: boolean) => {
+            setDialogOpen(open)
+            if (!open) resetForm()
+          }}
+        >
           <DialogTrigger asChild>
             <Button size="sm">
               <Plus className="h-4 w-4 mr-2" />
@@ -182,9 +185,7 @@ export default function TierManagement({ batchId }: TierManagementProps) {
           </DialogTrigger>
           <DialogContent>
             <DialogHeader>
-              <DialogTitle>
-                {editingTier ? 'Edit Tier' : 'Tambah Tier Baru'}
-              </DialogTitle>
+              <DialogTitle>{editingTier ? 'Edit Tier' : 'Tambah Tier Baru'}</DialogTitle>
             </DialogHeader>
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="space-y-2">
@@ -221,7 +222,7 @@ export default function TierManagement({ batchId }: TierManagementProps) {
                 <Label htmlFor="benefits">Benefits (satu per baris)</Label>
                 <Textarea
                   id="benefits"
-                  placeholder={"Training 2 hari\nCourse online\nSertifikat"}
+                  placeholder={'Training 2 hari\nCourse online\nSertifikat'}
                   value={benefits}
                   onChange={(e) => setBenefits(e.target.value)}
                   rows={4}
@@ -241,9 +242,7 @@ export default function TierManagement({ batchId }: TierManagementProps) {
                 <Button type="button" variant="outline" onClick={() => setDialogOpen(false)}>
                   Batal
                 </Button>
-                <Button type="submit">
-                  {editingTier ? 'Update' : 'Simpan'}
-                </Button>
+                <Button type="submit">{editingTier ? 'Update' : 'Simpan'}</Button>
               </div>
             </form>
           </DialogContent>
@@ -253,7 +252,9 @@ export default function TierManagement({ batchId }: TierManagementProps) {
         {loading ? (
           <p className="text-muted-foreground">Loading...</p>
         ) : tiers.length === 0 ? (
-          <p className="text-muted-foreground">Belum ada tier. Tambahkan tier untuk membuka pendaftaran.</p>
+          <p className="text-muted-foreground">
+            Belum ada tier. Tambahkan tier untuk membuka pendaftaran.
+          </p>
         ) : (
           <div className="space-y-3">
             {tiers.map((tier) => (
@@ -263,9 +264,7 @@ export default function TierManagement({ batchId }: TierManagementProps) {
               >
                 <div>
                   <h4 className="font-medium">{tier.name}</h4>
-                  <p className="text-lg font-bold text-primary">
-                    {formatPrice(tier.price)}
-                  </p>
+                  <p className="text-lg font-bold text-primary">{formatPrice(tier.price)}</p>
                   {tier.description && (
                     <p className="text-sm text-muted-foreground">{tier.description}</p>
                   )}
@@ -279,18 +278,10 @@ export default function TierManagement({ batchId }: TierManagementProps) {
                   >
                     <Link className="h-4 w-4" />
                   </Button>
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    onClick={() => openEditDialog(tier)}
-                  >
+                  <Button size="sm" variant="outline" onClick={() => openEditDialog(tier)}>
                     <Pencil className="h-4 w-4" />
                   </Button>
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    onClick={() => handleDelete(tier.id)}
-                  >
+                  <Button size="sm" variant="outline" onClick={() => handleDelete(tier.id)}>
                     <Trash2 className="h-4 w-4" />
                   </Button>
                 </div>
@@ -300,5 +291,5 @@ export default function TierManagement({ batchId }: TierManagementProps) {
         )}
       </CardContent>
     </Card>
-  );
+  )
 }

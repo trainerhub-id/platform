@@ -1,62 +1,62 @@
-import { useParams, useNavigate } from 'react-router';
-import { useState, useEffect } from 'react';
-import api from 'src/api/axios';
-import CardBox from 'src/components/shared/CardBox';
-import { Icon } from '@iconify/react';
-import { Loading } from 'src/components/ui/loading';
-import { Button } from 'src/components/ui/button';
+import { Icon } from '@iconify/react'
+import { useEffect, useState } from 'react'
+import { useNavigate, useParams } from 'react-router'
+import api from 'src/api/axios'
+import CardBox from 'src/components/shared/CardBox'
+import { Button } from 'src/components/ui/button'
+import { Loading } from 'src/components/ui/loading'
 
 interface CertificateValidation {
-  valid: boolean;
-  certificateNumber: string;
-  pesertaName: string;
-  courseName: string;
-  completedAt: string;
-  issuedAt: string;
-  status: string;
-  pdfUrl: string | null;
+  valid: boolean
+  certificateNumber: string
+  pesertaName: string
+  courseName: string
+  completedAt: string
+  issuedAt: string
+  status: string
+  pdfUrl: string | null
 }
 
 const ValidateCertificate = () => {
-  const { certificateNumber } = useParams<{ certificateNumber: string }>();
-  const navigate = useNavigate();
-  const [result, setResult] = useState<CertificateValidation | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const { certificateNumber } = useParams<{ certificateNumber: string }>()
+  const navigate = useNavigate()
+  const [result, setResult] = useState<CertificateValidation | null>(null)
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
     const validateCertificate = async () => {
       if (!certificateNumber) {
-        setError('Certificate number not provided');
-        setLoading(false);
-        return;
+        setError('Certificate number not provided')
+        setLoading(false)
+        return
       }
 
       try {
-        const response = await api.get(`/certificates/validate/${certificateNumber}`);
-        setResult(response.data);
-        setError(null);
+        const response = await api.get(`/certificates/validate/${certificateNumber}`)
+        setResult(response.data)
+        setError(null)
       } catch (err: any) {
         if (err.response?.status === 404) {
-          setError('Certificate not found');
+          setError('Certificate not found')
         } else {
-          setError('Failed to validate certificate. Please try again.');
+          setError('Failed to validate certificate. Please try again.')
         }
-        console.error('Validation error:', err);
+        console.error('Validation error:', err)
       } finally {
-        setLoading(false);
+        setLoading(false)
       }
-    };
+    }
 
-    validateCertificate();
-  }, [certificateNumber]);
+    validateCertificate()
+  }, [certificateNumber])
 
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
         <Loading fullPage />
       </div>
-    );
+    )
   }
 
   if (error || !result) {
@@ -67,15 +67,13 @@ const ValidateCertificate = () => {
             <Icon icon="solar:close-circle-bold" className="text-error" height={48} />
           </div>
           <h2 className="text-2xl font-bold text-dark mb-2">Invalid Certificate</h2>
-          <p className="text-bodytext mb-6">
-            {error || 'Certificate not found in our system.'}
-          </p>
+          <p className="text-bodytext mb-6">{error || 'Certificate not found in our system.'}</p>
           <Button onClick={() => navigate('/')} className="w-full">
             Back to Home
           </Button>
         </CardBox>
       </div>
-    );
+    )
   }
 
   const formatDate = (dateString: string) => {
@@ -83,8 +81,8 @@ const ValidateCertificate = () => {
       year: 'numeric',
       month: 'long',
       day: 'numeric',
-    });
-  };
+    })
+  }
 
   return (
     <div className="flex items-center justify-center min-h-screen p-4 bg-gray-50">
@@ -153,7 +151,7 @@ const ValidateCertificate = () => {
         </div>
       </CardBox>
     </div>
-  );
-};
+  )
+}
 
-export default ValidateCertificate;
+export default ValidateCertificate

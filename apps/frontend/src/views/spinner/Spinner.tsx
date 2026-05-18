@@ -1,5 +1,5 @@
-import { FC } from "react";
-import "./spinner.css";
+import { FC } from 'react'
+import './spinner.css'
 
 const Spinner: FC = () => (
   <div className="fallback-spinner">
@@ -9,5 +9,5 @@ const Spinner: FC = () => (
       <div className="effect-3 effects" />
     </div>
   </div>
-);
-export default Spinner;
+)
+export default Spinner

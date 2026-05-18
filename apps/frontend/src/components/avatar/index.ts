@@ -1,2 +1,2 @@
-export { UserAvatar } from './UserAvatar';
-export type { UserAvatarProps } from 'src/types/avatar';
+export type { UserAvatarProps } from 'src/types/avatar'
+export { UserAvatar } from './UserAvatar'

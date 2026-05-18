@@ -1,53 +1,53 @@
-import { Icon } from '@iconify/react';
-import { useQuery } from '@tanstack/react-query';
-import { Link } from 'react-router';
-import api from 'src/api/axios';
-import { Input } from 'src/components/ui/input';
+import { Icon } from '@iconify/react'
+import { useQuery } from '@tanstack/react-query'
+import { Link } from 'react-router'
+import api from 'src/api/axios'
+import { Input } from 'src/components/ui/input'
 
 type AdminGlobalSearchProps = {
-  value: string;
-  onChange: (value: string) => void;
-};
+  value: string
+  onChange: (value: string) => void
+}
 
 type EnrollmentSearchResult = {
-  enrollmentId: string;
-  pesertaName?: string | null;
-  pesertaEmail?: string | null;
-  pesertaPhone?: string | null;
-  batchId: string;
-  batchName?: string | null;
-  tierName?: string | null;
-  paymentStatus?: string | null;
-};
+  enrollmentId: string
+  pesertaName?: string | null
+  pesertaEmail?: string | null
+  pesertaPhone?: string | null
+  batchId: string
+  batchName?: string | null
+  tierName?: string | null
+  paymentStatus?: string | null
+}
 
 const formatPaymentStatus = (status?: string | null) => {
   switch (status) {
     case 'paid':
-      return 'Lunas';
+      return 'Lunas'
     case 'pending':
-      return 'Pending';
+      return 'Pending'
     case 'unpaid':
-      return 'Belum Lunas';
+      return 'Belum Lunas'
     default:
-      return status || 'Status belum tersedia';
+      return status || 'Status belum tersedia'
   }
-};
+}
 
 export const AdminGlobalSearch = ({ value, onChange }: AdminGlobalSearchProps) => {
-  const trimmedValue = value.trim();
+  const trimmedValue = value.trim()
   const searchQuery = useQuery({
     queryKey: ['admin-enrollment-search', value],
     enabled: trimmedValue.length >= 2,
     queryFn: async () => {
       const res = await api.get('/admin/enrollments/search', {
         params: { q: trimmedValue },
-      });
-      return (res.data.results ?? []) as EnrollmentSearchResult[];
+      })
+      return (res.data.results ?? []) as EnrollmentSearchResult[]
     },
-  });
+  })
 
-  const results = searchQuery.data ?? [];
-  const showDropdown = trimmedValue.length >= 2;
+  const results = searchQuery.data ?? []
+  const showDropdown = trimmedValue.length >= 2
 
   return (
     <div className="relative w-full max-w-xl">
@@ -96,5 +96,5 @@ export const AdminGlobalSearch = ({ value, onChange }: AdminGlobalSearchProps) =
         </div>
       )}
     </div>
-  );
-};
+  )
+}

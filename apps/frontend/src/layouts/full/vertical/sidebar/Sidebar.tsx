@@ -1,35 +1,34 @@
-"use client";
+'use client'
 
-import { useContext, useEffect, useMemo } from "react";
-
-import { PesertaMenuItems, AdminMenuItems, TrainerMenuItems } from "./Sidebaritems";
-import NavItems from "./NavItems";
-import NavCollapse from "./NavCollapse";
-import { useLocation } from "react-router";
-import SimpleBar from "simplebar-react";
-import FullLogo from "../../shared/logo/FullLogo";
-import LogoIcon from "../../shared/logo/LogoIcon";
-import { Icon } from "@iconify/react/dist/iconify.js";
-import { CustomizerContext } from "src/context/CustomizerContext";
-import { useUserRole } from "src/hooks/useUserRole";
-import { useSidebar } from "src/components/ui/sidebar";
+import { Icon } from '@iconify/react/dist/iconify.js'
+import { useContext, useEffect, useMemo } from 'react'
+import { useLocation } from 'react-router'
+import SimpleBar from 'simplebar-react'
+import { useSidebar } from 'src/components/ui/sidebar'
+import { CustomizerContext } from 'src/context/CustomizerContext'
+import { useUserRole } from 'src/hooks/useUserRole'
+import FullLogo from '../../shared/logo/FullLogo'
+import LogoIcon from '../../shared/logo/LogoIcon'
+import NavCollapse from './NavCollapse'
+import NavItems from './NavItems'
+import { AdminMenuItems, PesertaMenuItems, TrainerMenuItems } from './Sidebaritems'
 
 const SidebarLayout = () => {
-  const { setSelectedIconId, isCollapse, setIsCollapse } = useContext(CustomizerContext) || {};
-  const { role } = useUserRole();
-  const { setOpenMobile } = useSidebar();
+  const { setSelectedIconId, isCollapse, setIsCollapse } = useContext(CustomizerContext) || {}
+  const { role } = useUserRole()
+  const { setOpenMobile } = useSidebar()
 
-  const location = useLocation();
-  const pathname = location.pathname;
-  const isMiniSidebar = isCollapse === "mini-sidebar";
+  const location = useLocation()
+  const pathname = location.pathname
+  const isMiniSidebar = isCollapse === 'mini-sidebar'
 
   // Select menu based on user role
   const SidebarContent = useMemo(() => {
     if (role === 'trainer') {
-      return TrainerMenuItems;
+      return TrainerMenuItems
     }
-    return role === 'admin' ? AdminMenuItems : PesertaMenuItems;
-  }, [role]);
+    return role === 'admin' ? AdminMenuItems : PesertaMenuItems
+  }, [role])
 
   function findActiveUrl(narray: any, targetUrl: any) {
     for (const item of narray) {
@@ -38,41 +37,43 @@ const SidebarLayout = () => {
           if (section.children) {
             for (const child of section.children) {
               if (child.url === targetUrl) {
-                return item.id;
+                return item.id
               }
             }
           }
         }
       }
     }
-    return null;
+    return null
   }
 
   useEffect(() => {
-    const result = findActiveUrl(SidebarContent, pathname);
+    const result = findActiveUrl(SidebarContent, pathname)
     if (result) {
-      setSelectedIconId(result);
+      setSelectedIconId(result)
     }
-  }, [pathname, setSelectedIconId, SidebarContent]);
+  }, [pathname, setSelectedIconId, SidebarContent])
 
   return (
     <div className="fixed z-[120] flex items-start">
-      <div
-        className="menu-sidebar pt-6 bg-gray-100 dark:bg-darkgray relative h-screen transition-all duration-300"
-      >
+      <div className="menu-sidebar pt-6 bg-gray-100 dark:bg-darkgray relative h-screen transition-all duration-300">
         {/* Toggle Button - Floating on the right edge */}
         <button
           onClick={() => {
             if (isMiniSidebar) {
-              setIsCollapse("full-sidebar");
+              setIsCollapse('full-sidebar')
             } else {
-              setIsCollapse("mini-sidebar");
+              setIsCollapse('mini-sidebar')
             }
           }}
           className="sidebar-toggle-btn hidden xl:flex absolute -right-4 top-12 z-[130] h-8 w-8 bg-white dark:bg-dark shadow-md border border-gray-200 dark:border-gray-700 rounded-full justify-center items-center cursor-pointer hover:bg-gray-50 dark:hover:bg-darkgray text-primary"
         >
           <Icon
-            icon={isCollapse === "full-sidebar" ? "solar:alt-arrow-left-line-duotone" : "solar:alt-arrow-right-line-duotone"}
+            icon={
+              isCollapse === 'full-sidebar'
+                ? 'solar:alt-arrow-left-line-duotone'
+                : 'solar:alt-arrow-right-line-duotone'
+            }
             height={20}
           />
         </button>
@@ -82,7 +83,7 @@ const SidebarLayout = () => {
             <FullLogo />
             <LogoIcon />
           </div>
-          
+
           {/* Close Button - Mobile only */}
           <button
             onClick={() => setOpenMobile(false)}
@@ -108,16 +109,16 @@ const SidebarLayout = () => {
                       <NavCollapse key={child.id} item={child} />
                     ) : (
                       <NavItems key={child.id} item={child} />
-                    )
+                    ),
                   )}
                 </div>
-              ))
+              )),
             )}
           </div>
         </SimpleBar>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default SidebarLayout;
+export default SidebarLayout

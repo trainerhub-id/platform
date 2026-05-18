@@ -1,15 +1,15 @@
-import React, { useRef, useState } from 'react';
-import { animate, motion, useMotionValue, useMotionValueEvent, useTransform } from 'framer-motion';
+import { animate, motion, useMotionValue, useMotionValueEvent, useTransform } from 'framer-motion'
+import React, { useRef, useState } from 'react'
 
-const MAX_OVERFLOW = 50;
+const MAX_OVERFLOW = 50
 
 interface ElasticSliderProps {
-  defaultValue?: number;
-  min?: number;
-  max?: number;
-  step?: number;
-  color?: string;
-  onChange?: (value: number) => void;
+  defaultValue?: number
+  min?: number
+  max?: number
+  step?: number
+  color?: string
+  onChange?: (value: number) => void
 }
 
 const AnimatedSlider: React.FC<ElasticSliderProps> = ({
@@ -20,31 +20,31 @@ const AnimatedSlider: React.FC<ElasticSliderProps> = ({
   color = 'val(--color-primary)',
   onChange,
 }) => {
-  const [value, setValue] = useState(defaultValue);
-  const sliderRef = useRef<HTMLDivElement>(null);
+  const [value, setValue] = useState(defaultValue)
+  const sliderRef = useRef<HTMLDivElement>(null)
 
-  const clientX = useMotionValue(0);
-  const overflow = useMotionValue(0);
+  const clientX = useMotionValue(0)
+  const overflow = useMotionValue(0)
 
   useMotionValueEvent(clientX, 'change', (latest: any) => {
-    if (!sliderRef.current) return;
-    const { left, right } = sliderRef.current.getBoundingClientRect();
-    let diff = 0;
-    if (latest < left) diff = left - latest;
-    else if (latest > right) diff = latest - right;
-    overflow.jump(decay(diff, MAX_OVERFLOW));
-  });
+    if (!sliderRef.current) return
+    const { left, right } = sliderRef.current.getBoundingClientRect()
+    let diff = 0
+    if (latest < left) diff = left - latest
+    else if (latest > right) diff = latest - right
+    overflow.jump(decay(diff, MAX_OVERFLOW))
+  })
 
   const updateValue = (clientXPos: number) => {
-    if (!sliderRef.current) return;
-    const { left, width } = sliderRef.current.getBoundingClientRect();
-    let newValue = min + ((clientXPos - left) / width) * (max - min);
-    newValue = Math.round(newValue / step) * step;
-    newValue = Math.min(Math.max(newValue, min), max);
-    setValue(newValue);
-    onChange?.(newValue);
-    clientX.jump(clientXPos);
-  };
+    if (!sliderRef.current) return
+    const { left, width } = sliderRef.current.getBoundingClientRect()
+    let newValue = min + ((clientXPos - left) / width) * (max - min)
+    newValue = Math.round(newValue / step) * step
+    newValue = Math.min(Math.max(newValue, min), max)
+    setValue(newValue)
+    onChange?.(newValue)
+    clientX.jump(clientXPos)
+  }
 
   return (
     <motion.div
@@ -57,8 +57,8 @@ const AnimatedSlider: React.FC<ElasticSliderProps> = ({
           ref={sliderRef}
           className="relative flex-1 py-0 cursor-grab"
           onPointerDown={(e) => {
-            updateValue(e.clientX);
-            e.currentTarget.setPointerCapture(e.pointerId);
+            updateValue(e.clientX)
+            e.currentTarget.setPointerCapture(e.pointerId)
           }}
           onPointerMove={(e) => e.buttons > 0 && updateValue(e.clientX)}
           onPointerUp={() => animate(overflow, 0, { type: 'spring', bounce: 0.5 })}
@@ -90,12 +90,12 @@ const AnimatedSlider: React.FC<ElasticSliderProps> = ({
         </div>
       </div>
     </motion.div>
-  );
-};
-
-function decay(value: number, max: number): number {
-  const entry = value / max;
-  return 2 * (1 / (1 + Math.exp(-entry)) - 0.5) * max;
+  )
 }
 
-export default AnimatedSlider;
+function decay(value: number, max: number): number {
+  const entry = value / max
+  return 2 * (1 / (1 + Math.exp(-entry)) - 0.5) * max
+}
+
+export default AnimatedSlider

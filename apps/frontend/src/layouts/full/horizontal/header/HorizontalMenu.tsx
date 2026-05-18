@@ -1,11 +1,11 @@
-import Navigation from "../navbar/Navigation";
+import Navigation from '../navbar/Navigation'
 
 const HorizontalMenu = () => {
   return (
     <>
       <Navigation />
     </>
-  );
-};
+  )
+}
 
-export default HorizontalMenu;
+export default HorizontalMenu
