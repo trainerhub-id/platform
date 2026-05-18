@@ -1,5 +1,6 @@
 import { describe, expect, it, vi } from 'vitest'
 import { Hono } from 'hono'
+import type { AuthVariables } from '../auth/auth.middleware'
 import { handleAppError } from '../common/errors'
 import { createDokumenRoutes } from './dokumen.routes'
 
@@ -25,11 +26,11 @@ function appWith(dokumenService: any, workspaceService: any = {
   findByUserAndSlug: async (userId: string, slug: string) =>
     slug === 'b1-trainers' && userId === 'user_1' ? fakeWorkspace : null,
 }) {
-  const app = new Hono()
+  const app = new Hono<{ Variables: AuthVariables }>()
   // Inject test user (simulates requireAuth)
   app.use('*', async (c, next) => {
-    c.set('user', testUser as never)
-    c.set('session', { id: 'test-session', userId: testUser.id } as never)
+    c.set('user', testUser as any)
+    c.set('session', { id: 'test-session', userId: testUser.id } as any)
     await next()
   })
   app.route('/api', createDokumenRoutes({ dokumenService, workspaceService }))
