@@ -141,7 +141,15 @@ export class GenerationJobService {
   async enqueueGeneration(input: GenerationRequest) {
     const requestKey = buildGenerationRequestKey(input)
     const existing = await this.jobs.findByTypeAndRequestKey(input.jobType, requestKey)
-    if (existing) return existing
+
+    // If job exists but was never sent to boss (boss_job_id missing), re-enqueue
+    if (existing) {
+      if (!existing.bossJobId && existing.status === 'queued') {
+        const bossJobId = await this.enqueue(input.jobType, input, { singletonKey: requestKey })
+        if (bossJobId) return this.jobs.markBossJob(existing.id, bossJobId)
+      }
+      return existing
+    }
 
     const job = await this.jobs.create({
       documentId: input.documentId,
