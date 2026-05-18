@@ -138,6 +138,7 @@ export default function AiWorkspace({ flow }: AiWorkspaceProps) {
   const [isLoading, setIsLoading] = useState(true)
   const [isCreating, setIsCreating] = useState(false)
   const [isSending, setIsSending] = useState(false)
+  const [isSearchingTool, setIsSearchingTool] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
   const activeDocument = useMemo(
@@ -278,6 +279,13 @@ export default function AiWorkspace({ flow }: AiWorkspaceProps) {
     setIsSending(true)
     setError(null)
 
+    // Detect SKKNI search confirmation to show tool loading animation
+    const isUnitSelectionPhase = readiness?.phase === 'unit_selection'
+    const isConfirmation = /^(?:ya+a*|iya+h*|yes+|y+|ok+e*|oke+y*|setuju|lanjut|lanjutkan|siap|gas|boleh)(?:\s+\S*)?$/i.test(message.trim())
+    if (isUnitSelectionPhase && isConfirmation) {
+      setIsSearchingTool(true)
+    }
+
     try {
       if (!documentId) {
         const document = await createDocument({ flow, title: createDocumentTitle(flow) })
@@ -309,13 +317,18 @@ export default function AiWorkspace({ flow }: AiWorkspaceProps) {
         documentId,
         message,
         onChunk: (chunk) => {
-          setMessages((current) =>
-            normalizeMessages(
-              current.map((item) =>
-                item.id === assistantMessage.id ? { ...item, content: item.content + chunk } : item,
-              ),
-            ),
-          )
+          // Detect when tool call starts (empty content = waiting for tool) vs content arriving
+          setMessages((current) => {
+            const updated = current.map((item) =>
+              item.id === assistantMessage.id ? { ...item, content: item.content + chunk } : item,
+            )
+            // If assistant message has content, tool search is done
+            const assistantMsg = updated.find((m) => m.id === assistantMessage.id)
+            if (assistantMsg && assistantMsg.content.length > 0) {
+              setIsSearchingTool(false)
+            }
+            return normalizeMessages(updated)
+          })
         },
       })
 
@@ -325,6 +338,7 @@ export default function AiWorkspace({ flow }: AiWorkspaceProps) {
       setInput(message)
     } finally {
       setIsSending(false)
+      setIsSearchingTool(false)
     }
   }, [activeDocumentId, flow, input, isSending, loadConversation, loadDocuments])
 
@@ -397,9 +411,11 @@ export default function AiWorkspace({ flow }: AiWorkspaceProps) {
                 <Conversation className="h-full">
                   <ConversationContent className="mx-auto min-h-full w-full max-w-3xl px-4 py-6 md:px-6">
                     {messages.map((message) => (
-                      <MessageBubble key={message.id} message={message} />
+                      <MessageBubble key={message.id} message={message} onSelectUnit={setInput} />
                     ))}
-                    {isSending ? (
+                    {isSearchingTool ? (
+                      <ToolSearchAnimation />
+                    ) : isSending ? (
                       <div className="flex items-center gap-2 pl-1 text-xs" style={{ color: 'var(--ai-text-secondary, #6B7280)' }}>
                         <span className="h-1.5 w-1.5 animate-pulse rounded-full" style={{ background: 'var(--ai-gold, #B8863B)' }} />
                         Sedang memproses...
@@ -736,8 +752,106 @@ function DocumentManager({
   )
 }
 
-function MessageBubble({ message }: { message: UiMessage }) {
+// Regex to detect SKKNI unit code pattern e.g. N.79JPW00.140.1
+const SKKNI_CODE_RE = /[A-Z]\.\d{2}[A-Z0-9]+\.\d{3}\.\d+/g
+
+function parseSkkniUnits(content: string): Array<{ code: string; title: string }> {
+  // Match lines like: "1. **N.79JPW00.140.1** - Judul unit" or "N.79JPW00.140.1 — Judul"
+  const lines = content.split('\n')
+  const results: Array<{ code: string; title: string }> = []
+  for (const line of lines) {
+    const codeMatch = line.match(SKKNI_CODE_RE)
+    if (!codeMatch) continue
+    const code = codeMatch[0]
+    // Extract title: text after the code, strip markdown bold/dash
+    const afterCode = line.slice(line.indexOf(code) + code.length)
+    const title = afterCode.replace(/^[\s\-–—*_:]+/, '').replace(/\*\*/g, '').trim()
+    if (code && !results.find((r) => r.code === code)) {
+      results.push({ code, title: title || code })
+    }
+  }
+  return results
+}
+
+function SkkniCards({ units, onSelect }: { units: Array<{ code: string; title: string }>; onSelect: (val: string) => void }) {
+  const [hovered, setHovered] = useState<string | null>(null)
+  if (units.length === 0) return null
+  return (
+    <div className="mt-3 space-y-2">
+      <p className="text-[12px] font-semibold uppercase tracking-wider mb-2" style={{ color: '#9CA3AF' }}>
+        Pilih unit — klik untuk isi input
+      </p>
+      {units.map((u) => (
+        <button
+          key={u.code}
+          type="button"
+          onClick={() => onSelect(u.code)}
+          onMouseEnter={() => setHovered(u.code)}
+          onMouseLeave={() => setHovered(null)}
+          className="flex w-full items-start gap-3 rounded-xl px-4 py-3 text-left transition-all"
+          style={{
+            border: `1px solid ${hovered === u.code ? '#B8863B' : '#E8E2D8'}`,
+            background: hovered === u.code ? '#F7F1E8' : '#FFFFFF',
+            boxShadow: hovered === u.code ? '0 2px 8px rgba(184,134,59,0.12)' : 'none',
+          }}
+        >
+          <span
+            className="shrink-0 rounded-lg px-2 py-0.5 text-[12px] font-bold font-mono"
+            style={{ background: hovered === u.code ? '#F4E8D2' : '#F3F4F6', color: hovered === u.code ? '#B8863B' : '#374151' }}
+          >
+            {u.code}
+          </span>
+          <span className="text-[13px] leading-snug" style={{ color: hovered === u.code ? '#1F2937' : '#4B5563' }}>
+            {u.title}
+          </span>
+          {hovered === u.code && (
+            <Icon icon="solar:arrow-right-bold" height={14} style={{ color: '#B8863B', flexShrink: 0, marginTop: 2 }} />
+          )}
+        </button>
+      ))}
+    </div>
+  )
+}
+
+function ToolSearchAnimation() {
+  const steps = ['Menganalisis konteks pelatihan...', 'Mencari unit SKKNI relevan...', 'Mencocokkan kompetensi...']
+  const [step, setStep] = useState(0)
+
+  useEffect(() => {
+    const id = setInterval(() => setStep((s) => (s + 1) % steps.length), 1200)
+    return () => clearInterval(id)
+  }, [])
+
+  return (
+    <div
+      className="flex items-center gap-3 rounded-xl px-4 py-3"
+      style={{ border: '1px solid #E8E2D8', background: '#FFFFFF', maxWidth: '72ch' }}
+    >
+      <div className="flex shrink-0 items-center gap-1">
+        {[0, 1, 2].map((i) => (
+          <span
+            key={i}
+            className="rounded-full"
+            style={{
+              width: 6,
+              height: 6,
+              background: '#B8863B',
+              opacity: step === i ? 1 : 0.3,
+              transition: 'opacity 0.3s',
+            }}
+          />
+        ))}
+      </div>
+      <span className="text-[13px]" style={{ color: '#6B7280' }}>
+        {steps[step]}
+      </span>
+    </div>
+  )
+}
+
+function MessageBubble({ message, onSelectUnit }: { message: UiMessage; onSelectUnit?: (val: string) => void }) {
   const isUser = message.role === 'user'
+  const skkniUnits = !isUser && message.content ? parseSkkniUnits(message.content) : []
 
   return (
     <Message from={isUser ? 'user' : 'assistant'}>
@@ -759,6 +873,9 @@ function MessageBubble({ message }: { message: UiMessage }) {
         }
       >
         <MessageResponse whiteText={isUser}>{message.content || '...'}</MessageResponse>
+        {skkniUnits.length > 0 && onSelectUnit && (
+          <SkkniCards units={skkniUnits} onSelect={onSelectUnit} />
+        )}
       </MessageContent>
     </Message>
   )
