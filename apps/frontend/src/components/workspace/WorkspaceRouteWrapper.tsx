@@ -1,10 +1,10 @@
-import { Navigate, Outlet, useParams } from 'react-router'
+import { Navigate, Outlet, useLocation } from 'react-router'
 import { useCurrentWorkspace } from '../../hooks/useCurrentWorkspace'
 import { WorkspaceProvider } from '../../context/WorkspaceContext'
 
 export function WorkspaceRouteWrapper() {
   const result = useCurrentWorkspace()
-  const params = useParams()
+  const location = useLocation()
 
   if (result.status === 'loading') {
     return <div className="p-8 text-sm text-muted-foreground">Memuat workspace…</div>
@@ -20,7 +20,7 @@ export function WorkspaceRouteWrapper() {
 
   if (result.status === 'mismatch') {
     // Keep sub-path after the slug if present
-    const subPath = window.location.pathname.split('/').slice(2).join('/')
+    const subPath = location.pathname.split('/').slice(2).join('/')
     const target = subPath ? `/${result.defaultSlug}/${subPath}` : `/${result.defaultSlug}`
     return <Navigate to={target} replace />
   }
