@@ -133,7 +133,7 @@ const Sertifikat = () => {
   const trainerHubCerts = certificates.filter((c) => c.certType === 'trainerhub')
 
   return (
-    <div className="mx-auto max-w-5xl p-6 space-y-6">
+    <div className="space-y-6">
       {/* Page heading */}
       <div>
         <h1 className="text-2xl font-bold text-[#1E293B]">Sertifikat</h1>
