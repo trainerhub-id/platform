@@ -276,6 +276,11 @@ export default function AiWorkspace({ flow }: AiWorkspaceProps) {
   const handleSend = useCallback(async () => {
     const message = input.trim()
     if (!message || isSending) return
+    await handleSendMessage(message)
+  }, [input, isSending]) // eslint-disable-line react-hooks/exhaustive-deps
+
+  const handleSendMessage = useCallback(async (message: string) => {
+    if (!message || isSending) return
 
     let documentId = activeDocumentId
     setInput('')
@@ -343,7 +348,7 @@ export default function AiWorkspace({ flow }: AiWorkspaceProps) {
       setIsSending(false)
       setIsSearchingTool(false)
     }
-  }, [activeDocumentId, flow, input, isSending, loadConversation, loadDocuments])
+  }, [activeDocumentId, flow, isSending, loadConversation, loadDocuments])
 
   // Load generation state when active document changes
   useEffect(() => {
@@ -482,7 +487,7 @@ export default function AiWorkspace({ flow }: AiWorkspaceProps) {
                 <Conversation className="h-full">
                   <ConversationContent className="mx-auto min-h-full w-full max-w-3xl px-4 py-6 md:px-6">
                     {messages.map((message) => (
-                      <MessageBubble key={message.id} message={message} onSelectUnit={setInput} />
+                      <MessageBubble key={message.id} message={message} onSelectUnit={setInput} onSend={(msg) => void handleSendMessage(msg)} />
                     ))}
                     {isSearchingTool ? (
                       <ToolSearchAnimation />
@@ -928,9 +933,26 @@ function ToolSearchAnimation() {
   )
 }
 
-function MessageBubble({ message, onSelectUnit }: { message: UiMessage; onSelectUnit?: (val: string) => void }) {
+// Detect if assistant message is asking for SKKNI search confirmation
+const SKKNI_CONFIRM_RE = /(?:apakah|boleh|mau|ingin|lanjut|cari|pencarian|skkni|unit kompetensi).*(?:\?|lanjutkan|cari)/i
+
+function MessageBubble({
+  message,
+  onSelectUnit,
+  onSend,
+}: {
+  message: UiMessage
+  onSelectUnit?: (val: string) => void
+  onSend?: (msg: string) => void
+}) {
   const isUser = message.role === 'user'
   const skkniUnits = !isUser && message.content ? parseSkkniUnits(message.content) : []
+  const isAskingConfirm =
+    !isUser &&
+    message.content &&
+    skkniUnits.length === 0 &&
+    SKKNI_CONFIRM_RE.test(message.content) &&
+    !('pending' in message && message.pending)
 
   return (
     <Message from={isUser ? 'user' : 'assistant'}>
@@ -952,8 +974,19 @@ function MessageBubble({ message, onSelectUnit }: { message: UiMessage; onSelect
         }
       >
         <MessageResponse whiteText={isUser}>{message.content || '...'}</MessageResponse>
+        {isAskingConfirm && onSend && (
+          <button
+            type="button"
+            onClick={() => onSend('ya')}
+            className="mt-3 flex items-center gap-2 rounded-xl px-4 py-2.5 text-[13px] font-semibold transition-colors"
+            style={{ background: 'var(--ai-accent-bg, #F5EBDD)', color: 'var(--ai-gold, #B8863B)', border: '1px solid var(--ai-border, #E8E2D8)' }}
+          >
+            <Icon icon="solar:magnifer-bold" height={14} />
+            Ya, Lakukan Pencarian
+          </button>
+        )}
         {skkniUnits.length > 0 && onSelectUnit && (
-          <SkkniCards units={skkniUnits} onSelect={onSelectUnit} />
+          <SkkniCards units={skkniUnits} onSelect={(code) => onSend?.(code)} />
         )}
       </MessageContent>
     </Message>
