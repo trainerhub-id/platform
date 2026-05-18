@@ -1,5 +1,5 @@
 import { Icon } from '@iconify/react'
-import { useNavigate } from 'react-router'
+import { useNavigate, useParams } from 'react-router'
 import AiMentorLogo from 'src/assets/images/logos/logo-ai-mentor.png'
 import CardBox from 'src/components/shared/CardBox'
 
@@ -44,9 +44,10 @@ const categories: AiCategory[] = [
 
 export default function AiHubSelection() {
   const navigate = useNavigate()
+  const { slug } = useParams<{ slug: string }>()
 
   const handleCardClick = (category: AiCategory) => {
-    navigate(category.route)
+    navigate(`/${slug}/${category.route}`)
   }
 
   return (
