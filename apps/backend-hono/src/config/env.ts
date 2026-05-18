@@ -30,6 +30,8 @@ const envSchema = z.object({
   SCALEV_STORE_UNIQUE_ID: z.string().optional(),
   SCALEV_VARIANT_UNIQUE_ID: z.string().optional(),
   SCALEV_BUNDLE_PRICE_OPTION_UNIQUE_ID: z.string().optional(),
+  RESEND_API_KEY: z.string().optional(),
+  EMAIL_FROM: z.string().min(1).default('TrainerHub <noreply@sertifikasitrainer.com>'),
 })
 
 export type AppEnv = z.infer<typeof envSchema>

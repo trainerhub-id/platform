@@ -12,7 +12,8 @@
     "resolveJsonModule": true,
     "noUncheckedIndexedAccess": true,
     "exactOptionalPropertyTypes": true,
-    "outDir": "dist"
+    "outDir": "dist",
+    "jsx": "react-jsx"
   },
-  "include": ["src/**/*.ts", "drizzle.config.ts", "vitest.config.ts"]
+  "include": ["src/**/*.ts", "src/**/*.tsx", "drizzle.config.ts", "vitest.config.ts"]
 }

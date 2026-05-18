@@ -84,12 +84,15 @@ async function authFetch<T>(path: string, init: RequestInit = {}): Promise<T> {
 
   if (!response.ok) {
     const payload = await response.json().catch(() => null)
+    const code = payload?.code as string | undefined
     const message =
       payload?.message || payload?.error?.message || payload?.error || response.statusText
     const error = new Error(message || 'Authentication request failed') as Error & {
-      errors?: Array<{ longMessage: string }>
+      errors?: Array<{ longMessage: string; code?: string }>
+      code?: string
     }
-    error.errors = [{ longMessage: message || 'Authentication request failed' }]
+    error.code = code
+    error.errors = [{ longMessage: message || 'Authentication request failed', code }]
     throw error
   }
 

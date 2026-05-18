@@ -5,6 +5,7 @@ import Loadable from '../layouts/full/shared/loadable/Loadable'
 const Login = Loadable(lazy(() => import('../views/authentication/auth1/Login')))
 const AuthRegister = Loadable(lazy(() => import('../views/authentication/auth1/Register')))
 const ForgotPassword = Loadable(lazy(() => import('../views/authentication/auth1/ForgotPassword')))
+const ResetPassword = Loadable(lazy(() => import('../views/authentication/ResetPassword')))
 const PasswordResetRedirect = Loadable(
   lazy(() => import('../views/authentication/PasswordResetRedirect')),
 )
@@ -25,6 +26,7 @@ export const publicRouteChildren = [
   { path: '/auth/login', element: <Login /> },
   { path: '/auth/register', element: <AuthRegister /> },
   { path: '/auth/forgot-password', element: <ForgotPassword /> },
+  { path: '/reset-password', element: <ResetPassword /> },
   { path: '/sign-in', element: <PasswordResetRedirect /> },
   { path: '/register', element: <PublicRegister /> },
   { path: '/register/:batchSlug/:tierSlug', element: <PublicRegister /> },

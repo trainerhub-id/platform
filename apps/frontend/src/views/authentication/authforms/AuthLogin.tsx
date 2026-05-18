@@ -36,7 +36,15 @@ const AuthLogin = () => {
       }
     } catch (err: any) {
       console.error('error', err)
-      setError(err.errors?.[0]?.longMessage || 'An error occurred during sign in.')
+      const code = err.code || err.errors?.[0]?.code
+      const errorMessages: Record<string, string> = {
+        INVALID_EMAIL_OR_PASSWORD: 'Email atau password salah.',
+        USER_NOT_FOUND: 'Email tidak terdaftar.',
+        INVALID_PASSWORD: 'Password salah.',
+        EMAIL_NOT_VERIFIED: 'Email belum diverifikasi. Cek inbox Anda.',
+        TOO_MANY_REQUESTS: 'Terlalu banyak percobaan. Coba lagi nanti.',
+      }
+      setError(errorMessages[code] || err.errors?.[0]?.longMessage || 'Terjadi kesalahan saat login.')
     } finally {
       setLoading(false)
     }

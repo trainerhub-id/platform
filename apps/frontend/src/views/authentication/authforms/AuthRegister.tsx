@@ -41,7 +41,14 @@ const AuthRegister = () => {
       await beginSignUp()
     } catch (err: any) {
       console.error(err)
-      setError(err?.errors?.[0]?.longMessage || 'Sign up failed. Please try again.')
+      const code = err.code || err.errors?.[0]?.code
+      const errorMessages: Record<string, string> = {
+        USER_ALREADY_EXISTS: 'Email sudah terdaftar.',
+        INVALID_EMAIL: 'Format email tidak valid.',
+        PASSWORD_TOO_SHORT: 'Password minimal 8 karakter.',
+        PASSWORD_TOO_LONG: 'Password terlalu panjang.',
+      }
+      setError(errorMessages[code] || err?.errors?.[0]?.longMessage || 'Pendaftaran gagal. Coba lagi.')
     } finally {
       setLoading(false)
     }

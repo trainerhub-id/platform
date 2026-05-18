@@ -24,6 +24,7 @@
     "@aws-sdk/s3-request-presigner": "^3.1047.0",
     "@better-auth/drizzle-adapter": "^1.6.11",
     "@hono/zod-openapi": "^1.4.0",
+    "@react-email/components": "^1.0.12",
     "@react-pdf/renderer": "^4.5.1",
     "ai": "^6.0.182",
     "better-auth": "^1.6.11",
@@ -37,6 +38,7 @@
     "postgres": "^3.4.9",
     "qrcode": "^1.5.4",
     "react": "^19.2.6",
+    "resend": "^6.12.3",
     "zod": "^4.4.3"
   },
   "devDependencies": {
