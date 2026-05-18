@@ -29,9 +29,8 @@ type AppVariables = AuthVariables & {
 }
 
 type TestUser = { id: string; email: string; name: string; role?: string }
-type CreateAppOptions = { testUser?: TestUser }
 
-export function createApp(options: CreateAppOptions = {}) {
+export function createApp(options: { testUser?: TestUser; generationJobs?: import('./generation/generation-job.service').GenerationJobService } = {}) {
   const app = new OpenAPIHono<{ Variables: AppVariables }>()
 
   app.use(
@@ -77,7 +76,7 @@ export function createApp(options: CreateAppOptions = {}) {
   app.route('/api', createPesertaRoutes())
   app.route('/api', createInterviewRoutes())
   app.route('/api', createInterviewReadRoutes())
-  app.route('/api', createGenerationRoutes())
+  app.route('/api', createGenerationRoutes({ generationJobs: options.generationJobs }))
   app.route('/api', createSkkniRoutes())
   app.route('/api', createTodosRoutes())
   app.route('/api', createTugasRoutes())
@@ -92,7 +91,7 @@ export function createApp(options: CreateAppOptions = {}) {
   app.route('/', createPesertaRoutes())
   app.route('/', createInterviewRoutes())
   app.route('/', createInterviewReadRoutes())
-  app.route('/', createGenerationRoutes())
+  app.route('/', createGenerationRoutes({ generationJobs: options.generationJobs }))
   app.route('/', createSkkniRoutes())
   app.route('/', createTodosRoutes())
   app.route('/', createTugasRoutes())
