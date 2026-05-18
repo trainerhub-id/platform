@@ -140,7 +140,7 @@ export const RundownTemplateList = () => {
                   </p>
                   <div className="space-y-1 max-h-40 overflow-y-auto">
                     {template.items.slice(0, 5).map((item, idx) => (
-                      <div key={idx} className="flex items-center gap-2 text-sm">
+                      <div key={`${item.time}-${item.type}`} className="flex items-center gap-2 text-sm">
                         <span className="text-bodytext font-mono">{item.time}</span>
                         <span className={`px-2 py-0.5 rounded text-xs ${getTypeColor(item.type)}`}>
                           {item.type}

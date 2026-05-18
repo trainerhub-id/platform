@@ -54,9 +54,9 @@ export const Language = () => {
           </DropdownMenuTrigger>
 
           <DropdownMenuContent className="w-56 rounded-sm p-1">
-            {Languages.map((item, index) => (
+            {Languages.map((item) => (
               <DropdownMenuItem
-                key={index}
+                key={item.value}
                 onSelect={() => setIsLanguage(item.value)}
                 className="flex gap-3 items-center py-2 px-4 cursor-pointer hover:bg-muted"
               >

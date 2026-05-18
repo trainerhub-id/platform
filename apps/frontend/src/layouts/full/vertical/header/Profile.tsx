@@ -75,8 +75,8 @@ const Profile = () => {
           </div>
 
           {/* === Menu Items === */}
-          {menuItems.map((items, index) => (
-            <div key={index} className="px-6 mb-2">
+          {menuItems.map((items) => (
+            <div key={items.title} className="px-6 mb-2">
               <DropdownMenuItem
                 className="px-3 py-2 flex justify-between items-center bg-hover group/link w-full rounded-md cursor-pointer focus:bg-hover focus:text-primary"
                 onClick={() => handleMenuClick(items.url)}

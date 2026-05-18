@@ -72,8 +72,8 @@ const CertificateDetailCard = ({
 
       <div className="grid grid-cols-12 gap-8 mb-6">
         <div className="col-span-12 md:col-span-8 grid grid-cols-1 md:grid-cols-2 gap-y-6">
-          {details.map((detail, index) => (
-            <div key={index}>
+          {details.map((detail) => (
+            <div key={detail.label}>
               <p className="text-xs font-semibold text-dark mb-1">{detail.label}</p>
               <p className="text-sm text-bodytext font-medium">{detail.value}</p>
             </div>

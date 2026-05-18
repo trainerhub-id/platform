@@ -62,7 +62,7 @@ export const CreateRundownTemplateModal = ({
   ])
 
   const addItem = () => {
-    setItems([...items, createRundownItem({ time: '09:00', title: '', type: 'session' })])
+    setItems((prev) => [...prev, createRundownItem({ time: '09:00', title: '', type: 'session' })])
   }
 
   const removeItem = (index: number) => {

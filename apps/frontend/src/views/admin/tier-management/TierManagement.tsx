@@ -128,7 +128,7 @@ const TierManagement = () => {
                           ) : (
                             <div className="flex flex-wrap gap-1">
                               {template.defaultCourseIds.slice(0, 3).map((courseId, idx) => (
-                                <Badge key={idx} variant="outline" className="text-xs">
+                                <Badge key={courseId} variant="outline" className="text-xs">
                                   Kelas {idx + 1}
                                 </Badge>
                               ))}
@@ -150,9 +150,9 @@ const TierManagement = () => {
                             <p className="text-sm text-gray-400 italic">Tidak ada fitur AI</p>
                           ) : (
                             <div className="flex flex-wrap gap-1">
-                              {template.defaultAiFeatures.slice(0, 2).map((featureId, idx) => (
+                              {template.defaultAiFeatures.slice(0, 2).map((featureId) => (
                                 <Badge
-                                  key={idx}
+                                  key={featureId}
                                   variant="outline"
                                   className="text-xs bg-blue-50 text-blue-700 border-blue-200"
                                 >
@@ -179,8 +179,8 @@ const TierManagement = () => {
                             Benefit Paket
                           </h5>
                           <ul className="text-sm text-bodytext space-y-1">
-                            {template.defaultBenefits.slice(0, 3).map((benefit, idx) => (
-                              <li key={idx} className="flex items-start gap-2">
+                            {template.defaultBenefits.slice(0, 3).map((benefit) => (
+                              <li key={benefit} className="flex items-start gap-2">
                                 <Icon
                                   icon="solar:check-circle-bold"
                                   className="text-primary mt-0.5 shrink-0"

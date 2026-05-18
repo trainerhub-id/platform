@@ -113,22 +113,24 @@ export const useKelas = (courseId?: string) => {
 
       const newProgress = totalLessons > 0 ? Math.round((completedLessons / totalLessons) * 100) : 0
 
-      setSelectedKelas({
-        ...selectedKelas,
-        chapters: updatedChapters,
-        progress: newProgress,
-        completedChapters: updatedChapters.filter((ch) =>
-          ch.lessons.every((l) => l.status === 'selesai'),
-        ).length,
-      })
+      setSelectedKelas((prev) =>
+        prev
+          ? {
+              ...prev,
+              chapters: updatedChapters,
+              progress: newProgress,
+              completedChapters: updatedChapters.filter((ch) =>
+                ch.lessons.every((l) => l.status === 'selesai'),
+              ).length,
+            }
+          : prev,
+      )
 
       // Update Active Lesson State if it matches
       if (activeLesson && activeLesson.id === lessonId) {
-        setActiveLesson({
-          ...activeLesson,
-          status,
-          videoProgress: status === 'selesai' ? 0 : activeLesson.videoProgress,
-        })
+        setActiveLesson((prev) =>
+          prev ? { ...prev, status, videoProgress: status === 'selesai' ? 0 : prev.videoProgress } : prev,
+        )
       }
 
       await api.patch(`/kelas/${selectedKelas.id}/lesson/${lessonId}/progress`, {

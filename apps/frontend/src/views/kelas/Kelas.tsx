@@ -118,12 +118,6 @@ const Kelas = () => {
     if (!selectedKelas || hasShownCompletion) return
 
     // Debug logging
-    console.log('🎯 Completion Check:', {
-      progress: selectedKelas.progress,
-      isComplete: selectedKelas.progress === 100,
-      hasShownCompletion,
-      courseId: selectedKelas.id,
-    })
 
     // Check if course is completed (100%)
     if (selectedKelas.progress === 100) {
@@ -131,22 +125,16 @@ const Kelas = () => {
       const modalKey = `completion_modal_shown_${selectedKelas.id}`
       const alreadyShown = sessionStorage.getItem(modalKey)
 
-      console.log('✅ Course Complete!', {
-        modalKey,
-        alreadyShown,
-        willShow: !alreadyShown,
-      })
 
       if (!alreadyShown) {
         // Small delay to let the UI update
-        setTimeout(() => {
-          console.log('🎉 Showing completion modal')
+        const timer = setTimeout(() => {
           setShowCompletionModal(true)
           setHasShownCompletion(true)
           sessionStorage.setItem(modalKey, 'true')
         }, 500)
+        return () => clearTimeout(timer)
       } else {
-        console.log('⏭️ Modal already shown in this browser')
       }
     }
   }, [selectedKelas?.progress, selectedKelas?.id, hasShownCompletion])

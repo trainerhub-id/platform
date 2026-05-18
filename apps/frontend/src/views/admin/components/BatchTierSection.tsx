@@ -24,6 +24,12 @@ import {
 } from 'src/components/ui/select'
 import { Textarea } from 'src/components/ui/textarea'
 import { AI_FEATURES } from 'src/constants/aiFeatures'
+const idrFormatter = new Intl.NumberFormat('id-ID', {
+  style: 'currency',
+  currency: 'IDR',
+  minimumFractionDigits: 0,
+})
+
 
 interface TierTemplate {
   id: string
@@ -364,11 +370,7 @@ export const BatchTierSection = ({ batchId, batchSlug: batchSlugProp }: BatchTie
   }
 
   const formatPrice = (price: number) => {
-    return new Intl.NumberFormat('id-ID', {
-      style: 'currency',
-      currency: 'IDR',
-      minimumFractionDigits: 0,
-    }).format(price)
+    return idrFormatter.format(price)
   }
 
   const selectedTemplate = templates.find((t) => t.id === formData.tierTemplateId)

@@ -14,6 +14,12 @@ import {
   SelectValue,
 } from 'src/components/ui/select'
 import { useUser } from 'src/lib/better-auth'
+const idrFormatter = new Intl.NumberFormat('id-ID', {
+  style: 'currency',
+  currency: 'IDR',
+  minimumFractionDigits: 0,
+})
+
 
 const API_URL = import.meta.env.VITE_API_URL || '/api'
 
@@ -163,11 +169,7 @@ export default function Register() {
   }
 
   const formatPrice = (price: number) => {
-    return new Intl.NumberFormat('id-ID', {
-      style: 'currency',
-      currency: 'IDR',
-      minimumFractionDigits: 0,
-    }).format(price)
+    return idrFormatter.format(price)
   }
 
   const formatDate = (dateString: string) => {
@@ -249,7 +251,7 @@ export default function Register() {
               <p className="text-sm font-medium mb-2">Yang Anda dapatkan:</p>
               <ul className="space-y-1">
                 {tier.benefits.map((benefit, idx) => (
-                  <li key={idx} className="flex items-center gap-2 text-sm">
+                  <li key={benefit} className="flex items-center gap-2 text-sm">
                     <CheckCircle className="h-4 w-4 text-green-500" />
                     {benefit}
                   </li>

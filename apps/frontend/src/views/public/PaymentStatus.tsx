@@ -4,6 +4,12 @@ import { useNavigate, useSearchParams } from 'react-router'
 import { Alert, AlertDescription } from 'src/components/ui/alert'
 import { Button } from 'src/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from 'src/components/ui/card'
+const idrFormatter = new Intl.NumberFormat('id-ID', {
+  style: 'currency',
+  currency: 'IDR',
+  minimumFractionDigits: 0,
+})
+
 
 const API_URL = import.meta.env.VITE_API_URL || '/api'
 
@@ -108,11 +114,7 @@ export default function PaymentStatus() {
   }, [statusData?.status, sessionId, claimToken])
 
   const formatCurrency = (value: number) =>
-    new Intl.NumberFormat('id-ID', {
-      style: 'currency',
-      currency: 'IDR',
-      minimumFractionDigits: 0,
-    }).format(value)
+    idrFormatter.format(value)
 
   if (loading) {
     return (

@@ -15,7 +15,7 @@ const TrainingRundownTab = ({ rundown }: TrainingRundownTabProps) => {
 
         {rundown &&
           rundown.map((item: any, idx: number) => (
-            <div key={idx} className="relative flex items-center mb-10 last:mb-0">
+            <div key={item.time} className="relative flex items-center mb-10 last:mb-0">
               {/* Time */}
               <div className="w-[60px] text-sm font-medium text-gray-400 text-left shrink-0">
                 {item.time}

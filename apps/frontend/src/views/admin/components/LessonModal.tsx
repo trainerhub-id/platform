@@ -50,7 +50,6 @@ export const LessonModal: React.FC<LessonModalProps> = ({
   const [uploading, setUploading] = useState(false)
   const [uploadProgress, setUploadProgress] = useState(0)
   const [processingStatus, setProcessingStatus] = useState<string>('')
-  const [selectedFile, setSelectedFile] = useState<File | null>(null)
 
   // Local state to track video existence (can be updated independently of initialData)
   const [localPlaybackId, setLocalPlaybackId] = useState<string | null>(null)
@@ -80,7 +79,6 @@ export const LessonModal: React.FC<LessonModalProps> = ({
             ? 'google-drive'
             : 'youtube',
       )
-      setSelectedFile(null)
       setUploadProgress(0)
       setProcessingStatus('')
     }
@@ -530,7 +528,6 @@ export const LessonModal: React.FC<LessonModalProps> = ({
                         onChange={(e) => {
                           const file = e.target.files?.[0]
                           if (file) {
-                            setSelectedFile(file)
                             handleMuxUpload(file)
                           }
                         }}
