@@ -1,5 +1,7 @@
 import { useCallback, useEffect, useState } from 'react'
 import api from 'src/api/workspace-axios'
+import { readCurrentWorkspaceSlug } from 'src/api/workspace-axios'
+import { useWorkspaces } from 'src/hooks/useWorkspaces'
 
 export interface TodoItem {
   id: string
@@ -19,9 +21,28 @@ export const useTodos = (batchId?: string, isAdmin: boolean = false) => {
   const [todos, setTodos] = useState<TodoItem[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<any>(null)
+  const { data: workspaces, isLoading: workspacesLoading } = useWorkspaces()
+
+  const workspaceSlug =
+    typeof window === 'undefined'
+      ? null
+      : (readCurrentWorkspaceSlug(window.location.pathname) ??
+        [...(workspaces ?? [])].sort((a, b) => {
+          const aTs = new Date(a.lastAccessedAt ?? a.createdAt).getTime()
+          const bTs = new Date(b.lastAccessedAt ?? b.createdAt).getTime()
+          return bTs - aTs
+        })[0]?.slug)
 
   const fetchTodos = useCallback(async () => {
     try {
+      if (!isAdmin && workspacesLoading) return
+      if (!isAdmin && !workspaceSlug) {
+        setTodos([])
+        setError(null)
+        setLoading(false)
+        return
+      }
+
       setLoading(true)
       let url = '/todos/my'
       if (isAdmin && batchId) {
@@ -30,7 +51,10 @@ export const useTodos = (batchId?: string, isAdmin: boolean = false) => {
         url = '/todos/admin/all'
       }
 
-      const res = await api.get(url)
+      const res = await api.get(
+        url,
+        workspaceSlug ? { headers: { 'X-Workspace-Slug': workspaceSlug } } : undefined,
+      )
 
       setTodos(res.data ?? [])
       setError(null)
@@ -40,7 +64,7 @@ export const useTodos = (batchId?: string, isAdmin: boolean = false) => {
     } finally {
       setLoading(false)
     }
-  }, [batchId, isAdmin])
+  }, [batchId, isAdmin, workspaceSlug, workspacesLoading])
 
   useEffect(() => {
     fetchTodos()
