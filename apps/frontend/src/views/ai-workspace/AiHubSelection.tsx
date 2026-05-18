@@ -1,5 +1,5 @@
 import { Icon } from '@iconify/react'
-import { useNavigate } from 'react-router'
+import { useNavigate, useParams } from 'react-router'
 import AiMentorLogo from 'src/assets/images/logos/logo-ai-mentor.png'
 import CardBox from 'src/components/shared/CardBox'
 
@@ -19,8 +19,8 @@ const categories: AiCategory[] = [
     description:
       'Bantu buat lesson plan, design assessment, dan generate materi training dengan AI',
     icon: 'solar:presentation-graph-bold-duotone',
-    color: 'var(--color-primary)',
-    route: '/user/ai-hub/trainer-workspace',
+    color: '#4F75FF',
+    route: 'ai-hub/trainer-workspace',
   },
   {
     id: 'master',
@@ -28,8 +28,8 @@ const categories: AiCategory[] = [
     description:
       'Analisis performa peserta, feedback otomatis, dan coaching tips untuk trainer master',
     icon: 'solar:diploma-verified-bold-duotone',
-    color: 'var(--color-gold)',
-    route: '/user/ai-hub/master-workspace',
+    color: '#AA8D55',
+    route: 'ai-hub/master-workspace',
   },
   {
     id: 'branding',
@@ -38,15 +38,16 @@ const categories: AiCategory[] = [
       'Personal branding ToT dan promosi training dengan gaya hangat & membimbing. Support LinkedIn, Instagram, Email, Website.',
     icon: 'solar:star-bold-duotone',
     color: '#10B981',
-    route: '/user/ai-hub/branding',
+    route: 'ai-hub/branding',
   },
 ]
 
 export default function AiHubSelection() {
   const navigate = useNavigate()
+  const { slug } = useParams<{ slug: string }>()
 
   const handleCardClick = (category: AiCategory) => {
-    navigate(category.route)
+    navigate(`/${slug}/${category.route}`)
   }
 
   return (

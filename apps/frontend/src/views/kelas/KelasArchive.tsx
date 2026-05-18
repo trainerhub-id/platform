@@ -1,6 +1,6 @@
 import { Icon } from '@iconify/react'
 import { useEffect, useState } from 'react'
-import { useNavigate } from 'react-router'
+import { useNavigate, useParams } from 'react-router'
 import api from 'src/api/axios'
 import CardBox from 'src/components/shared/CardBox'
 import { Badge } from 'src/components/ui/badge'
@@ -23,6 +23,7 @@ const KelasArchive = () => {
   const [courses, setCourses] = useState<Course[]>([])
   const [loading, setLoading] = useState(true)
   const navigate = useNavigate()
+  const { slug } = useParams<{ slug: string }>()
 
   useEffect(() => {
     fetchCourses()
@@ -45,7 +46,7 @@ const KelasArchive = () => {
     if (!hasAccess) {
       return // Do nothing if no access
     }
-    navigate(`/user/kelas/${courseId}`)
+    navigate(`/${slug}/kelas/${courseId}`)
   }
 
   if (loading) {

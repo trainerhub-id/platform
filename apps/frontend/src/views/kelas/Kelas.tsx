@@ -1,10 +1,10 @@
 import { Icon } from '@iconify/react'
-import Hls from 'hls.js'
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { useNavigate, useParams } from 'react-router'
 import CardBox from 'src/components/shared/CardBox'
 import { CourseCompletionModal } from 'src/components/shared/CourseCompletionModal'
 import CourseLessonItem from 'src/components/shared/CourseLessonItem'
+import LazyMuxPlayer from 'src/components/shared/LazyMuxPlayer'
 import { Badge } from 'src/components/ui/badge'
 import { Button } from 'src/components/ui/button'
 import { Loading } from 'src/components/ui/loading'
@@ -40,8 +40,6 @@ const Kelas = () => {
   const [tokenLoading, setTokenLoading] = useState(false)
   const [showCompletionModal, setShowCompletionModal] = useState(false)
   const [hasShownCompletion, setHasShownCompletion] = useState(false)
-  const muxVideoRef = useRef<HTMLVideoElement | null>(null)
-
   // Debounced progress save - every 5 seconds (MUST be before early returns)
   const debounceTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
   const debouncedSaveProgress = useCallback(
@@ -87,13 +85,13 @@ const Kelas = () => {
         const data = await response.json()
         setPlaybackToken(data.token)
 
-        // Auto-refresh token before expiry (refresh at 90% of expiry time)
-        const refreshTime = data.expiresIn * 0.9 * 1000 // Convert to milliseconds
-        setTimeout(() => {
-          if (activeLesson?.id === lessonId) {
+        // Auto-refresh token before expiry (only if expiresIn is provided)
+        if (data.expiresIn && data.expiresIn > 0) {
+          const refreshTime = data.expiresIn * 0.9 * 1000
+          setTimeout(() => {
             fetchPlaybackToken(lessonId)
-          }
-        }, refreshTime)
+          }, refreshTime)
+        }
       } catch (error) {
         console.error('Error fetching playback token:', error)
         setPlaybackToken(null)
@@ -101,7 +99,7 @@ const Kelas = () => {
         setTokenLoading(false)
       }
     },
-    [activeLesson, getToken],
+    [getToken],
   )
 
   // Fetch token when active lesson changes
@@ -139,48 +137,6 @@ const Kelas = () => {
     }
   }, [selectedKelas?.progress, selectedKelas?.id, hasShownCompletion])
 
-  const signedPlaybackUrl = useMemo(() => {
-    if (!activeLesson?.muxPlaybackId || !playbackToken) return null
-    return `https://stream.mux.com/${activeLesson.muxPlaybackId}.m3u8?token=${playbackToken}`
-  }, [activeLesson?.muxPlaybackId, playbackToken])
-
-  useEffect(() => {
-    const video = muxVideoRef.current
-    if (!video || !signedPlaybackUrl) return
-
-    video.muted = false
-    video.defaultMuted = false
-    video.volume = 1
-    video.playsInline = true
-    video.crossOrigin = 'anonymous'
-
-    let hls: Hls | null = null
-
-    if (video.canPlayType('application/vnd.apple.mpegurl')) {
-      video.src = signedPlaybackUrl
-      video.load()
-    } else if (Hls.isSupported()) {
-      hls = new Hls({
-        enableWorker: true,
-        autoStartLoad: true,
-      })
-      hls.loadSource(signedPlaybackUrl)
-      hls.attachMedia(video)
-    } else {
-      video.src = signedPlaybackUrl
-      video.load()
-    }
-
-    return () => {
-      if (hls) {
-        hls.destroy()
-      } else {
-        video.removeAttribute('src')
-        video.load()
-      }
-    }
-  }, [signedPlaybackUrl, activeLesson?.id])
-
   if (loading) {
     return <Loading fullPage />
   }
@@ -194,7 +150,7 @@ const Kelas = () => {
         <div className="text-center">
           <h3 className="text-lg font-semibold text-dark mb-2">Kelas tidak ditemukan</h3>
           <p className="text-sm text-bodytext mb-4">Kelas yang Anda cari tidak tersedia.</p>
-          <Button onClick={() => navigate('/user/kelas')} variant="outline">
+          <Button onClick={() => navigate('../kelas')} variant="outline">
             <Icon icon="solar:arrow-left-outline" className="mr-2" height={16} />
             Kembali ke Daftar Kelas
           </Button>
@@ -267,7 +223,7 @@ const Kelas = () => {
               variant="ghost"
               size="sm"
               className="h-10 w-10 p-0 rounded-lg hover:bg-gray-100 shrink-0"
-              onClick={() => navigate('/user/kelas')}
+              onClick={() => navigate('../kelas')}
               title="Kembali ke Daftar Kelas"
             >
               <Icon icon="solar:arrow-left-outline" height={20} className="text-gray-600" />
@@ -304,16 +260,25 @@ const Kelas = () => {
                   <div className="text-white">Loading secure video...</div>
                 </div>
               ) : activeLesson.muxPlaybackId && playbackToken ? (
-                <video
-                  ref={muxVideoRef}
-                  controls
-                  playsInline
-                  preload="metadata"
+                <LazyMuxPlayer
+                  playbackId={activeLesson.muxPlaybackId}
+                  tokens={{ playback: playbackToken }}
                   onTimeUpdate={handleTimeUpdate}
                   onLoadedMetadata={handleLoadedMetadata}
                   onEnded={handleVideoEnded}
                   className="w-full h-full"
-                  poster=""
+                  style={{
+                    '--controls': 'auto',
+                    '--media-object-fit': 'contain',
+                    '--center-controls': 'none',
+                    aspectRatio: '16/9',
+                    width: '100%',
+                    height: '100%',
+                  } as React.CSSProperties}
+                  streamType="on-demand"
+                  preload="metadata"
+                  muted={false}
+                  volume={1}
                 />
               ) : activeLesson.videoUrl && isYouTubeUrl(activeLesson.videoUrl) ? (
                 <iframe

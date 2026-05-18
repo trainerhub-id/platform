@@ -252,11 +252,11 @@ interface ProfileType {
 const profileDD: ProfileType[] = [
   {
     title: 'My Profile',
-    url: '/user/profile',
+    url: '/profile',
   },
   {
     title: 'Training Information',
-    url: '/user/training/info',
+    url: '/training',
   },
   {
     title: 'Sign Out',

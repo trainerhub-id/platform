@@ -49,6 +49,15 @@ const Header = ({ layoutType }: HeaderPropsType) => {
   const location = useLocation()
   const pathname = location.pathname
 
+  // Extract sub-path after /:slug/ for workspace route matching
+  const subPath = (() => {
+    const parts = pathname.split('/').filter(Boolean)
+    if (parts[0] && parts[0] !== 'admin' && parts[0] !== 'auth' && parts[0] !== 'workspaces') {
+      return '/' + parts.slice(1).join('/')
+    }
+    return pathname
+  })()
+
   /* Check if current path is an Admin path - MOVED UP */
   const isAdmin = pathname.startsWith('/admin')
 
@@ -335,7 +344,7 @@ const Header = ({ layoutType }: HeaderPropsType) => {
                       </div>
                     ) : null}
 
-                    {pathname === '/user/home' && (
+                    {subPath === '/' && (
                       <div>
                         <h2 className="text-xl font-semibold text-ld mb-0.5">
                           Halo, <span className="text-[var(--color-gold)]">{userName}</span>
@@ -345,7 +354,7 @@ const Header = ({ layoutType }: HeaderPropsType) => {
                         </p>
                       </div>
                     )}
-                    {pathname === '/user/training/info' && (
+                    {subPath === '/training' && (
                       <div>
                         <h2 className="text-xl font-semibold text-ld mb-0.5">Info Training</h2>
                         <p className="text-bodytext text-xs">
@@ -353,7 +362,7 @@ const Header = ({ layoutType }: HeaderPropsType) => {
                         </p>
                       </div>
                     )}
-                    {pathname === '/user/kelas' && (
+                    {subPath === '/kelas' && (
                       <div>
                         <h2 className="text-xl font-semibold text-ld mb-0.5">Kelas Saya</h2>
                         <p className="text-bodytext text-xs">
@@ -361,25 +370,25 @@ const Header = ({ layoutType }: HeaderPropsType) => {
                         </p>
                       </div>
                     )}
-                    {pathname.startsWith('/user/kelas/') && (
+                    {subPath.startsWith('/kelas/') && (
                       <div>
                         <h2 className="text-xl font-semibold text-ld mb-0.5">Kelas</h2>
                         <p className="text-bodytext text-xs">Materi pembelajaran dan tugas</p>
                       </div>
                     )}
-                    {pathname === '/user/ai-generator' && (
+                    {subPath === '/ai-generator' && (
                       <div>
                         <h2 className="text-xl font-semibold text-ld mb-0.5">AI Rebuild</h2>
                         <p className="text-bodytext text-xs">Modul AI sedang dibangun ulang</p>
                       </div>
                     )}
-                    {pathname === '/user/sertifikat' && (
+                    {subPath === '/sertifikat' && (
                       <div>
                         <h2 className="text-xl font-semibold text-ld mb-0.5">Sertifikat</h2>
                         <p className="text-bodytext text-xs">Sertifikat kelulusan kamu</p>
                       </div>
                     )}
-                    {pathname === '/user/dokumen' && (
+                    {subPath === '/dokumen' && (
                       <div>
                         <h2 className="text-xl font-semibold text-ld mb-0.5">Dokumen</h2>
                         <p className="text-bodytext text-xs">
@@ -387,7 +396,7 @@ const Header = ({ layoutType }: HeaderPropsType) => {
                         </p>
                       </div>
                     )}
-                    {pathname === '/user/ai-hub' && (
+                    {subPath === '/ai-hub' && (
                       <div>
                         <h2 className="text-xl font-semibold text-ld mb-0.5">Pilih Asisten AI</h2>
                         <p className="text-bodytext text-xs">
@@ -395,7 +404,7 @@ const Header = ({ layoutType }: HeaderPropsType) => {
                         </p>
                       </div>
                     )}
-                    {pathname === '/user/ai-hub/master-workspace' &&
+                    {subPath === '/ai-hub/master-workspace' &&
                       (() => {
                         return (
                           <div>
@@ -407,7 +416,7 @@ const Header = ({ layoutType }: HeaderPropsType) => {
                           </div>
                         )
                       })()}
-                    {pathname === '/user/ai-hub/trainer-workspace' && (
+                    {subPath === '/ai-hub/trainer-workspace' && (
                       <div>
                         <h2 className="text-xl font-semibold text-ld mb-0.5">AI for Trainer</h2>
                         <p className="text-bodytext text-xs">
@@ -416,7 +425,7 @@ const Header = ({ layoutType }: HeaderPropsType) => {
                         </p>
                       </div>
                     )}
-                    {pathname === '/user/ai-hub/branding' && (
+                    {subPath === '/ai-hub/branding' && (
                       <div>
                         <h2 className="text-xl font-semibold text-ld mb-0.5">AI for Branding</h2>
                         <p className="text-bodytext text-xs">
@@ -424,7 +433,7 @@ const Header = ({ layoutType }: HeaderPropsType) => {
                         </p>
                       </div>
                     )}
-                    {pathname === '/user/profile' && (
+                    {subPath === '/profile' && (
                       <div>
                         <h2 className="text-xl font-semibold text-ld mb-0.5">Profil Peserta</h2>
                         <p className="text-bodytext text-xs">
@@ -432,7 +441,7 @@ const Header = ({ layoutType }: HeaderPropsType) => {
                         </p>
                       </div>
                     )}
-                    {(pathname === '/trainer/documents' || pathname === '/user/documents') && (
+                    {(subPath === '/ai-hub/trainer-workspace' || subPath === '/ai-hub/trainer-workspace') && (
                       <div>
                         <h2 className="text-xl font-semibold text-ld mb-0.5">Dokumen Pelatihan</h2>
                         <p className="text-bodytext text-xs">

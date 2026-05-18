@@ -22,7 +22,7 @@ export default function PaymentCallback() {
 
     // 2. If user is already signed in, redirect and skip everything
     if (isSignedIn) {
-      navigate('/user/home')
+      navigate('/')
       return
     }
 
@@ -44,7 +44,7 @@ export default function PaymentCallback() {
 
       // If user is already signed in, skip the claim process entirely
       if (isSignedIn) {
-        navigate('/user/home')
+        navigate('/')
         return
       }
 
@@ -68,7 +68,7 @@ export default function PaymentCallback() {
       } catch (error) {
         // If already signed in error (race condition), just redirect
         if (error instanceof Error && error.message.includes('already signed in')) {
-          navigate('/user/home')
+          navigate('/')
           return
         }
 

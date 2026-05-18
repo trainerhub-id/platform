@@ -18,7 +18,7 @@ export default function AiBrandingPlaceholder() {
         training. Backend flow-nya belum diaktifkan.
       </p>
       <Button asChild variant="outline">
-        <Link to="/user/ai-hub">
+        <Link to="../ai-hub">
           <Icon icon="solar:arrow-left-linear" height={18} />
           Kembali ke pilihan AI
         </Link>

@@ -1,8 +1,8 @@
 /* Custom MuxPlayer Styling */
 mux-player {
   /* Primary accent color - for progress bar, buttons, hover states */
-  --media-accent-color: var(--color-gold);
-  --media-primary-color: var(--color-gold);
+  --media-accent-color: #c39341;
+  --media-primary-color: #c39341;
 
   /* Control bar background */
   --media-control-background: rgba(0, 0, 0, 0.7);
@@ -14,14 +14,14 @@ mux-player {
 
   /* Range/Progress colors */
   --media-range-track-background: rgba(255, 255, 255, 0.3);
-  --media-range-bar-color: var(--color-gold);
-  --media-range-thumb-background: var(--color-gold);
+  --media-range-bar-color: #c39341;
+  --media-range-thumb-background: #c39341;
 
   /* Time display */
   --media-time-display-color: #ffffff;
 
   /* Focus ring */
-  --media-focus-ring-color: var(--color-gold);
+  --media-focus-ring-color: #c39341;
 
   /* Tooltip background */
   --media-tooltip-background: rgba(0, 0, 0, 0.9);
@@ -33,20 +33,27 @@ mux-player::part(bottom) {
   transition: all 0.2s ease;
 }
 
-/* Play button in center */
-mux-player::part(play button) {
-  background: rgba(195, 147, 65, 0.92) !important;
-  border-color: var(--color-gold) !important;
+/* Play button in center - hide it, use bottom controls only */
+mux-player::part(center-controls) {
+  display: none !important;
 }
 
-mux-player::part(play button):hover {
-  background: rgba(166, 124, 61, 1) !important;
-  transform: scale(1.1);
+media-play-button[slot="centered-chrome"] {
+  display: none !important;
+}
+
+mux-player {
+  --media-control-display: none;
+}
+
+/* Override: show bottom controls */
+mux-player::part(bottom) {
+  display: flex !important;
 }
 
 /* Loading spinner color */
 mux-player::part(loading-indicator) {
-  --media-loading-indicator-color: var(--color-gold);
+  --media-loading-indicator-color: #c39341;
 }
 
 /* Custom styling for better visibility */

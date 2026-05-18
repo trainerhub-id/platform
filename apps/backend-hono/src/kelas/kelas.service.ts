@@ -1,4 +1,5 @@
 import { and, eq, inArray } from 'drizzle-orm'
+import { createPrivateKey, createSign } from 'node:crypto'
 import { db } from '../db/client'
 import {
   batchTiers,
@@ -151,8 +152,47 @@ export class KelasService {
     return row
   }
 
-  async getPlaybackToken() {
-    return { token: null }
+  async getPlaybackToken(lessonId: string) {
+    try {
+      const [lesson] = await db
+        .select({ muxPlaybackId: lessons.muxPlaybackId })
+        .from(lessons)
+        .where(eq(lessons.id, lessonId))
+        .limit(1)
+
+      if (!lesson?.muxPlaybackId) {
+        return { token: null }
+      }
+
+      const keyId = process.env.MUX_SIGNING_KEY_ID
+      const privateKeyB64 = process.env.MUX_SIGNING_KEY_PRIVATE_KEY_PKCS8
+
+      if (!keyId || !privateKeyB64) {
+        return { token: null }
+      }
+
+      const privateKeyPem = Buffer.from(privateKeyB64, 'base64').toString('utf-8')
+      const privateKey = createPrivateKey({ key: privateKeyPem, format: 'pem' })
+
+      const header = Buffer.from(JSON.stringify({ alg: 'RS256', typ: 'JWT', kid: keyId })).toString('base64url')
+      const payload = Buffer.from(JSON.stringify({
+        sub: lesson.muxPlaybackId,
+        aud: 'v',
+        exp: Math.floor(Date.now() / 1000) + 3600,
+        kid: keyId,
+      })).toString('base64url')
+
+      const signingInput = `${header}.${payload}`
+      const sign = createSign('RSA-SHA256')
+      sign.update(signingInput)
+      const sig = sign.sign(privateKey, 'base64url')
+      const token = `${signingInput}.${sig}`
+
+      return { token }
+    } catch (err) {
+      console.error('[KelasService] getPlaybackToken error:', err)
+      return { token: null }
+    }
   }
 
   private async getAccessibleCourseIds(pesertaId: string) {

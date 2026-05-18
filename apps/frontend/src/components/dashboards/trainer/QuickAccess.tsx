@@ -23,7 +23,7 @@ const QuickAccess = () => {
         'border-purple-700 text-purple-700 dark:border-purple-300 dark:text-purple-300 hover:bg-purple-700 hover:text-white dark:hover:bg-purple-300 dark:hover:text-purple-900',
       buttonText: 'Lihat Detail',
       buttonVariant: 'outline' as const,
-      url: '/user/profile',
+      url: 'profile',
     },
     {
       id: 2,
@@ -36,7 +36,7 @@ const QuickAccess = () => {
         'border-blue-700 text-blue-700 dark:border-blue-300 dark:text-blue-300 hover:bg-blue-700 hover:text-white dark:hover:bg-blue-300 dark:hover:text-blue-900',
       buttonText: 'Lihat Detail',
       buttonVariant: 'outline' as const,
-      url: '/user/training/info',
+      url: 'training',
     },
     {
       id: 3,
@@ -49,7 +49,7 @@ const QuickAccess = () => {
         'border-green-700 text-green-700 dark:border-green-300 dark:text-green-300 hover:bg-green-700 hover:text-white dark:hover:bg-green-300 dark:hover:text-green-900',
       buttonText: 'Lihat Detail',
       buttonVariant: 'outline' as const,
-      url: '/user/kelas',
+      url: 'kelas',
     },
     {
       id: 4,
@@ -62,7 +62,7 @@ const QuickAccess = () => {
         'border-orange-700 text-orange-700 dark:border-orange-300 dark:text-orange-300 hover:bg-orange-700 hover:text-white dark:hover:bg-orange-300 dark:hover:text-orange-900',
       buttonText: 'Lihat Detail',
       buttonVariant: 'outline' as const,
-      url: '/user/dokumen',
+      url: 'dokumen',
     },
     {
       id: 5,
@@ -75,7 +75,7 @@ const QuickAccess = () => {
         'border-yellow-700 text-yellow-700 dark:border-yellow-300 dark:text-yellow-300 hover:bg-yellow-700 hover:text-white dark:hover:bg-yellow-300 dark:hover:text-yellow-900',
       buttonText: 'Lihat Detail',
       buttonVariant: 'outline' as const,
-      url: '/user/sertifikat',
+      url: 'sertifikat',
     },
   ]
 

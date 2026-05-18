@@ -3,6 +3,7 @@ import { Navigate } from 'react-router'
 import { AdminRoute } from '../components/auth/AdminRoute'
 import { UserRoute } from '../components/auth/UserRoute'
 import { RoleBasedRedirect } from '../components/RoleBasedRedirect'
+import { LegacyUserRedirect } from '../components/LegacyUserRedirect'
 import Loadable from '../layouts/full/shared/loadable/Loadable'
 import { WorkspaceRouteWrapper } from '../components/workspace/WorkspaceRouteWrapper'
 
@@ -30,122 +31,52 @@ const ManageKelas = Loadable(lazy(() => import('../views/admin/ManageKelas')))
 const EditKelas = Loadable(lazy(() => import('../views/admin/EditKelas')))
 const Dokumen = Loadable(lazy(() => import('../views/dokumen/Dokumen')))
 const Workspaces = Loadable(lazy(() => import('../views/workspaces/Workspaces')))
+const WorkspaceDashboard = Loadable(
+  lazy(() => import('../views/workspace-dashboard/WorkspaceDashboard')),
+)
 
 export const protectedRouteChildren = [
   { path: '/', exact: true, element: <RoleBasedRedirect /> },
+
+  // Workspace routes — all peserta pages live here
   {
-    path: '/user/home',
-    exact: true,
+    path: '/:slug',
     element: (
       <UserRoute>
-        <TrainerDashboard />
+        <WorkspaceRouteWrapper />
       </UserRoute>
     ),
+    children: [
+      { index: true, element: <TrainerDashboard /> },
+      { path: 'training', element: <TrainingInformation /> },
+      { path: 'profile', element: <ProfilePage /> },
+      { path: 'kelas', element: <KelasArchive /> },
+      { path: 'kelas/:id', element: <Kelas /> },
+      { path: 'dokumen', element: <Dokumen /> },
+      { path: 'sertifikat', element: <Sertifikat /> },
+      { path: 'ai-hub', element: <AiHubSelection /> },
+      { path: 'ai-hub/master-workspace', element: <AiWorkspace flow="master" /> },
+      { path: 'ai-hub/trainer-workspace', element: <AiWorkspace flow="trainer" /> },
+      { path: 'ai-hub/branding', element: <AiBrandingPlaceholder /> },
+    ],
   },
+
+  // Legacy /user/* redirects (bookmarks, old links)
+  { path: '/user/*', element: <LegacyUserRedirect /> },
+  { path: '/trainer/documents', element: <LegacyUserRedirect /> },
+
+  // Workspace selector
   {
-    path: '/user/training/info',
+    path: '/workspaces',
     exact: true,
     element: (
       <UserRoute>
-        <TrainingInformation />
-      </UserRoute>
-    ),
-  },
-  {
-    path: '/user/kelas',
-    exact: true,
-    element: (
-      <UserRoute>
-        <KelasArchive />
-      </UserRoute>
-    ),
-  },
-  {
-    path: '/user/kelas/:id',
-    exact: true,
-    element: (
-      <UserRoute>
-        <Kelas />
+        <Workspaces />
       </UserRoute>
     ),
   },
 
-  {
-    path: '/user/ai-generator',
-    exact: true,
-    element: <Navigate to="/user/ai-hub/trainer-workspace" replace />,
-  },
-  {
-    path: '/user/ai-hub',
-    exact: true,
-    element: (
-      <UserRoute>
-        <AiHubSelection />
-      </UserRoute>
-    ),
-  },
-  {
-    path: '/user/ai-hub/master-workspace',
-    exact: true,
-    element: (
-      <UserRoute>
-        <AiWorkspace flow="master" />
-      </UserRoute>
-    ),
-  },
-  {
-    path: '/user/ai-hub/trainer-workspace',
-    exact: true,
-    element: (
-      <UserRoute>
-        <AiWorkspace flow="trainer" />
-      </UserRoute>
-    ),
-  },
-  {
-    path: '/user/ai-hub/branding',
-    exact: true,
-    element: (
-      <UserRoute>
-        <AiBrandingPlaceholder />
-      </UserRoute>
-    ),
-  },
-  {
-    path: '/user/ai-hub/master',
-    exact: true,
-    element: <Navigate to="/user/ai-hub/master-workspace" replace />,
-  },
-  {
-    path: '/user/ai-hub/trainer',
-    exact: true,
-    element: <Navigate to="/user/ai-hub/trainer-workspace" replace />,
-  },
-  {
-    path: '/user/ai-hub/:category',
-    exact: true,
-    element: <Navigate to="/user/ai-hub/trainer-workspace" replace />,
-  },
-  {
-    path: '/user/documents',
-    exact: true,
-    element: <Navigate to="/user/ai-hub/trainer-workspace" replace />,
-  },
-  {
-    path: '/trainer/documents',
-    exact: true,
-    element: <Navigate to="/user/ai-hub/trainer-workspace" replace />,
-  },
-  {
-    path: '/user/profile',
-    exact: true,
-    element: (
-      <UserRoute>
-        <ProfilePage />
-      </UserRoute>
-    ),
-  },
-
+  // Admin routes (unchanged)
   {
     path: '/admin/home',
     exact: true,
@@ -254,27 +185,6 @@ export const protectedRouteChildren = [
       </AdminRoute>
     ),
   },
-  {
-    path: '/workspaces',
-    exact: true,
-    element: (
-      <UserRoute>
-        <Workspaces />
-      </UserRoute>
-    ),
-  },
-  {
-    path: '/:slug',
-    element: (
-      <UserRoute>
-        <WorkspaceRouteWrapper />
-      </UserRoute>
-    ),
-    children: [
-      { index: true, element: <Navigate to="/user/home" replace /> },
-      { path: 'dokumen', element: <Dokumen /> },
-      { path: 'sertifikat', element: <Sertifikat /> },
-    ],
-  },
+
   { path: '*', element: <Navigate to="/auth/404" /> },
 ]

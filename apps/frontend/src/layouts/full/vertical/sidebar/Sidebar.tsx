@@ -12,7 +12,11 @@ import FullLogo from '../../shared/logo/FullLogo'
 import LogoIcon from '../../shared/logo/LogoIcon'
 import NavCollapse from './NavCollapse'
 import NavItems from './NavItems'
-import { AdminMenuItems, PesertaMenuItems, TrainerMenuItems } from './Sidebaritems'
+import {
+  AdminMenuItems,
+  getPesertaMenuItems,
+  getTrainerMenuItems,
+} from './Sidebaritems'
 
 const SidebarLayout = () => {
   const { setSelectedIconId, isCollapse, setIsCollapse } = useContext(CustomizerContext) || {}
@@ -23,13 +27,22 @@ const SidebarLayout = () => {
   const pathname = location.pathname
   const isMiniSidebar = isCollapse === 'mini-sidebar'
 
+  // Extract slug from URL (first path segment for peserta routes)
+  const slug = useMemo(() => {
+    const parts = pathname.split('/').filter(Boolean)
+    if (parts[0] && parts[0] !== 'admin' && parts[0] !== 'auth' && parts[0] !== 'workspaces') {
+      return parts[0]
+    }
+    return '_'
+  }, [pathname])
+
   // Select menu based on user role
   const SidebarContent = useMemo(() => {
     if (role === 'trainer') {
-      return TrainerMenuItems
+      return getTrainerMenuItems(slug)
     }
-    return role === 'admin' ? AdminMenuItems : PesertaMenuItems
-  }, [role])
+    return role === 'admin' ? AdminMenuItems : getPesertaMenuItems(slug)
+  }, [role, slug])
 
   function findActiveUrl(narray: any, targetUrl: any) {
     for (const item of narray) {

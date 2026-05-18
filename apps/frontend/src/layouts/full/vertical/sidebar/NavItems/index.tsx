@@ -26,7 +26,11 @@ const NavItems: React.FC<NavItemsProps> = ({ item, isInsideCollapse }) => {
   const tooltipLabel = t(`${item.name}`)
 
   // Check if current path matches item URL or is a nested route
-  const isActive = pathname === item.url || pathname.startsWith(item.url + '/')
+  // Exact match only for root-level workspace paths (e.g. /btch1-trainers)
+  const urlSegments = item.url?.split('/').filter(Boolean).length ?? 0
+  const isActive = urlSegments <= 1
+    ? pathname === item.url
+    : pathname === item.url || pathname.startsWith(item.url + '/')
 
   React.useEffect(() => {
     setIsTooltipOpen(false)
