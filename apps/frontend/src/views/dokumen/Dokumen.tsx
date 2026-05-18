@@ -1,10 +1,12 @@
 import { Icon } from '@iconify/react'
 import { Alert, AlertDescription, AlertTitle } from 'src/components/ui/alert'
 import { Loading } from 'src/components/ui/loading'
+import { useWorkspace } from 'src/context/WorkspaceContext'
 import { DocumentCategoryList } from './components/DocumentCategoryList'
 import { useDokumen } from './hooks/useDokumen'
 
 const Dokumen = () => {
+  const ws = useWorkspace()
   const { categories, statuses, loading, error, fetchStatuses } = useDokumen()
 
   const handleUpdate = () => {
@@ -14,6 +16,10 @@ const Dokumen = () => {
   return (
     <>
       <div className="space-y-6">
+        <div className="text-sm text-muted-foreground mb-4">
+          Dokumen untuk <span className="font-medium">{ws.displayName}</span>
+        </div>
+
         {/* Info Card */}
         <div className="bg-primary/5 border border-primary/20 rounded-lg p-6 flex flex-col sm:flex-row gap-4 items-start sm:items-center">
           <div className="p-3 bg-white rounded-full border border-primary/20 text-primary shadow-sm shrink-0">
