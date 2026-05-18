@@ -87,13 +87,13 @@ const Kelas = () => {
         const data = await response.json()
         setPlaybackToken(data.token)
 
-        // Auto-refresh token before expiry (refresh at 90% of expiry time)
-        const refreshTime = data.expiresIn * 0.9 * 1000 // Convert to milliseconds
-        setTimeout(() => {
-          if (activeLesson?.id === lessonId) {
+        // Auto-refresh token before expiry (only if expiresIn is provided)
+        if (data.expiresIn && data.expiresIn > 0) {
+          const refreshTime = data.expiresIn * 0.9 * 1000
+          setTimeout(() => {
             fetchPlaybackToken(lessonId)
-          }
-        }, refreshTime)
+          }, refreshTime)
+        }
       } catch (error) {
         console.error('Error fetching playback token:', error)
         setPlaybackToken(null)
@@ -101,7 +101,7 @@ const Kelas = () => {
         setTokenLoading(false)
       }
     },
-    [activeLesson, getToken],
+    [getToken],
   )
 
   // Fetch token when active lesson changes
