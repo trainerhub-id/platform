@@ -65,24 +65,27 @@ describe('ResponseService', () => {
         outcome: 'Membuat strategi pemasaran digital',
       },
     }
-    const service = new ResponseService(
-      { getLanguageModel: () => model as LanguageModel },
-      {
-        async searchMaster(input) {
-          skkniInput = input
-          return [
-            {
-              id: 'unit_1',
-              unitCode: 'M.70MKT00.001.1',
-              title: 'Mengelola Kampanye Digital',
-              relevanceScore: 0.91,
-              reason: 'Sesuai konteks marketing',
-              evidence: ['Rank 1'],
-            },
-          ]
-        },
+    const service = new ResponseService({ getLanguageModel: () => model as LanguageModel }, {
+      async searchMaster(input: unknown) {
+        skkniInput = input
+        return [
+          {
+            id: 'unit_1',
+            unitCode: 'M.70MKT00.001.1',
+            title: 'Mengelola Kampanye Digital',
+            relevanceScore: 0.91,
+            reason: 'Sesuai konteks marketing',
+            evidence: ['Rank 1'],
+          },
+        ]
       },
-    )
+      async getUnitDetail() {
+        return null
+      },
+      async getCompetencyMap() {
+        return null
+      },
+    } as never)
 
     const response = await service.stream({
       message: 'yaa',
@@ -96,10 +99,7 @@ describe('ResponseService', () => {
     await expect(response.text()).resolves.toContain('M.70MKT00.001.1')
     expect(skkniInput).toBe(masterJson)
     expect(model.doStreamCalls).toHaveLength(2)
-    expect(model.doStreamCalls[0]?.toolChoice).toEqual({
-      type: 'tool',
-      toolName: 'search_skkni_units',
-    })
+    expect(model.doStreamCalls[0]?.toolChoice).toEqual({ type: 'auto' })
     expect(model.doStreamCalls[0]?.tools?.map((item) => item.name)).toEqual(['search_skkni_units'])
   })
 })

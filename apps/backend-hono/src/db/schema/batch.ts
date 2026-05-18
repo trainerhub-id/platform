@@ -6,6 +6,7 @@ import {
   pgTable,
   text,
   timestamp,
+  uniqueIndex,
   uuid,
   varchar,
 } from 'drizzle-orm/pg-core'
@@ -21,25 +22,35 @@ export const trainer = pgTable('trainer', {
   updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
 })
 
-export const batchTraining = pgTable('batch_training', {
-  id: uuid('id').primaryKey().defaultRandom(),
-  namaBatch: varchar('nama_batch', { length: 255 }).notNull(),
-  slug: varchar('slug', { length: 255 }).notNull().unique(),
-  tanggal: timestamp('tanggal', { withTimezone: true }).notNull(),
-  tanggalSelesai: timestamp('tanggal_selesai', { withTimezone: true }),
-  hotel: varchar('hotel', { length: 255 }),
-  alamat: text('alamat'),
-  mapsLink: text('maps_link'),
-  imageUrl: text('image_url'),
-  status: varchar('status', { length: 50 }).default('draft').notNull(),
-  rundownTemplateId: integer('rundown_template_id'),
-  courseId: uuid('course_id').references(() => courses.id, { onDelete: 'set null' }),
-  trainerId: uuid('trainer_id').references(() => trainer.id, { onDelete: 'set null' }),
-  latitude: numeric('latitude'),
-  longitude: numeric('longitude'),
-  createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
-  updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
-})
+export const batchTraining = pgTable(
+  'batch_training',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    batchNumber: integer('batch_number').notNull(),
+    namaBatch: varchar('nama_batch', { length: 255 }).notNull(),
+    slug: varchar('slug', { length: 255 }).notNull().unique(),
+    tanggal: timestamp('tanggal', { withTimezone: true }).notNull(),
+    tanggalSelesai: timestamp('tanggal_selesai', { withTimezone: true }),
+    hotel: varchar('hotel', { length: 255 }),
+    alamat: text('alamat'),
+    mapsLink: text('maps_link'),
+    imageUrl: text('image_url'),
+    status: varchar('status', { length: 50 }).default('draft').notNull(),
+    rundownTemplateId: integer('rundown_template_id'),
+    courseId: uuid('course_id').references(() => courses.id, { onDelete: 'set null' }),
+    trainerId: uuid('trainer_id').references(() => trainer.id, { onDelete: 'set null' }),
+    latitude: numeric('latitude'),
+    longitude: numeric('longitude'),
+    createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+    updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
+  },
+  (table) => ({
+    courseBatchUnique: uniqueIndex('batch_training_course_batch_number_unique').on(
+      table.courseId,
+      table.batchNumber,
+    ),
+  }),
+)
 
 export const tierTemplates = pgTable('tier_templates', {
   id: uuid('id').primaryKey().defaultRandom(),

@@ -29,6 +29,27 @@
       "when": 1778819244990,
       "tag": "0003_greedy_kylun",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1779080786590,
+      "tag": "0004_cute_nextwave",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1779081075493,
+      "tag": "0005_elite_sue_storm",
+      "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1779085856926,
+      "tag": "0006_wonderful_exiles",
+      "breakpoints": true
     }
   ]
 }

@@ -14,7 +14,7 @@ const cert = {
 
 describe('certificate routes', () => {
   it('validates public certificate', async () => {
-    const app = createCertificateRoutes({ validate: async () => ({ ...cert, valid: true }) } as any)
+    const app = createCertificateRoutes({ service: { validate: async () => ({ ...cert, valid: true }) } as any })
 
     const res = await app.request('/certificates/validate/TRH-2026-DIG-00001')
     const body = await res.json()
@@ -29,7 +29,7 @@ describe('certificate routes', () => {
       c.set('user', null)
       await next()
     })
-    app.route('/', createCertificateRoutes({ getMyCertificates: async () => [] } as any))
+    app.route('/', createCertificateRoutes({ service: { getMyCertificates: async () => [] } as any }))
 
     const res = await app.request('/certificates/me')
 
@@ -42,7 +42,7 @@ describe('certificate routes', () => {
       c.set('user', { id: 'user_1', role: 'peserta' })
       await next()
     })
-    app.route('/', createCertificateRoutes({ getMyCertificates: async () => [cert] } as any))
+    app.route('/', createCertificateRoutes({ service: { getMyCertificates: async () => [cert] } as any }))
 
     const res = await app.request('/certificates/me')
     const body = await res.json()
@@ -57,7 +57,7 @@ describe('certificate routes', () => {
       c.set('user', { id: 'user_1', role: 'peserta' })
       await next()
     })
-    app.route('/', createCertificateRoutes({ generateCertificateForUser: async () => cert } as any))
+    app.route('/', createCertificateRoutes({ service: { generateCertificateForUser: async () => cert } as any }))
 
     const res = await app.request('/certificates/generate/course_1', { method: 'POST' })
     const body = await res.json()

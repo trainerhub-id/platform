@@ -1,60 +1,52 @@
 import { Hono } from 'hono'
 import { type AuthVariables, requireAuth } from '../auth/auth.middleware'
 import { requireRole } from '../auth/roles'
+import type { Workspace } from '../db/schema'
+import { requireWorkspace } from '../workspace/workspace.middleware'
+import { WorkspaceService } from '../workspace/workspace.service'
 import { TodosService } from './todos.service'
 
-type TodosVariables = AuthVariables & { requestId: string }
+type TodosVariables = AuthVariables & { requestId: string; workspace: Workspace }
 type UserLike = { id: string; role?: string }
-type TodosServiceLike = Pick<
-  TodosService,
-  | 'getTodosForUser'
-  | 'initializeTodosForUser'
-  | 'syncTodosWithProfileState'
-  | 'getTodosForBatch'
-  | 'initializeTodosForBatch'
-  | 'updateTodoStatus'
->
+type TodosServiceLike = Pick<TodosService, 'listForWorkspace' | 'updateStatus' | 'initializeTodosForWorkspace' | 'syncTodosWithProfileState'>
 
-export function createTodosRoutes(service: TodosServiceLike = new TodosService()) {
+export function createTodosRoutes(deps: {
+  service?: TodosServiceLike
+  workspaceService?: Pick<WorkspaceService, 'findByUserAndSlug'>
+} = {}) {
+  const service: TodosServiceLike = deps.service ?? new TodosService()
+  const workspaceService = deps.workspaceService ?? new WorkspaceService()
   const app = new Hono<{ Variables: TodosVariables }>()
+  const workspaceGuard = requireWorkspace(workspaceService)
 
-  app.get('/todos/my', requireAuth, requireRole(['peserta', 'admin']), async (c) => {
+  app.get('/todos/my', requireAuth, requireRole(['peserta', 'admin']), workspaceGuard, async (c) => {
+    const ws = c.get('workspace')
+    return c.json(await service.listForWorkspace(ws.id))
+  })
+
+  app.post('/todos/init', requireAuth, requireRole(['peserta', 'admin']), workspaceGuard, async (c) => {
     const user = c.get('user') as UserLike
-    return c.json(await service.getTodosForUser(user.id))
+    const ws = c.get('workspace')
+    await service.initializeTodosForWorkspace(ws.id, user.id, ws.pesertaId)
+    return c.json({ success: true })
   })
 
-  app.post('/todos/init', requireAuth, requireRole(['peserta', 'admin']), async (c) => {
+  app.post('/todos/sync', requireAuth, requireRole(['peserta', 'admin']), workspaceGuard, async (c) => {
     const user = c.get('user') as UserLike
-    await service.initializeTodosForUser(user.id)
+    const ws = c.get('workspace')
+    await service.syncTodosWithProfileState(ws.id, user.id, ws.pesertaId)
     return c.json({ success: true })
   })
 
-  app.post('/todos/sync', requireAuth, requireRole(['peserta', 'admin']), async (c) => {
-    const user = c.get('user') as UserLike
-    await service.syncTodosWithProfileState(user.id)
+  app.patch('/todos/:id/complete', requireAuth, requireRole(['peserta', 'admin']), workspaceGuard, async (c) => {
+    const ws = c.get('workspace')
+    await service.updateStatus({ id: c.req.param('id'), workspaceId: ws.id, status: 'done' })
     return c.json({ success: true })
   })
 
-  app.get('/todos/admin/all', requireAuth, requireRole(['admin']), async (c) =>
-    c.json(await service.getTodosForBatch()),
-  )
-  app.post('/todos/admin/init', requireAuth, requireRole(['admin']), async (c) => {
-    await service.initializeTodosForBatch()
-    return c.json({ success: true })
-  })
-  app.get('/todos/batch/:batchId/admin', requireAuth, requireRole(['admin']), async (c) =>
-    c.json(await service.getTodosForBatch(c.req.param('batchId'))),
-  )
-  app.post('/todos/batch/:batchId/init', requireAuth, requireRole(['admin']), async (c) => {
-    await service.initializeTodosForBatch(c.req.param('batchId'))
-    return c.json({ success: true })
-  })
-  app.patch('/todos/:id/complete', requireAuth, requireRole(['peserta', 'admin']), async (c) => {
-    await service.updateTodoStatus(c.req.param('id'), 'done')
-    return c.json({ success: true })
-  })
-  app.patch('/todos/:id/start', requireAuth, requireRole(['peserta', 'admin']), async (c) => {
-    await service.updateTodoStatus(c.req.param('id'), 'in_progress')
+  app.patch('/todos/:id/start', requireAuth, requireRole(['peserta', 'admin']), workspaceGuard, async (c) => {
+    const ws = c.get('workspace')
+    await service.updateStatus({ id: c.req.param('id'), workspaceId: ws.id, status: 'in_progress' })
     return c.json({ success: true })
   })
 

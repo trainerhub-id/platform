@@ -23,14 +23,22 @@ import { createReadinessRoutes } from './routes/readiness.routes'
 import { createSkkniRoutes } from './skkni/skkni.routes'
 import { createTodosRoutes } from './todos/todos.routes'
 import { createTugasRoutes } from './tugas/tugas.routes'
+import { createWorkspaceRoutes } from './workspace/workspace.routes'
+import { WorkspaceService } from './workspace/workspace.service'
 
 type AppVariables = AuthVariables & {
   requestId: string
 }
 
 type TestUser = { id: string; email: string; name: string; role?: string }
+type ServiceLike = Pick<WorkspaceService, 'listForUser' | 'findByUserAndSlug'>
+type CreateAppOptions = {
+  testUser?: TestUser
+  workspaceService?: ServiceLike
+  generationJobs?: import('./generation/generation-job.service').GenerationJobService
+}
 
-export function createApp(options: { testUser?: TestUser; generationJobs?: import('./generation/generation-job.service').GenerationJobService } = {}) {
+export function createApp(options: CreateAppOptions = {}) {
   const app = new OpenAPIHono<{ Variables: AppVariables }>()
 
   app.use(
@@ -63,6 +71,11 @@ export function createApp(options: { testUser?: TestUser; generationJobs?: impor
   app.on(['POST', 'GET'], '/api/auth/*', rateLimit({ windowMs: 15 * 60 * 1000, max: 30 }), (c) =>
     auth.handler(c.req.raw),
   )
+  const workspaceService = options.workspaceService ?? new WorkspaceService()
+  const generationRoutesDeps = options.generationJobs
+    ? { generationJobs: options.generationJobs }
+    : {}
+
   app.route('/', createOpenApiApp())
   app.route('/', createHealthRoutes())
   app.route('/', createReadinessRoutes())
@@ -72,13 +85,13 @@ export function createApp(options: { testUser?: TestUser; generationJobs?: impor
   app.route('/api', createDocumentRoutes())
   app.route('/api', createBatchRoutes())
   app.route('/api', createPaymentRoutes())
-  app.route('/api', createCertificateRoutes())
+  app.route('/api', createCertificateRoutes({ workspaceService }))
   app.route('/api', createPesertaRoutes())
   app.route('/api', createInterviewRoutes())
   app.route('/api', createInterviewReadRoutes())
-  app.route('/api', createGenerationRoutes({ generationJobs: options.generationJobs }))
+  app.route('/api', createGenerationRoutes(generationRoutesDeps))
   app.route('/api', createSkkniRoutes())
-  app.route('/api', createTodosRoutes())
+  app.route('/api', createTodosRoutes({ workspaceService }))
   app.route('/api', createTugasRoutes())
   app.route('/api', createKelasRoutes())
   app.route('/api', createDokumenRoutes())
@@ -87,18 +100,21 @@ export function createApp(options: { testUser?: TestUser; generationJobs?: impor
   app.route('/', createDocumentRoutes())
   app.route('/', createBatchRoutes())
   app.route('/', createPaymentRoutes())
-  app.route('/', createCertificateRoutes())
+  app.route('/', createCertificateRoutes({ workspaceService }))
   app.route('/', createPesertaRoutes())
   app.route('/', createInterviewRoutes())
   app.route('/', createInterviewReadRoutes())
-  app.route('/', createGenerationRoutes({ generationJobs: options.generationJobs }))
+  app.route('/', createGenerationRoutes(generationRoutesDeps))
   app.route('/', createSkkniRoutes())
-  app.route('/', createTodosRoutes())
+  app.route('/', createTodosRoutes({ workspaceService }))
   app.route('/', createTugasRoutes())
   app.route('/', createKelasRoutes())
   app.route('/', createDokumenRoutes())
   app.route('/', createAuditLogRoutes())
   app.route('/', createEnrollmentRoutes())
+
+  app.route('/api', createWorkspaceRoutes(workspaceService))
+  app.route('/', createWorkspaceRoutes(workspaceService))
 
   app.notFound((c) => errorResponse(c, 404, 'NOT_FOUND', 'Not found'))
   app.onError(handleAppError)

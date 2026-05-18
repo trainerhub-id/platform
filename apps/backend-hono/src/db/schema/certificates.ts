@@ -1,6 +1,7 @@
 import { pgEnum, pgTable, text, timestamp, uuid, varchar } from 'drizzle-orm/pg-core'
 import { courses } from './learning'
 import { peserta } from './people'
+import { workspaces } from './workspaces'
 
 export const certificateTypeEnum = pgEnum('certificate_type', ['bnsp', 'trainerhub'])
 export const certificateStatusEnum = pgEnum('certificate_status', [
@@ -16,6 +17,9 @@ export const sertifikat = pgTable('sertifikat', {
   pesertaId: uuid('peserta_id')
     .notNull()
     .references(() => peserta.id, { onDelete: 'cascade' }),
+  workspaceId: uuid('workspace_id')
+    .notNull()
+    .references(() => workspaces.id, { onDelete: 'cascade' }),
   courseId: uuid('course_id').references(() => courses.id, { onDelete: 'set null' }),
   type: certificateTypeEnum('type').notNull().default('trainerhub'),
   status: certificateStatusEnum('status').default('issued').notNull(),

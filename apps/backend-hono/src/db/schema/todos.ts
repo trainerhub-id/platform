@@ -1,5 +1,5 @@
 import { boolean, json, pgEnum, pgTable, text, timestamp, uuid } from 'drizzle-orm/pg-core'
-import { batchTraining } from './batch'
+import { workspaces } from './workspaces'
 
 export const todoStatusEnum = pgEnum('todo_status', [
   'todo',
@@ -17,8 +17,10 @@ export const todoCategoryEnum = pgEnum('todo_category', [
 
 export const todos = pgTable('todos', {
   id: uuid('id').defaultRandom().primaryKey(),
+  workspaceId: uuid('workspace_id')
+    .notNull()
+    .references(() => workspaces.id, { onDelete: 'cascade' }),
   userId: text('user_id'),
-  batchId: uuid('batch_id').references(() => batchTraining.id),
   key: text('key').notNull(),
   title: text('title').notNull(),
   category: todoCategoryEnum('category').notNull(),

@@ -4,100 +4,91 @@ import { TodosRepository } from './todos.repository'
 
 type TodoStatus = 'todo' | 'in_progress' | 'waiting_review' | 'done'
 
+type RepositoryLike = Pick<
+  TodosRepository,
+  | 'findByWorkspace'
+  | 'insertMissingForWorkspace'
+  | 'pruneWorkspaceTodosToKeys'
+  | 'updateDefinitionMetadataForWorkspace'
+  | 'updateStatus'
+  | 'setStatusByKey'
+  | 'hasPaidEnrollment'
+  | 'hasUploadedDocument'
+  | 'hasCompletedLesson'
+  | 'hasAiDocument'
+  | 'ensurePesertaForUser'
+>
+
 export class TodosService {
-  constructor(private readonly repository = new TodosRepository()) {}
+  private readonly repository: RepositoryLike
 
-  async initializeTodosForUser(userId: string, batchId?: string) {
-    const profile = await this.repository.ensurePesertaForUser(userId)
-    if (!profile?.id) return []
+  constructor(deps: { repository?: RepositoryLike } = {}) {
+    this.repository = deps.repository ?? new TodosRepository()
+  }
 
+  async initializeTodosForWorkspace(
+    workspaceId: string,
+    userId: string,
+    pesertaId: string,
+  ) {
     const definitions = Object.values(TODO_DEFINITIONS).filter(
-      (definition) => definition.role === 'participant',
+      (d) => d.role === 'participant',
     )
-    const values: NewTodo[] = definitions.map((definition) => ({
-      userId: profile.id,
-      batchId,
-      key: definition.key,
-      title: definition.title,
-      category: definition.category,
+    const values: NewTodo[] = definitions.map((d) => ({
+      workspaceId,
+      userId,
+      key: d.key,
+      title: d.title,
+      category: d.category,
       status: 'todo',
-      isBlocking: definition.isBlocking ?? false,
+      isBlocking: d.isBlocking ?? false,
       meta: {},
     }))
-    await this.repository.pruneUserTodosToKeys(
-      profile.id,
-      definitions.map((definition) => definition.key),
+    await this.repository.pruneWorkspaceTodosToKeys(
+      workspaceId,
+      definitions.map((d) => d.key),
     )
-    const created = await this.repository.insertMissing(values)
-    await this.repository.updateDefinitionMetadata(profile.id, values)
-
-    await this.syncTodosWithProfileState(userId)
-    return created
+    await this.repository.insertMissingForWorkspace(workspaceId, values)
+    await this.repository.updateDefinitionMetadataForWorkspace(workspaceId, values)
+    await this.syncTodosWithProfileState(workspaceId, userId, pesertaId)
   }
 
-  async initializeTodosForBatch(batchId?: string) {
-    const definitions = Object.values(TODO_DEFINITIONS).filter(
-      (definition) => definition.role === 'admin',
-    )
-    return this.repository.insertMany(
-      definitions.map((definition) => ({
-        userId: null,
-        batchId,
-        key: definition.key,
-        title: definition.title,
-        category: definition.category,
-        status: 'todo',
-        isBlocking: definition.isBlocking ?? false,
-        meta: {},
-      })),
-    )
-  }
-
-  async getTodosForUser(userId: string) {
-    const profile = await this.repository.ensurePesertaForUser(userId)
-    if (!profile?.id) return []
-
-    await this.initializeTodosForUser(userId)
-    await this.syncTodosWithProfileState(userId)
-    let rows = await this.repository.findByUserId(profile.id)
-
+  async listForWorkspace(workspaceId: string) {
+    const rows = await this.repository.findByWorkspace(workspaceId)
     return rows
       .sort((a, b) => getDefinitionOrder(a.key) - getDefinitionOrder(b.key))
       .map(enrichTodo)
   }
 
-  async getTodosForBatch(batchId?: string) {
-    const rows = await this.repository.findAdmin(batchId)
-    return rows.map(enrichTodo)
+  async updateStatus(input: { id: string; workspaceId: string; status: TodoStatus }) {
+    const row = await this.repository.updateStatus(input.id, input.workspaceId, input.status)
+    if (!row) throw new Error('TODO_NOT_FOUND')
+    return row
   }
 
-  async updateTodoStatus(id: string, status: TodoStatus) {
-    return this.repository.updateStatus(id, status)
-  }
-
-  async syncTodosWithProfileState(userId: string) {
+  async syncTodosWithProfileState(workspaceId: string, userId: string, pesertaId: string) {
     const profile = await this.repository.ensurePesertaForUser(userId)
     if (!profile?.id) return
 
     const hasPaidAccess =
-      profile.paymentStatus === 'paid' || (await this.repository.hasPaidEnrollment(profile.id))
+      profile.paymentStatus === 'paid' || (await this.repository.hasPaidEnrollment(pesertaId))
     await this.repository.setStatusByKey(
-      profile.id,
+      workspaceId,
       'lakukan_pembayaran',
       hasPaidAccess ? 'done' : 'todo',
     )
     await this.repository.setStatusByKey(
-      profile.id,
+      workspaceId,
       'selesaikan_kelas',
-      (await this.repository.hasCompletedLesson(profile.id)) ? 'done' : 'todo',
+      (await this.repository.hasCompletedLesson(pesertaId)) ? 'done' : 'todo',
     )
     await this.repository.setStatusByKey(
-      profile.id,
+      workspaceId,
       'upload_dokumen',
-      (await this.repository.hasUploadedDocument(profile.id)) ? 'done' : 'todo',
+      (await this.repository.hasUploadedDocument(workspaceId)) ? 'done' : 'todo',
     )
     await this.repository.setStatusByKey(
-      profile.id,
+      workspaceId,
       'coba_ai',
       (await this.repository.hasAiDocument(userId)) ? 'done' : 'todo',
     )

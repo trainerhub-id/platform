@@ -27,7 +27,7 @@ describe('buildGenerationRequestKey', () => {
 describe('GenerationJobService', () => {
   it('returns existing job for same job type and request key without enqueue', async () => {
     let enqueued = 0
-    const existing = { id: 'job_1', status: 'queued', requestKey: 'key_1' }
+    const existing = { id: 'job_1', status: 'queued', requestKey: 'key_1', bossJobId: 'boss_1' }
     const service = new GenerationJobService({
       jobs: {
         listByDocument: async () => [],

@@ -117,6 +117,14 @@ export class CertificateRepository {
     return row ?? null
   }
 
+  async findByWorkspace(workspaceId: string) {
+    return db
+      .select()
+      .from(sertifikat)
+      .where(eq(sertifikat.workspaceId, workspaceId))
+      .orderBy(sql`${sertifikat.createdAt} DESC`)
+  }
+
   async listByPeserta(pesertaId: string) {
     return db
       .select()
@@ -148,6 +156,7 @@ export class CertificateRepository {
 
   async createTrainerhubCertificate(input: {
     pesertaId: string
+    workspaceId: string
     courseId: string
     certificateNumber: string
     courseName: string
@@ -159,6 +168,7 @@ export class CertificateRepository {
       .insert(sertifikat)
       .values({
         pesertaId: input.pesertaId,
+        workspaceId: input.workspaceId,
         courseId: input.courseId,
         type: 'trainerhub',
         status: 'issued',
@@ -176,6 +186,7 @@ export class CertificateRepository {
 
   async createBnspCertificate(input: {
     pesertaId: string
+    workspaceId: string
     nomorSertifikat?: string
     lsp?: string
     fileUrl: string
@@ -184,6 +195,7 @@ export class CertificateRepository {
       .insert(sertifikat)
       .values({
         pesertaId: input.pesertaId,
+        workspaceId: input.workspaceId,
         type: 'bnsp',
         status: 'issued',
         nomorSertifikat: input.nomorSertifikat,
