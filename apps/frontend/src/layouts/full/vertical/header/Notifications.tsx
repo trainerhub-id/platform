@@ -1,5 +1,5 @@
 import { Icon } from '@iconify/react'
-import moment from 'moment'
+import { formatDistanceToNow } from 'date-fns'
 import { Link, useLocation } from 'react-router'
 import SimpleBar from 'simplebar-react'
 import { Badge } from 'src/components/ui/badge'
@@ -124,7 +124,7 @@ const Notifications = () => {
                       </div>
 
                       <div className="text-xs block self-start pt-1.5">
-                        {moment(notification.createdAt).fromNow()}
+                        {formatDistanceToNow(new Date(notification.createdAt), { addSuffix: true })}
                       </div>
                     </div>
                   </Link>

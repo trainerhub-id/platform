@@ -54,9 +54,9 @@ export default function PaymentCheckout() {
     }
 
     try {
-      const res = await fetch(
-        `${API_URL}/public/payment/session/${sessionId}?token=${encodeURIComponent(claimToken)}`,
-      )
+      const res = await fetch(`${API_URL}/public/payment/session/${sessionId}`, {
+        headers: { Authorization: `Bearer ${claimToken}` },
+      })
       const data = await res.json()
 
       if (!res.ok) {
@@ -84,12 +84,10 @@ export default function PaymentCheckout() {
     setError(null)
 
     try {
-      const res = await fetch(
-        `${API_URL}/public/payment/session/${sessionId}/check?token=${encodeURIComponent(claimToken)}`,
-        {
-          method: 'POST',
-        },
-      )
+      const res = await fetch(`${API_URL}/public/payment/session/${sessionId}/check`, {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${claimToken}` },
+      })
       const data = await res.json()
 
       if (!res.ok) {

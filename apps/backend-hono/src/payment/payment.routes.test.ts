@@ -61,7 +61,9 @@ describe('payment routes', () => {
       }),
     } as any)
 
-    const res = await app.request('/public/payment/claim/session_1?token=token_1')
+    const res = await app.request('/public/payment/claim/session_1', {
+      headers: { Authorization: 'Bearer token_1' },
+    })
     const body = await res.json()
 
     expect(res.status).toBe(200)
@@ -77,8 +79,9 @@ describe('payment routes', () => {
       ) => ({ sessionId, token, forceCheck, status: 'paid' }),
     } as any)
 
-    const res = await app.request('/public/payment/session/session_1/check?token=token_1', {
+    const res = await app.request('/public/payment/session/session_1/check', {
       method: 'POST',
+      headers: { Authorization: 'Bearer token_1' },
     })
     const body = await res.json()
 

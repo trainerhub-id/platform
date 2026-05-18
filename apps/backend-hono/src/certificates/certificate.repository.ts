@@ -244,6 +244,75 @@ export class CertificateRepository {
     }
   }
 
+  async getBatchCourseProgress(pesertaId: string, courseIds: string[]) {
+    if (courseIds.length === 0) return new Map<string, number>()
+
+    const allChapters = await db
+      .select()
+      .from(chapters)
+      .where(inArray(chapters.courseId, courseIds))
+
+    const chapterIds = allChapters.map((c) => c.id)
+    if (chapterIds.length === 0) return new Map(courseIds.map((id) => [id, 0]))
+
+    const allLessons = await db.select().from(lessons).where(inArray(lessons.chapterId, chapterIds))
+
+    const lessonIds = allLessons.map((l) => l.id)
+    if (lessonIds.length === 0) return new Map(courseIds.map((id) => [id, 0]))
+
+    const completed = await db
+      .select()
+      .from(pesertaCourseProgress)
+      .where(
+        and(
+          eq(pesertaCourseProgress.pesertaId, pesertaId),
+          eq(pesertaCourseProgress.status, 'selesai'),
+          inArray(pesertaCourseProgress.lessonId, lessonIds),
+        ),
+      )
+
+    // Build lookup: lessonId → courseId
+    const chapterMap = new Map(allChapters.map((c) => [c.id, c.courseId]))
+    const lessonToCourse = new Map(allLessons.map((l) => [l.id, chapterMap.get(l.chapterId)!]))
+
+    const totalMap = new Map<string, number>()
+    const completedMap = new Map<string, number>()
+    for (const id of courseIds) {
+      totalMap.set(id, 0)
+      completedMap.set(id, 0)
+    }
+    for (const l of allLessons) {
+      const cid = lessonToCourse.get(l.id)
+      if (cid) totalMap.set(cid, (totalMap.get(cid) ?? 0) + 1)
+    }
+    for (const p of completed) {
+      const cid = lessonToCourse.get(p.lessonId)
+      if (cid) completedMap.set(cid, (completedMap.get(cid) ?? 0) + 1)
+    }
+
+    return new Map(
+      courseIds.map((id) => {
+        const total = totalMap.get(id) ?? 0
+        const done = completedMap.get(id) ?? 0
+        return [id, total === 0 ? 0 : Math.round((done / total) * 100)]
+      }),
+    )
+  }
+
+  async listCertificatesByCourseIds(pesertaId: string, courseIds: string[]) {
+    if (courseIds.length === 0) return []
+    return db
+      .select()
+      .from(sertifikat)
+      .where(
+        and(
+          eq(sertifikat.pesertaId, pesertaId),
+          eq(sertifikat.type, 'trainerhub'),
+          inArray(sertifikat.courseId, courseIds),
+        ),
+      )
+  }
+
   async listCourses() {
     return db.select().from(courses)
   }

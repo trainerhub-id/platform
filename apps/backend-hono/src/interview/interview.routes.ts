@@ -1,4 +1,4 @@
-import { Hono } from 'hono'
+import { type Context, Hono } from 'hono'
 import { z } from 'zod'
 import { type AuthVariables, requireAuth } from '../auth/auth.middleware'
 import { errorResponse } from '../common/errors'
@@ -26,10 +26,13 @@ type ReadRouteDeps = {
   conversations?: Pick<ConversationRepository, 'recentMessages'>
 }
 
-async function loadOwnedDocument(c: any, documents: Pick<DocumentRepository, 'findById'>) {
+async function loadOwnedDocument(
+  c: Context<{ Variables: InterviewRouteVariables }>,
+  documents: Pick<DocumentRepository, 'findById'>,
+) {
   const user = c.get('user')
   if (!user) return { error: errorResponse(c, 401, 'UNAUTHORIZED', 'Authentication required') }
-  const doc = await documents.findById(c.req.param('documentId'))
+  const doc = await documents.findById(c.req.param('documentId') ?? '')
   if (!doc) return { error: errorResponse(c, 404, 'DOCUMENT_NOT_FOUND', 'Document not found') }
   if (!isDocumentOwner(doc, user.id))
     return { error: errorResponse(c, 403, 'FORBIDDEN', 'Document belongs to another user') }

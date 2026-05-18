@@ -42,6 +42,12 @@ export function parseEnv(input: NodeJS.ProcessEnv | Record<string, string | unde
       .join('; ')
     throw new Error(`Invalid environment: ${message}`)
   }
+  if (
+    parsed.data.NODE_ENV === 'production' &&
+    parsed.data.BETTER_AUTH_SECRET === 'dev-secret-change-me-dev-secret-change-me'
+  ) {
+    throw new Error('BETTER_AUTH_SECRET must be set to a secure value in production')
+  }
   return parsed.data
 }
 

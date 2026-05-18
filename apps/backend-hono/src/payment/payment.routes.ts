@@ -89,19 +89,29 @@ export function createPaymentRoutes(service: PaymentServiceLike = new PaymentSer
   })
 
   app.get('/public/payment/session/:sessionId', async (c) =>
-    c.json(await service.getPaymentSessionCheckout(c.req.param('sessionId'), c.req.query('token'))),
+    c.json(
+      await service.getPaymentSessionCheckout(
+        c.req.param('sessionId'),
+        c.req.header('Authorization')?.replace(/^Bearer\s+/i, ''),
+      ),
+    ),
   )
   app.post('/public/payment/session/:sessionId/check', async (c) =>
     c.json(
       await service.refreshScalevPaymentStatus(
         c.req.param('sessionId'),
-        c.req.query('token'),
+        c.req.header('Authorization')?.replace(/^Bearer\s+/i, ''),
         true,
       ),
     ),
   )
   app.get('/public/payment/claim/:sessionId', async (c) =>
-    c.json(await service.claimPayment(c.req.param('sessionId'), c.req.query('token'))),
+    c.json(
+      await service.claimPayment(
+        c.req.param('sessionId'),
+        c.req.header('Authorization')?.replace(/^Bearer\s+/i, ''),
+      ),
+    ),
   )
 
   app.get('/admin/scalev/stores', requireAuth, requireRole(['admin']), async (c) =>

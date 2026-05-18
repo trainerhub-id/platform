@@ -7,6 +7,7 @@ import { createBatchRoutes } from './batch/batch.routes'
 import { createCertificateRoutes } from './certificates/certificate.routes'
 import { errorResponse, handleAppError } from './common/errors'
 import { createOpenApiApp } from './common/openapi'
+import { rateLimit } from './common/rate-limit.middleware'
 import { requestIdMiddleware } from './common/request-id.middleware'
 import { env, getFrontendOrigins } from './config/env'
 import { createDocumentRoutes } from './documents/document.routes'
@@ -60,7 +61,9 @@ export function createApp(options: CreateAppOptions = {}) {
     }
     return c.json({ user, session })
   })
-  app.on(['POST', 'GET'], '/api/auth/*', (c) => auth.handler(c.req.raw))
+  app.on(['POST', 'GET'], '/api/auth/*', rateLimit({ windowMs: 15 * 60 * 1000, max: 30 }), (c) =>
+    auth.handler(c.req.raw),
+  )
   app.route('/', createOpenApiApp())
   app.route('/', createHealthRoutes())
   app.route('/', createReadinessRoutes())

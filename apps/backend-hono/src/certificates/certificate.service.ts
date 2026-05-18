@@ -31,11 +31,16 @@ type CertificateRepositoryLike = {
   findByCourseAndPeserta(pesertaId: string, courseId: string): Promise<CertificateRecord | null>
   listByPeserta(pesertaId: string): Promise<CertificateRecord[]>
   listAllByPeserta?(pesertaId: string): Promise<CertificateRecord[]>
-  listCourses?(): Promise<{ id: string; title: string }[]>
+  listCourses(): Promise<{ id: string; title: string }[]>
   getCourseProgress(
     pesertaId: string,
     courseId: string,
   ): Promise<{ progress: number; totalLessons: number; completedLessons: number }>
+  getBatchCourseProgress(pesertaId: string, courseIds: string[]): Promise<Map<string, number>>
+  listCertificatesByCourseIds(
+    pesertaId: string,
+    courseIds: string[],
+  ): Promise<{ id: string; courseId: string | null }[]>
   countCourseCertificatesForYear(courseId: string, year: number): Promise<number>
   createTrainerhubCertificate(input: {
     pesertaId: string
@@ -155,21 +160,25 @@ export class CertificateService {
 
   async getEligibleCourses(userId: string) {
     const peserta = await this.repository.findPesertaByUserId(userId)
-    if (!peserta || !this.repository.listCourses) return []
+    if (!peserta) return []
     const courses = await this.repository.listCourses()
-    return Promise.all(
-      courses.map(async (course) => {
-        const progress = await this.repository.getCourseProgress(peserta.id, course.id)
-        const certificate = await this.repository.findByCourseAndPeserta(peserta.id, course.id)
-        return {
-          courseId: course.id,
-          courseName: course.title,
-          progress: Math.round(progress.progress),
-          hasCertificate: !!certificate,
-          certificateId: certificate?.id ?? null,
-        }
-      }),
-    )
+    if (courses.length === 0) return []
+    const courseIds = courses.map((c) => c.id)
+    const [progressMap, certificates] = await Promise.all([
+      this.repository.getBatchCourseProgress(peserta.id, courseIds),
+      this.repository.listCertificatesByCourseIds(peserta.id, courseIds),
+    ])
+    const certMap = new Map(certificates.map((c) => [c.courseId, c]))
+    return courses.map((course) => {
+      const cert = certMap.get(course.id) ?? null
+      return {
+        courseId: course.id,
+        courseName: course.title,
+        progress: progressMap.get(course.id) ?? 0,
+        hasCertificate: !!cert,
+        certificateId: cert?.id ?? null,
+      }
+    })
   }
 
   async findById(id: string) {

@@ -61,9 +61,10 @@ function clean(value: unknown): string | undefined {
 }
 
 export function buildSkkniContext(masterJson: unknown): MasterSkkniContext {
-  const root = masterJson && typeof masterJson === 'object' ? (masterJson as any) : {}
-  const master = root.brainstorming_master ?? {}
-  const trainer = root.brainstorming ?? {}
+  const root =
+    masterJson && typeof masterJson === 'object' ? (masterJson as Record<string, unknown>) : {}
+  const master = (root.brainstorming_master ?? {}) as Record<string, unknown>
+  const trainer = (root.brainstorming ?? {}) as Record<string, unknown>
 
   if (
     root.schema_key === 'hono_trainer_alpha_v1' ||

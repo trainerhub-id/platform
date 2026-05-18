@@ -1,6 +1,5 @@
 import { Icon } from '@iconify/react'
 import Hls from 'hls.js'
-import { debounce } from 'lodash'
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useNavigate, useParams } from 'react-router'
 import CardBox from 'src/components/shared/CardBox'
@@ -44,19 +43,23 @@ const Kelas = () => {
   const muxVideoRef = useRef<HTMLVideoElement | null>(null)
 
   // Debounced progress save - every 5 seconds (MUST be before early returns)
+  const debounceTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
   const debouncedSaveProgress = useCallback(
-    debounce((lessonId: string, currentTime: number) => {
-      saveVideoProgress(lessonId, currentTime)
-    }, 5000),
+    (lessonId: string, currentTime: number) => {
+      if (debounceTimer.current) clearTimeout(debounceTimer.current)
+      debounceTimer.current = setTimeout(() => {
+        saveVideoProgress(lessonId, currentTime)
+      }, 5000)
+    },
     [saveVideoProgress],
   )
 
   // Cleanup debounced function on unmount (MUST be before early returns)
   useEffect(() => {
     return () => {
-      debouncedSaveProgress.cancel()
+      if (debounceTimer.current) clearTimeout(debounceTimer.current)
     }
-  }, [debouncedSaveProgress])
+  }, [])
 
   // Fetch playback token for secured video
   const fetchPlaybackToken = useCallback(

@@ -51,7 +51,9 @@ export default function PaymentCallback() {
       processedRef.current = true
 
       try {
-        const res = await fetch(`${API_URL}/public/payment/claim/${sessionId}?token=${claimToken}`)
+        const res = await fetch(`${API_URL}/public/payment/claim/${sessionId}`, {
+          headers: { Authorization: `Bearer ${claimToken}` },
+        })
 
         if (!res.ok) {
           const errorData = await res.json().catch(() => ({ message: 'Unknown error' }))

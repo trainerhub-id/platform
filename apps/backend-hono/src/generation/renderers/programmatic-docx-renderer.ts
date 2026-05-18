@@ -133,7 +133,7 @@ function buildDocument(input: RenderInput) {
       : documentType === 'bukti-8'
         ? [
             ['No', 'Aspek', 'Indikator', 'Catatan'],
-            ...asRows((payload as any).asesmen?.observasi, [
+            ...asRows((payload.asesmen as Record<string, unknown> | undefined)?.observasi, [
               'aspek',
               'indikator_keberhasilan',
               'penilaian_lanjut',
