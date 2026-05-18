@@ -933,8 +933,15 @@ function ToolSearchAnimation() {
   )
 }
 
-// Detect if assistant message is asking for SKKNI search confirmation
-const SKKNI_CONFIRM_RE = /(?:apakah|boleh|mau|ingin|lanjut|cari|pencarian|skkni|unit kompetensi).*(?:\?|lanjutkan|cari)/i
+function stripSkkniLines(content: string): string {
+  const re = /[A-Z]\.\d{2}[A-Z0-9]+\.\d{3}\.\d+/
+  return content
+    .split('\n')
+    .filter((line) => !re.test(line) || line.includes('|'))
+    .join('\n')
+    .replace(/\n{3,}/g, '\n\n')
+    .trim()
+}
 
 function MessageBubble({
   message,
@@ -973,7 +980,9 @@ function MessageBubble({
               }
         }
       >
-        <MessageResponse whiteText={isUser}>{message.content || '...'}</MessageResponse>
+        <MessageResponse whiteText={isUser}>
+          {isUser ? (message.content || '...') : (skkniUnits.length > 0 ? stripSkkniLines(message.content) : (message.content || '...'))}
+        </MessageResponse>
         {isAskingConfirm && onSend && (
           <button
             type="button"
