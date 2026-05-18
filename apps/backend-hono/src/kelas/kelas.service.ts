@@ -1,5 +1,4 @@
 import { and, eq, inArray } from 'drizzle-orm'
-import { execSync } from 'node:child_process'
 import { createPrivateKey, createSign } from 'node:crypto'
 import { db } from '../db/client'
 import {
@@ -166,16 +165,35 @@ export class KelasService {
       }
 
       const keyId = process.env.MUX_SIGNING_KEY_ID
-      const privateKeyB64 = process.env.MUX_SIGNING_KEY_PRIVATE_KEY
+      const privateKeyB64 = process.env.MUX_SIGNING_KEY_PRIVATE_KEY_PKCS8
 
       if (!keyId || !privateKeyB64) {
         return { token: null }
       }
 
       const privateKeyPem = Buffer.from(privateKeyB64, 'base64').toString('utf-8')
-      // Convert PKCS#1 to PKCS#8 (BoringSSL in Bun requires PKCS#8)
-      const pkcs8Pem = execSync('openssl pkcs8 -topk8 -nocrypt', { input: privateKeyPem }).toString()
-      const privateKey = createPrivateKey({ key: pkcs8Pem, format: 'pem' })
+      const privateKey = createPrivateKey({ key: privateKeyPem, format: 'pem' })
+
+      const header = Buffer.from(JSON.stringify({ alg: 'RS256', typ: 'JWT', kid: keyId })).toString('base64url')
+      const payload = Buffer.from(JSON.stringify({
+        sub: lesson.muxPlaybackId,
+        aud: 'v',
+        exp: Math.floor(Date.now() / 1000) + 3600,
+        kid: keyId,
+      })).toString('base64url')
+
+      const signingInput = `${header}.${payload}`
+      const sign = createSign('RSA-SHA256')
+      sign.update(signingInput)
+      const sig = sign.sign(privateKey, 'base64url')
+      const token = `${signingInput}.${sig}`
+
+      return { token }
+    } catch (err) {
+      console.error('[KelasService] getPlaybackToken error:', err)
+      return { token: null }
+    }
+  }
 
       const header = Buffer.from(JSON.stringify({ alg: 'RS256', typ: 'JWT', kid: keyId })).toString('base64url')
       const payload = Buffer.from(JSON.stringify({
