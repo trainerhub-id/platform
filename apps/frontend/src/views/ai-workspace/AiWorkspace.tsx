@@ -392,7 +392,7 @@ export default function AiWorkspace({ flow }: AiWorkspaceProps) {
                     {isSending ? (
                       <div className="flex items-center gap-2 pl-1 text-xs text-bodytext">
                         <span className="h-2 w-2 animate-pulse rounded-full bg-primary" />
-                        AI sedang menyusun respons
+                        Sedang memproses...
                       </div>
                     ) : null}
                   </ConversationContent>
