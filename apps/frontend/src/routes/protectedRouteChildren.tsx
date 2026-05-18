@@ -6,7 +6,6 @@ import { RoleBasedRedirect } from '../components/RoleBasedRedirect'
 import Loadable from '../layouts/full/shared/loadable/Loadable'
 import { WorkspaceRouteWrapper } from '../components/workspace/WorkspaceRouteWrapper'
 
-const TrainerDashboard = Loadable(lazy(() => import('../views/dashboard/TrainerDashboard')))
 const TrainingInformation = Loadable(lazy(() => import('../views/training/TrainingInformation')))
 const KelasArchive = Loadable(lazy(() => import('../views/kelas/KelasArchive')))
 const Kelas = Loadable(lazy(() => import('../views/kelas/Kelas')))
@@ -39,11 +38,7 @@ export const protectedRouteChildren = [
   {
     path: '/user/home',
     exact: true,
-    element: (
-      <UserRoute>
-        <TrainerDashboard />
-      </UserRoute>
-    ),
+    element: <Navigate to="/" replace />,
   },
   {
     path: '/user/training/info',
