@@ -141,6 +141,7 @@ const defaultRepository: DokumenRepositoryLike = {
         })
         .where(eq(dokumenPeserta.id, existing.id))
         .returning()
+      if (!row) throw new Error('DOKUMEN_UPSERT_FAILED')
       return { id: row.id }
     }
 
@@ -154,6 +155,7 @@ const defaultRepository: DokumenRepositoryLike = {
         status: 'pending',
       })
       .returning()
+    if (!row) throw new Error('DOKUMEN_UPSERT_FAILED')
     return { id: row.id }
   },
 

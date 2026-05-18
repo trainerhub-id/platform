@@ -71,7 +71,7 @@ describe('DokumenService', () => {
       const result = await service.getStatus('ws_1')
 
       expect(repository.findStatusByWorkspace).toHaveBeenCalledWith('ws_1')
-      expect(result[0].fileUrl).toBe('https://cdn.example.com/uploads/ktp.pdf')
+      expect(result[0]!.fileUrl).toBe('https://cdn.example.com/uploads/ktp.pdf')
     })
   })
 
