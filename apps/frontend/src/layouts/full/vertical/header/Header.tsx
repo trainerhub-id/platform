@@ -27,6 +27,7 @@ import { Language } from './Language'
 import MobileHeaderItems from './MobileHeaderItems'
 import NotificationButton from './NotificationButton'
 import Profile from './Profile'
+import { WorkspaceSwitcher } from 'src/components/workspace/WorkspaceSwitcher'
 
 interface HeaderPropsType {
   layoutType: string
@@ -334,6 +335,8 @@ const Header = ({ layoutType }: HeaderPropsType) => {
                         <FullLogo />
                       </div>
                     ) : null}
+
+                    <WorkspaceSwitcher />
 
                     {pathname === '/user/home' && (
                       <div>
