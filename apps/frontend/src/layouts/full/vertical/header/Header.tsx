@@ -178,7 +178,7 @@ const Header = ({ layoutType }: HeaderPropsType) => {
       <header
         className={`sticky top-0 text-ld z-[90] ${
           isAdmin
-            ? 'bg-[#1f2937] text-white shadow-md'
+            ? 'bg-dark text-white shadow-md'
             : isSticky
               ? 'bg-white dark:bg-dark shadow-md'
               : 'bg-white dark:bg-dark'
@@ -213,7 +213,7 @@ const Header = ({ layoutType }: HeaderPropsType) => {
                   <div>
                     {pathname === '/admin/home' && nearestBatch && (
                       <div className="flex items-center gap-4">
-                        <div className="flex items-center gap-3 bg-[#AA8D55] text-white px-4 py-2 rounded-md shadow-sm">
+                        <div className="flex items-center gap-3 bg-[var(--color-gold)] text-white px-4 py-2 rounded-md shadow-sm">
                           <Icon icon="solar:box-minimalistic-line-duotone" height={18} />
                           <span className="font-semibold text-sm">
                             {nearestBatch.namaBatch || 'Training'}
@@ -338,7 +338,7 @@ const Header = ({ layoutType }: HeaderPropsType) => {
                     {pathname === '/user/home' && (
                       <div>
                         <h2 className="text-xl font-semibold text-ld mb-0.5">
-                          Halo, <span className="text-[#AA8D55]">{userName}</span>
+                          Halo, <span className="text-[var(--color-gold)]">{userName}</span>
                         </h2>
                         <p className="text-bodytext text-xs">
                           Ini rangkuman perjalanan sertifikasi kamu

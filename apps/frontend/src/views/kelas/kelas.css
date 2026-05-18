@@ -1,8 +1,8 @@
 /* Custom MuxPlayer Styling */
 mux-player {
   /* Primary accent color - for progress bar, buttons, hover states */
-  --media-accent-color: #c39341;
-  --media-primary-color: #c39341;
+  --media-accent-color: var(--color-gold);
+  --media-primary-color: var(--color-gold);
 
   /* Control bar background */
   --media-control-background: rgba(0, 0, 0, 0.7);
@@ -14,14 +14,14 @@ mux-player {
 
   /* Range/Progress colors */
   --media-range-track-background: rgba(255, 255, 255, 0.3);
-  --media-range-bar-color: #c39341;
-  --media-range-thumb-background: #c39341;
+  --media-range-bar-color: var(--color-gold);
+  --media-range-thumb-background: var(--color-gold);
 
   /* Time display */
   --media-time-display-color: #ffffff;
 
   /* Focus ring */
-  --media-focus-ring-color: #c39341;
+  --media-focus-ring-color: var(--color-gold);
 
   /* Tooltip background */
   --media-tooltip-background: rgba(0, 0, 0, 0.9);
@@ -36,7 +36,7 @@ mux-player::part(bottom) {
 /* Play button in center */
 mux-player::part(play button) {
   background: rgba(195, 147, 65, 0.92) !important;
-  border-color: #c39341 !important;
+  border-color: var(--color-gold) !important;
 }
 
 mux-player::part(play button):hover {
@@ -46,7 +46,7 @@ mux-player::part(play button):hover {
 
 /* Loading spinner color */
 mux-player::part(loading-indicator) {
-  --media-loading-indicator-color: #c39341;
+  --media-loading-indicator-color: var(--color-gold);
 }
 
 /* Custom styling for better visibility */

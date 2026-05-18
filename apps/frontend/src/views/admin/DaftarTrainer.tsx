@@ -115,7 +115,7 @@ const DaftarTrainer = () => {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <div className="flex items-center gap-2 text-[#B58E36] mb-1">
+          <div className="flex items-center gap-2 text-[var(--color-gold)] mb-1">
             <Icon icon="solar:user-speak-rounded-line-duotone" height={18} />
             <span className="text-sm font-semibold">Admin</span>
           </div>
@@ -148,7 +148,7 @@ const DaftarTrainer = () => {
                   />
                 ) : null}
                 <div
-                  className={`w-16 h-16 rounded-full bg-gradient-to-br from-[#B58E36] to-[#8D6E2A] flex items-center justify-center text-white font-bold text-xl border-2 border-primary/10 ${trainer.fotoUrl ? 'hidden' : ''}`}
+                  className={`w-16 h-16 rounded-full bg-gradient-to-br from-[var(--color-gold)] to-[#8D6E2A] flex items-center justify-center text-white font-bold text-xl border-2 border-primary/10 ${trainer.fotoUrl ? 'hidden' : ''}`}
                 >
                   {trainer.nama?.charAt(0)?.toUpperCase() || 'T'}
                 </div>

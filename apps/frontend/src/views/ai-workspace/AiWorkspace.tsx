@@ -423,31 +423,31 @@ export default function AiWorkspace({ flow }: AiWorkspaceProps) {
   return (
     <div
       className="flex -mx-5 -my-8 min-h-0 overflow-hidden lg:-mx-8"
-      style={{ height: 'calc(100dvh - 79px)', background: 'var(--ai-bg, #F8F6F2)' }}
+      style={{ height: 'calc(100dvh - 79px)', background: 'var(--ai-bg, var(--ai-bg, var(--color-lightgray)))' }}
     >
       {/* Main chat column */}
-      <div className="relative flex min-w-0 flex-1 flex-col overflow-hidden" style={{ borderRight: '1px solid var(--ai-border, #E8E2D8)', background: 'var(--ai-surface, #FFFFFF)' }}>
+      <div className="relative flex min-w-0 flex-1 flex-col overflow-hidden" style={{ borderRight: '1px solid var(--ai-border, var(--ai-border, var(--color-border)))', background: 'var(--ai-surface, #FFFFFF)' }}>
 
         {/* Top info bar */}
-        <div className="z-10 px-4 py-2.5 md:px-6" style={{ borderBottom: '1px solid var(--ai-border, #E8E2D8)', background: 'var(--ai-surface, #FFFFFF)' }}>
+        <div className="z-10 px-4 py-2.5 md:px-6" style={{ borderBottom: '1px solid var(--ai-border, var(--ai-border, var(--color-border)))', background: 'var(--ai-surface, #FFFFFF)' }}>
           <div className="flex min-w-0 items-center justify-between gap-3">
             <div className="flex min-w-0 items-center gap-3">
               <div className="flex min-w-0 items-center gap-2">
                 <span
                   className="inline-flex items-center rounded-md px-2 py-0.5 text-xs font-semibold"
-                  style={{ background: 'var(--ai-accent-bg, #F5EBDD)', color: 'var(--ai-gold, #B8863B)' }}
+                  style={{ background: 'var(--ai-accent-bg, var(--ai-accent-bg, var(--color-gold-light)))', color: 'var(--ai-gold, var(--color-gold))' }}
                 >
                   {activeDocument?.title || copy.newTitle}
                 </span>
                 <span
                   className="inline-flex items-center rounded-full px-2 py-0.5 text-[11px] font-medium"
-                  style={{ background: 'var(--ai-accent-bg, #F5EBDD)', color: 'var(--ai-gold, #B8863B)' }}
+                  style={{ background: 'var(--ai-accent-bg, var(--ai-accent-bg, var(--color-gold-light)))', color: 'var(--ai-gold, var(--color-gold))' }}
                 >
                   {progress}%
                 </span>
               </div>
-              <span className="text-xs" style={{ color: 'var(--ai-text-secondary, #6B7280)' }}>
-                Fase: <span className="font-medium" style={{ color: 'var(--ai-text-primary, #1F2937)' }}>{readiness?.phase || activeDocument?.currentPhase || 'brainstorming'}</span>
+              <span className="text-xs" style={{ color: 'var(--ai-text-secondary, var(--color-bodytext))' }}>
+                Fase: <span className="font-medium" style={{ color: 'var(--ai-text-primary, var(--color-dark))' }}>{readiness?.phase || activeDocument?.currentPhase || 'brainstorming'}</span>
               </span>
             </div>
 
@@ -465,7 +465,7 @@ export default function AiWorkspace({ flow }: AiWorkspaceProps) {
           </div>
 
           {error ? (
-            <div className="mt-2 rounded-lg border px-3 py-2 text-xs" style={{ borderColor: '#fca5a5', background: '#fef2f2', color: '#dc2626' }}>
+            <div className="mt-2 rounded-lg border px-3 py-2 text-xs" style={{ borderColor: 'var(--color-lighterror)', background: 'var(--color-lighterror)', color: 'var(--color-error)' }}>
               {error}
             </div>
           ) : null}
@@ -474,12 +474,12 @@ export default function AiWorkspace({ flow }: AiWorkspaceProps) {
         {/* Chat area */}
         <div className="min-h-0 flex-1 overflow-hidden">
           <div className="flex h-full flex-col">
-            <div className="min-h-0 flex-1" style={{ background: 'var(--ai-bg, #F8F6F2)' }}>
+            <div className="min-h-0 flex-1" style={{ background: 'var(--ai-bg, var(--ai-bg, var(--color-lightgray)))' }}>
               {messages.length === 0 ? (
                 <Conversation className="h-full">
                   <ConversationEmptyState
                     description={copy.emptyPrompt}
-                    icon={<Icon icon="solar:chat-round-dots-bold-duotone" height={32} style={{ color: 'var(--ai-gold, #B8863B)' }} />}
+                    icon={<Icon icon="solar:chat-round-dots-bold-duotone" height={32} style={{ color: 'var(--ai-gold, var(--color-gold))' }} />}
                     title="Mulai percakapan terarah"
                   />
                 </Conversation>
@@ -492,8 +492,8 @@ export default function AiWorkspace({ flow }: AiWorkspaceProps) {
                     {isSearchingTool ? (
                       <ToolSearchAnimation />
                     ) : isSending ? (
-                      <div className="flex items-center gap-2 pl-1 text-xs" style={{ color: 'var(--ai-text-secondary, #6B7280)' }}>
-                        <span className="h-1.5 w-1.5 animate-pulse rounded-full" style={{ background: 'var(--ai-gold, #B8863B)' }} />
+                      <div className="flex items-center gap-2 pl-1 text-xs" style={{ color: 'var(--ai-text-secondary, var(--color-bodytext))' }}>
+                        <span className="h-1.5 w-1.5 animate-pulse rounded-full" style={{ background: 'var(--ai-gold, var(--color-gold))' }} />
                         Sedang memproses...
                       </div>
                     ) : null}
@@ -504,10 +504,10 @@ export default function AiWorkspace({ flow }: AiWorkspaceProps) {
             </div>
 
             {/* Input area */}
-            <div className="shrink-0 px-4 py-3 md:px-6" style={{ borderTop: '1px solid var(--ai-border, #E8E2D8)', background: 'var(--ai-surface, #FFFFFF)' }}>
+            <div className="shrink-0 px-4 py-3 md:px-6" style={{ borderTop: '1px solid var(--ai-border, var(--ai-border, var(--color-border)))', background: 'var(--ai-surface, #FFFFFF)' }}>
               <div
                 className="mx-auto flex max-w-3xl items-end gap-3 rounded-2xl px-4 py-3"
-                style={{ border: '1px solid var(--ai-border, #E8E2D8)', background: 'var(--ai-surface, #FFFFFF)', boxShadow: '0 1px 4px 0 rgba(0,0,0,0.06)' }}
+                style={{ border: '1px solid var(--ai-border, var(--ai-border, var(--color-border)))', background: 'var(--ai-surface, #FFFFFF)', boxShadow: '0 1px 4px 0 rgba(0,0,0,0.06)' }}
               >
                 <Textarea
                   value={input}
@@ -522,7 +522,7 @@ export default function AiWorkspace({ flow }: AiWorkspaceProps) {
                   placeholder={copy.emptyPrompt}
                   aria-label="Tulis pesan"
                   className="max-h-[120px] min-h-[40px] flex-1 resize-none border-0 bg-transparent px-0 py-0 text-sm leading-6 shadow-none focus-visible:ring-0"
-                  style={{ color: 'var(--ai-text-primary, #1F2937)' }}
+                  style={{ color: 'var(--ai-text-primary, var(--color-dark))' }}
                 />
                 <button
                   type="button"
@@ -530,7 +530,7 @@ export default function AiWorkspace({ flow }: AiWorkspaceProps) {
                   onClick={() => void handleSend()}
                   disabled={!input.trim() || isSending}
                   className="mb-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-xl transition-opacity disabled:opacity-40"
-                  style={{ background: 'var(--ai-gold, #B8863B)', color: '#fff' }}
+                  style={{ background: 'var(--ai-gold, var(--color-gold))', color: '#fff' }}
                 >
                   <Icon icon="solar:plain-bold" height={16} />
                 </button>
@@ -644,9 +644,9 @@ function DocumentManager({
           type="button"
           disabled={isBusy}
           className="inline-flex items-center gap-1.5 rounded-xl border px-3 py-1.5 text-xs font-medium transition-colors disabled:opacity-50"
-          style={{ borderColor: 'var(--ai-border, #E8E2D8)', color: 'var(--ai-text-primary, #1F2937)', background: 'var(--ai-surface, #FFFFFF)' }}
+          style={{ borderColor: 'var(--ai-border, var(--ai-border, var(--color-border)))', color: 'var(--ai-text-primary, var(--color-dark))', background: 'var(--ai-surface, #FFFFFF)' }}
         >
-          <Icon icon="solar:folder-with-files-bold" height={14} style={{ color: 'var(--ai-gold, #B8863B)' }} />
+          <Icon icon="solar:folder-with-files-bold" height={14} style={{ color: 'var(--ai-gold, var(--color-gold))' }} />
           Kelola Dokumen
         </button>
       </DialogTrigger>
@@ -785,7 +785,7 @@ function DocumentManager({
                             {isActive ? (
                               <span
                                 className="shrink-0 rounded-md px-1.5 py-0.5 text-[10px] font-semibold"
-                                style={{ background: 'var(--ai-accent-bg, #F5EBDD)', color: 'var(--ai-gold, #B8863B)' }}
+                                style={{ background: 'var(--ai-accent-bg, var(--ai-accent-bg, var(--color-gold-light)))', color: 'var(--ai-gold, var(--color-gold))' }}
                               >
                                 Aktif
                               </span>
@@ -862,7 +862,7 @@ function SkkniCards({ units, onSelect }: { units: Array<{ code: string; title: s
   if (units.length === 0) return null
   return (
     <div className="mt-3 space-y-2">
-      <p className="text-[12px] font-semibold uppercase tracking-wider mb-2" style={{ color: '#9CA3AF' }}>
+      <p className="text-[12px] font-semibold uppercase tracking-wider mb-2" style={{ color: 'var(--color-lightmuted)' }}>
         Pilih unit — klik untuk memilih
       </p>
       {units.map((u) => (
@@ -874,22 +874,22 @@ function SkkniCards({ units, onSelect }: { units: Array<{ code: string; title: s
           onMouseLeave={() => setHovered(null)}
           className="flex w-full items-start gap-3 rounded-xl px-4 py-3 text-left transition-all"
           style={{
-            border: `1px solid ${hovered === u.code ? '#B8863B' : '#E8E2D8'}`,
-            background: hovered === u.code ? '#F7F1E8' : '#FFFFFF',
+            border: `1px solid ${hovered === u.code ? 'var(--color-gold)' : 'var(--ai-border, var(--color-border))'}`,
+            background: hovered === u.code ? 'var(--color-gold-light)' : '#FFFFFF',
             boxShadow: hovered === u.code ? '0 2px 8px rgba(184,134,59,0.12)' : 'none',
           }}
         >
           <span
             className="shrink-0 rounded-lg px-2 py-0.5 text-[12px] font-bold font-mono"
-            style={{ background: hovered === u.code ? '#F4E8D2' : '#F3F4F6', color: hovered === u.code ? '#B8863B' : '#374151' }}
+            style={{ background: hovered === u.code ? 'var(--color-gold-light)' : '#F3F4F6', color: hovered === u.code ? 'var(--color-gold)' : 'var(--color-dark)' }}
           >
             {u.code}
           </span>
-          <span className="text-[13px] leading-snug" style={{ color: hovered === u.code ? '#1F2937' : '#4B5563' }}>
+          <span className="text-[13px] leading-snug" style={{ color: hovered === u.code ? 'var(--color-dark)' : 'var(--color-bodytext)' }}>
             {u.title}
           </span>
           {hovered === u.code && (
-            <Icon icon="solar:arrow-right-bold" height={14} style={{ color: '#B8863B', flexShrink: 0, marginTop: 2 }} />
+            <Icon icon="solar:arrow-right-bold" height={14} style={{ color: 'var(--color-gold)', flexShrink: 0, marginTop: 2 }} />
           )}
         </button>
       ))}
@@ -909,7 +909,7 @@ function ToolSearchAnimation() {
   return (
     <div
       className="flex items-center gap-3 rounded-xl px-4 py-3"
-      style={{ border: '1px solid #E8E2D8', background: '#FFFFFF', maxWidth: '72ch' }}
+      style={{ border: '1px solid var(--ai-border, var(--color-border))', background: '#FFFFFF', maxWidth: '72ch' }}
     >
       <div className="flex shrink-0 items-center gap-1">
         {[0, 1, 2].map((i) => (
@@ -919,14 +919,14 @@ function ToolSearchAnimation() {
             style={{
               width: 6,
               height: 6,
-              background: '#B8863B',
+              background: 'var(--color-gold)',
               opacity: step === i ? 1 : 0.3,
               transition: 'opacity 0.3s',
             }}
           />
         ))}
       </div>
-      <span className="text-[13px]" style={{ color: '#6B7280' }}>
+      <span className="text-[13px]" style={{ color: 'var(--color-bodytext)' }}>
         {steps[step]}
       </span>
     </div>
@@ -973,14 +973,14 @@ function MessageBubble({
         style={
           isUser
             ? {
-                background: 'var(--ai-gold, #B8863B)',
+                background: 'var(--ai-gold, var(--color-gold))',
                 color: '#fff',
                 boxShadow: '0 1px 3px 0 rgba(184,134,59,0.2)',
               }
             : {
                 background: 'var(--ai-surface, #FFFFFF)',
-                borderColor: 'var(--ai-border, #E8E2D8)',
-                color: 'var(--ai-text-primary, #1F2937)',
+                borderColor: 'var(--ai-border, var(--ai-border, var(--color-border)))',
+                color: 'var(--ai-text-primary, var(--color-dark))',
                 boxShadow: '0 1px 3px 0 rgba(0,0,0,0.04)',
               }
         }
@@ -993,7 +993,7 @@ function MessageBubble({
             type="button"
             onClick={() => onSend('ya')}
             className="mt-3 flex items-center gap-2 rounded-xl px-4 py-2.5 text-[13px] font-semibold transition-colors"
-            style={{ background: 'var(--ai-accent-bg, #F5EBDD)', color: 'var(--ai-gold, #B8863B)', border: '1px solid var(--ai-border, #E8E2D8)' }}
+            style={{ background: 'var(--ai-accent-bg, var(--ai-accent-bg, var(--color-gold-light)))', color: 'var(--ai-gold, var(--color-gold))', border: '1px solid var(--ai-border, var(--ai-border, var(--color-border)))' }}
           >
             <Icon icon="solar:magnifer-bold" height={14} />
             Ya, Lakukan Pencarian
@@ -1031,7 +1031,7 @@ function CheckpointPanel({
   return (
     <aside
       className="hidden w-72 flex-shrink-0 overflow-y-auto lg:block"
-      style={{ background: 'var(--ai-bg, #F8F6F2)' }}
+      style={{ background: 'var(--ai-bg, var(--ai-bg, var(--color-lightgray)))' }}
     >
       <div className="p-5">
         {isJobDone ? (
@@ -1054,21 +1054,21 @@ function CheckpointPanel({
 // ─── Shared helpers ──────────────────────────────────────────────────────────
 
 const S = {
-  gold: '#B8863B',
-  goldDark: '#A67831',
-  goldSoft: '#F4E8D2',
-  cream: '#F7F1E8',
-  border: '#E8E2D8',
-  bg: '#FAF8F3',
-  white: '#FFFFFF',
-  textPrimary: '#1F2937',
-  textSecondary: '#6B7280',
-  textMuted: '#9CA3AF',
-  green: '#34A853',
-  greenBg: '#EAF7EE',
-  processBg: '#FFF4DC',
-  track: '#E5E7EB',
-  tipsBg: '#FBF7EF',
+  gold: 'var(--color-gold)',
+  goldDark: 'var(--color-gold-hover)',
+  goldSoft: 'var(--color-gold-light)',
+  cream: 'var(--color-gold-light)',
+  border: 'var(--ai-border, var(--color-border))',
+  bg: 'var(--ai-bg, var(--color-lightgray))',
+  white: 'var(--color-white, #fff)',
+  textPrimary: 'var(--color-dark)',
+  textSecondary: 'var(--color-bodytext)',
+  textMuted: 'var(--color-lightmuted)',
+  green: 'var(--color-success)',
+  greenBg: 'var(--color-lightsuccess)',
+  processBg: 'var(--color-lightwarning)',
+  track: 'var(--color-border)',
+  tipsBg: 'var(--color-gold-light)',
 } as const
 
 function ProgressBar({ value, color = S.gold }: { value: number; color?: string }) {
@@ -1128,7 +1128,7 @@ function SidebarBelumGenerate({
         <div className="mt-3">
           <ProgressBar value={progress} />
         </div>
-        <div className="mt-2 flex justify-between text-[13px]" style={{ color: '#374151' }}>
+        <div className="mt-2 flex justify-between text-[13px]" style={{ color: 'var(--color-dark)' }}>
           <span>{completedFields.length}/{requiredFields.length} field</span>
           <span>{completedGroups.length}/{groups.length} fase</span>
         </div>
@@ -1140,14 +1140,14 @@ function SidebarBelumGenerate({
           Fase Saat Ini
         </p>
         <div className="flex items-start gap-3">
-          <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full" style={{ background: '#E8C681' }}>
+          <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full" style={{ background: 'var(--color-gold-light)' }}>
             <Icon icon="solar:clock-circle-bold" height={14} style={{ color: S.gold }} />
           </div>
           <div className="min-w-0">
             <p className="text-[17px] font-bold leading-tight" style={{ color: S.textPrimary }}>
               {activeGroup?.label || 'Brainstorming'}
             </p>
-            <p className="mt-1.5 text-[14px] leading-relaxed" style={{ color: '#4B5563' }}>
+            <p className="mt-1.5 text-[14px] leading-relaxed" style={{ color: 'var(--color-bodytext)' }}>
               {activeGroup?.description || 'Arah kelas, audiens, hasil belajar, dan institusi.'}
             </p>
           </div>
@@ -1192,16 +1192,16 @@ function SidebarBelumGenerate({
               {isDone ? (
                 <Icon icon="solar:check-circle-bold" height={20} style={{ color: S.green, flexShrink: 0 }} />
               ) : isCurrent ? (
-                <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full" style={{ background: '#E8C681' }}>
+                <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full" style={{ background: 'var(--color-gold-light)' }}>
                   <Icon icon="solar:clock-circle-bold" height={13} style={{ color: S.gold }} />
                 </div>
               ) : (
                 <Icon icon="solar:record-circle-linear" height={20} style={{ color: S.track, flexShrink: 0 }} />
               )}
-              <span className="flex-1 truncate text-[14px] font-medium" style={{ color: isCurrent ? S.gold : '#374151' }}>
+              <span className="flex-1 truncate text-[14px] font-medium" style={{ color: isCurrent ? S.gold : 'var(--color-dark)' }}>
                 {group.label}
               </span>
-              <span className="text-[13px] font-medium" style={{ color: isDone ? S.green : isCurrent ? S.gold : '#374151' }}>
+              <span className="text-[13px] font-medium" style={{ color: isDone ? S.green : isCurrent ? S.gold : 'var(--color-dark)' }}>
                 {pct}%
               </span>
             </div>
@@ -1214,7 +1214,7 @@ function SidebarBelumGenerate({
         <Icon icon="solar:lightbulb-bold-duotone" height={18} style={{ color: S.gold, flexShrink: 0, marginTop: 1 }} />
         <div>
           <p className="text-[13px] font-semibold mb-0.5" style={{ color: S.textPrimary }}>Tips</p>
-          <p className="text-[13px] leading-relaxed" style={{ color: '#4B5563' }}>
+          <p className="text-[13px] leading-relaxed" style={{ color: 'var(--color-bodytext)' }}>
             Lengkapi semua field untuk mempercepat pembuatan dokumen.
           </p>
         </div>
@@ -1227,7 +1227,7 @@ function SidebarBelumGenerate({
           onClick={onGenerate}
           className="flex w-full items-center justify-center gap-2.5 rounded-xl transition-colors"
           style={{ height: 52, background: S.green, color: '#fff', marginTop: 4 }}
-          onMouseEnter={(e) => { (e.currentTarget as HTMLButtonElement).style.background = '#2a9447' }}
+          onMouseEnter={(e) => { (e.currentTarget as HTMLButtonElement).style.background = 'var(--color-successemphasis)' }}
           onMouseLeave={(e) => { (e.currentTarget as HTMLButtonElement).style.background = S.green }}
         >
           <Icon icon="solar:document-add-bold" height={18} />
@@ -1243,7 +1243,7 @@ function SidebarBelumGenerate({
 function CategoryStatusPill({ status }: { status: 'done' | 'processing' | 'waiting' }) {
   if (status === 'done')
     return (
-      <span className="rounded-full px-3 py-1 text-[12px] font-semibold" style={{ background: S.greenBg, color: '#1F8F45' }}>
+      <span className="rounded-full px-3 py-1 text-[12px] font-semibold" style={{ background: S.greenBg, color: 'var(--color-successemphasis)' }}>
         Selesai
       </span>
     )
@@ -1288,7 +1288,7 @@ function SidebarSedangGenerate({ generationJob }: { generationJob: GenerationJob
         <div className="mt-3">
           <ProgressBar value={pct} />
         </div>
-        <p className="mt-2 text-[13px]" style={{ color: '#374151' }}>
+        <p className="mt-2 text-[13px]" style={{ color: 'var(--color-dark)' }}>
           Membuat {total} dokumen...
         </p>
       </div>
@@ -1296,7 +1296,7 @@ function SidebarSedangGenerate({ generationJob }: { generationJob: GenerationJob
       {/* Generating banner */}
       <div
         className="flex items-center justify-center gap-3 rounded-xl"
-        style={{ height: 54, background: '#C89335', cursor: 'not-allowed' }}
+        style={{ height: 54, background: 'var(--color-gold)', cursor: 'not-allowed' }}
       >
         <Icon icon="svg-spinners:ring-resize" height={18} className="text-white" />
         <span className="text-[15px] font-semibold text-white">Membuat Dokumen...</span>
@@ -1305,7 +1305,7 @@ function SidebarSedangGenerate({ generationJob }: { generationJob: GenerationJob
       {/* Info */}
       <div className="rounded-[14px] p-4 flex gap-3" style={{ background: S.tipsBg, border: `1px solid ${S.border}` }}>
         <Icon icon="solar:info-circle-bold-duotone" height={18} style={{ color: S.gold, flexShrink: 0, marginTop: 1 }} />
-        <p className="text-[13px] leading-relaxed" style={{ color: '#4B5563' }}>
+        <p className="text-[13px] leading-relaxed" style={{ color: 'var(--color-bodytext)' }}>
           Dokumen dibuat bertahap dan akan muncul saat siap diunduh.
         </p>
       </div>
@@ -1365,14 +1365,14 @@ function SidebarSiapDiunduh({ generatedFiles }: { generatedFiles: GeneratedFile[
             <p className="text-[15px] font-bold" style={{ color: S.textPrimary }}>Dokumen Siap Diunduh</p>
             <p className="text-[13px] mt-0.5" style={{ color: S.textSecondary }}>Dokumen Trainer</p>
           </div>
-          <span className="rounded-full px-3 py-1 text-[13px] font-bold" style={{ background: S.greenBg, color: '#1F8F45' }}>
+          <span className="rounded-full px-3 py-1 text-[13px] font-bold" style={{ background: S.greenBg, color: 'var(--color-successemphasis)' }}>
             {generatedFiles.length}/14
           </span>
         </div>
         <div className="mt-3">
           <ProgressBar value={Math.round((generatedFiles.length / 14) * 100)} color={S.green} />
         </div>
-        <p className="mt-2 text-[13px]" style={{ color: '#374151' }}>
+        <p className="mt-2 text-[13px]" style={{ color: 'var(--color-dark)' }}>
           {generatedFiles.length}/14 dokumen selesai
         </p>
       </div>
@@ -1410,15 +1410,15 @@ function SidebarSiapDiunduh({ generatedFiles }: { generatedFiles: GeneratedFile[
               >
                 <Icon icon="solar:check-circle-bold" height={18} style={{ color: S.green, flexShrink: 0 }} />
                 <span className="flex-1 text-[13px] font-semibold truncate" style={{ color: S.textPrimary }}>{cat.label}</span>
-                <span className="text-[12px]" style={{ color: '#374151' }}>{catFiles.length}/{cat.types.length}</span>
+                <span className="text-[12px]" style={{ color: 'var(--color-dark)' }}>{catFiles.length}/{cat.types.length}</span>
                 <Icon icon="solar:alt-arrow-down-bold" height={13} style={{ color: S.textMuted, flexShrink: 0, transform: isOpen ? 'rotate(180deg)' : 'none', transition: 'transform 0.2s' }} />
               </button>
               {isOpen && (
                 <div style={{ borderTop: `1px solid #EFEAE2` }}>
                   {catFiles.map((file) => (
                     <div key={file.id} className="flex items-center gap-2 px-3" style={{ height: 46, paddingLeft: 44 }}>
-                      <span className="flex-1 truncate text-[12px]" style={{ color: '#4B5563' }}>{LABELS[file.documentType] ?? file.documentType}</span>
-                      <span className="rounded-full text-[11px] font-semibold" style={{ background: S.greenBg, color: '#1F8F45', padding: '3px 8px' }}>Siap</span>
+                      <span className="flex-1 truncate text-[12px]" style={{ color: 'var(--color-bodytext)' }}>{LABELS[file.documentType] ?? file.documentType}</span>
+                      <span className="rounded-full text-[11px] font-semibold" style={{ background: S.greenBg, color: 'var(--color-successemphasis)', padding: '3px 8px' }}>Siap</span>
                       <button
                         type="button"
                         className="flex items-center justify-center rounded-[10px] ml-1"
@@ -1440,7 +1440,7 @@ function SidebarSiapDiunduh({ generatedFiles }: { generatedFiles: GeneratedFile[
       {/* Info */}
       <div className="rounded-[14px] p-4 flex gap-3" style={{ background: S.tipsBg, border: `1px solid ${S.border}` }}>
         <Icon icon="solar:shield-check-bold-duotone" height={18} style={{ color: S.green, flexShrink: 0, marginTop: 1 }} />
-        <p className="text-[13px] leading-relaxed" style={{ color: '#4B5563' }}>
+        <p className="text-[13px] leading-relaxed" style={{ color: 'var(--color-bodytext)' }}>
           Semua dokumen tersimpan aman dan dapat diunduh kapan saja.
         </p>
       </div>

@@ -167,7 +167,7 @@ const AdminBatchList = () => {
                         >
                           {getBatchName(batch)}
                         </Link>
-                        <p className="mt-1 text-xs font-medium text-[#B58E36]">
+                        <p className="mt-1 text-xs font-medium text-[var(--color-gold)]">
                           Mentor: {batch.trainerName || 'TBD'}
                         </p>
                         <p className="mt-1 text-xs text-bodytext">
@@ -180,7 +180,7 @@ const AdminBatchList = () => {
                         <div className="flex items-center gap-1.5 font-medium">
                           <Icon
                             icon="solar:calendar-linear"
-                            className="text-[#B58E36]"
+                            className="text-[var(--color-gold)]"
                             height={16}
                           />
                           <span>

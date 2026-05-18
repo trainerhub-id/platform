@@ -16,13 +16,13 @@ const TrainingList = ({ trainings, selectedId, onSelect }: TrainingListProps) =>
           key={training.id}
           className={`cursor-pointer p-0 overflow-hidden border rounded-2xl ${
             selectedId === training.id
-              ? 'border-[#B58E36] ring-1 ring-[#B58E36]/20 bg-white'
+              ? 'border-[var(--color-gold)] ring-1 ring-[var(--color-gold)]/20 bg-white'
               : 'border-gray-200 bg-white'
           }`}
           onClick={() => onSelect(training)}
         >
           <div className="px-4 py-3 border-b border-ld flex items-center justify-between">
-            <h5 className="font-bold text-[#AA8D55] text-base">Training #0{index + 1}</h5>
+            <h5 className="font-bold text-[var(--color-gold)] text-base">Training #0{index + 1}</h5>
             <button className="text-bodytext">
               <Icon icon="solar:menu-dots-vertical-bold" height={20} />
             </button>
@@ -63,7 +63,7 @@ const TrainingList = ({ trainings, selectedId, onSelect }: TrainingListProps) =>
                   {training.dateStart} - {training.dateEnd}
                 </span>
               </div>
-              <Button className="bg-[#AA8D55] hover:bg-[#AA8D55]/90 text-white rounded-xl px-4 py-1.5 h-auto text-[10px] font-bold shadow-none transition-colors border-none outline-none uppercase tracking-wider">
+              <Button className="bg-[var(--color-gold)] hover:bg-[var(--color-gold)]/90 text-white rounded-xl px-4 py-1.5 h-auto text-[10px] font-bold shadow-none transition-colors border-none outline-none uppercase tracking-wider">
                 Lihat Detail
               </Button>
             </div>

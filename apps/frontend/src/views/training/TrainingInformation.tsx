@@ -66,7 +66,7 @@ const TrainingInformation = () => {
           <CardBox className="p-8">
             {/* Header with Batch Selector */}
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
-              <h3 className="text-2xl font-bold text-[#1A2537]">Detail Training</h3>
+              <h3 className="text-2xl font-bold text-dark">Detail Training</h3>
               <Select
                 value={selectedTraining.id}
                 onValueChange={(val) => {
@@ -92,14 +92,14 @@ const TrainingInformation = () => {
               <TabsList className="bg-transparent h-auto p-0 gap-3 mb-8 w-full justify-start overflow-x-auto custom-scrollbar pb-2">
                 <TabsTrigger
                   value="detail"
-                  className="data-[state=active]:bg-[#B58E36] data-[state=active]:text-white bg-[#F4F7FB] text-gray-500 rounded-xl px-4 py-2 h-auto text-sm font-semibold transition-all border-none flex items-center gap-2"
+                  className="data-[state=active]:bg-[var(--color-gold)] data-[state=active]:text-white bg-lightgray text-bodytext rounded-xl px-4 py-2 h-auto text-sm font-semibold transition-all border-none flex items-center gap-2"
                 >
                   <Icon icon="solar:folder-with-files-bold" height={18} />
                   Detail Training
                 </TabsTrigger>
                 <TabsTrigger
                   value="rundown"
-                  className="data-[state=active]:bg-[#B58E36] data-[state=active]:text-white bg-[#F4F7FB] text-gray-500 rounded-xl px-4 py-2 h-auto text-sm font-semibold transition-all border-none flex items-center gap-2"
+                  className="data-[state=active]:bg-[var(--color-gold)] data-[state=active]:text-white bg-lightgray text-bodytext rounded-xl px-4 py-2 h-auto text-sm font-semibold transition-all border-none flex items-center gap-2"
                 >
                   <Icon icon="solar:checklist-minimalistic-bold" height={18} />
                   Rundown Acara

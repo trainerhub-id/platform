@@ -51,7 +51,7 @@ const AdminHome = () => {
     <div className="space-y-6">
       {/* Header */}
       <div>
-        <div className="flex items-center gap-2 text-[#B58E36] mb-1">
+        <div className="flex items-center gap-2 text-[var(--color-gold)] mb-1">
           <Icon icon="solar:home-smile-angle-outline" height={18} />
           <span className="text-sm font-semibold">Dashboard</span>
         </div>
@@ -107,14 +107,14 @@ const AdminHome = () => {
               </div>
             ) : participants.length === 0 ? (
               <div className="border border-dashed border-gray-200 rounded-xl p-8 text-center bg-gray-50">
-                <p className="text-gray-500">Belum ada peserta terdaftar.</p>
+                <p className="text-bodytext">Belum ada peserta terdaftar.</p>
               </div>
             ) : (
               <div className="space-y-3">
                 {participants.slice(0, 5).map((participant) => (
                   <div
                     key={participant.id}
-                    className="flex items-center justify-between p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
+                    className="flex items-center justify-between p-3 bg-lightgray rounded-lg hover:bg-gray-100 transition-colors"
                   >
                     <div className="flex items-center gap-3">
                       <div className="w-10 h-10 rounded-full overflow-hidden bg-gray-200 flex-shrink-0">
@@ -130,7 +130,7 @@ const AdminHome = () => {
                       </div>
                       <div>
                         <p className="font-semibold text-dark text-sm">{participant.name}</p>
-                        <p className="text-xs text-gray-500">{participant.contact.split('|')[0]}</p>
+                        <p className="text-xs text-bodytext">{participant.contact.split('|')[0]}</p>
                       </div>
                     </div>
                     <div className="flex items-center gap-2">

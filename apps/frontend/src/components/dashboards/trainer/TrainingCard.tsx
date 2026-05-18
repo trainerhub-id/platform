@@ -186,7 +186,7 @@ const TrainingCard = ({ batch, paymentStatus: profilePaymentStatus }: TrainingCa
 
                 {/* Actions */}
                 <div className="flex flex-wrap gap-3 mt-6">
-                  <button className="flex items-center gap-2 py-2.5 px-4 bg-[#E6D6BC] text-[#8D6E33] hover:bg-[#8D6E33] hover:text-white transition-all text-sm font-semibold shadow-sm hover:shadow-md rounded-md">
+                  <button className="flex items-center gap-2 py-2.5 px-4 bg-[var(--color-gold-light)] text-[var(--color-gold-hover)] hover:bg-[var(--color-gold-hover)] hover:text-white transition-all text-sm font-semibold shadow-sm hover:shadow-md rounded-md">
                     <Icon icon="solar:book-outline" height={18} />
                     Informasi Training
                   </button>

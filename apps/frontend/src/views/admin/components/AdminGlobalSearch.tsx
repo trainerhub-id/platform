@@ -60,7 +60,7 @@ export const AdminGlobalSearch = ({ value, onChange }: AdminGlobalSearchProps) =
         value={value}
         onChange={(event) => onChange(event.target.value)}
         placeholder="Cari peserta, email, no HP, batch..."
-        className="h-10 border-white/20 bg-white pl-10 pr-3 text-dark placeholder:text-gray-500 focus-visible:border-[#AA8D55]"
+        className="h-10 border-white/20 bg-white pl-10 pr-3 text-dark placeholder:text-gray-500 focus-visible:border-[var(--color-gold)]"
       />
 
       {showDropdown && (

@@ -242,7 +242,7 @@ const DaftarPeserta = () => {
       header: () => <span className="whitespace-nowrap">Aksi</span>,
       cell: (info: any) => (
         <button
-          className="bg-[#B58E36] text-white p-2 rounded-lg hover:bg-[#94742C] transition-colors"
+          className="bg-[var(--color-gold)] text-white p-2 rounded-lg hover:bg-[#94742C] transition-colors"
           onClick={() => {
             setSelectedParticipantId(info.row.original.id)
             setIsDetailModalOpen(true)
@@ -350,7 +350,7 @@ const DaftarPeserta = () => {
       {/* Table Section */}
       <CardBox className="p-0 overflow-hidden">
         {/* Table Header */}
-        <div className="bg-[#B58E36] px-4 sm:px-6 py-4 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 text-white [&_*]:text-white">
+        <div className="bg-[var(--color-gold)] px-4 sm:px-6 py-4 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 text-white [&_*]:text-white">
           <h3 className="font-semibold text-base sm:text-lg text-white">Tabel Daftar Peserta</h3>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -358,7 +358,7 @@ const DaftarPeserta = () => {
                 <Icon icon="solar:filter-linear" height={18} />
                 Filter
                 {activeFiltersCount > 0 && (
-                  <span className="bg-white text-[#B58E36] text-xs font-bold px-1.5 py-0.5 rounded-full min-w-[20px] text-center">
+                  <span className="bg-white text-[var(--color-gold)] text-xs font-bold px-1.5 py-0.5 rounded-full min-w-[20px] text-center">
                     {activeFiltersCount}
                   </span>
                 )}
@@ -513,7 +513,7 @@ const DaftarPeserta = () => {
                   onClick={() => table.setPageIndex(page - 1)}
                   className={`w-10 h-10 rounded-full font-medium flex items-center justify-center transition-all ${
                     table.getState().pagination.pageIndex === page - 1
-                      ? 'bg-[#B58E36] text-white'
+                      ? 'bg-[var(--color-gold)] text-white'
                       : 'hover:bg-gray-100 text-gray-600'
                   }`}
                 >

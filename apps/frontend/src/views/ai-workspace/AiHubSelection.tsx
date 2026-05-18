@@ -19,7 +19,7 @@ const categories: AiCategory[] = [
     description:
       'Bantu buat lesson plan, design assessment, dan generate materi training dengan AI',
     icon: 'solar:presentation-graph-bold-duotone',
-    color: '#4F75FF',
+    color: 'var(--color-primary)',
     route: '/user/ai-hub/trainer-workspace',
   },
   {
@@ -28,7 +28,7 @@ const categories: AiCategory[] = [
     description:
       'Analisis performa peserta, feedback otomatis, dan coaching tips untuk trainer master',
     icon: 'solar:diploma-verified-bold-duotone',
-    color: '#AA8D55',
+    color: 'var(--color-gold)',
     route: '/user/ai-hub/master-workspace',
   },
   {

@@ -6,6 +6,11 @@
   --color-warning-rgb: 248, 194, 10;
   --color-error-rgb: 255, 102, 146;
   --color-success-rgb: 46, 169, 92;
+
+  /* Brand gold — canonical single source of truth */
+  --color-gold: #AA8D55;
+  --color-gold-hover: #8B7346;
+  --color-gold-light: #F4EBD9;
 }
 
 [data-color-theme="BLUE_THEME"] {
@@ -58,19 +63,19 @@
 }
 
 [data-color-theme="BROWN_THEME"] {
-  --color-primary: #B8863B;
-  --color-secondary: #A67831;
-  --color-primary-rgb: 184, 134, 59;
-  --color-secondary-rgb: 166, 120, 49;
+  --color-primary: var(--color-gold);
+  --color-secondary: var(--color-gold-hover);
+  --color-primary-rgb: 170, 141, 85;
+  --color-secondary-rgb: 139, 115, 70;
 
   /* Warm neutral surface palette */
   --ai-bg: #F8F6F2;
   --ai-surface: #FFFFFF;
   --ai-border: #E8E2D8;
   --ai-accent-bg: #F5EBDD;
-  --ai-text-primary: #1F2937;
-  --ai-text-secondary: #6B7280;
-  --ai-gold: #B8863B;
-  --ai-gold-hover: #A67831;
-  --ai-gold-light: #F5EBDD;
+  --ai-text-primary: var(--dark);
+  --ai-text-secondary: var(--bodytext);
+  --ai-gold: var(--color-gold);
+  --ai-gold-hover: var(--color-gold-hover);
+  --ai-gold-light: var(--color-gold-light);
 }

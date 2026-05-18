@@ -51,14 +51,14 @@ const CourseLessonItem = ({
   const getLessonIcon = (status: string) => {
     if (status === 'selesai') {
       return (
-        <div className="w-9 h-9 rounded-lg bg-[#4F75FF] flex items-center justify-center flex-shrink-0">
+        <div className="w-9 h-9 rounded-lg bg-[var(--color-primary)] flex items-center justify-center flex-shrink-0">
           <Icon icon="solar:check-read-linear" className="text-white" height={20} />
         </div>
       )
     }
     if (status === 'sedang-diproses') {
       return (
-        <div className="w-9 h-9 rounded-lg bg-[#EBF3FF] flex items-center justify-center flex-shrink-0">
+        <div className="w-9 h-9 rounded-lg bg-[var(--color-lightprimary)] flex items-center justify-center flex-shrink-0">
           <Icon icon="solar:play-bold" className="text-primary" height={18} />
         </div>
       )
@@ -75,7 +75,7 @@ const CourseLessonItem = ({
       <div
         className={`flex items-start gap-3 p-2 rounded-xl transition-all duration-200 cursor-pointer border ${
           isActive
-            ? 'bg-[#EFF4FF] border-[#4F75FF] shadow-sm'
+            ? 'bg-[var(--color-lightprimary)] border-[var(--color-primary)] shadow-sm'
             : 'hover:bg-gray-50 bg-white border-transparent'
         }`}
         onClick={onClick}
@@ -84,7 +84,7 @@ const CourseLessonItem = ({
         <div className="flex-1 min-w-0">
           <div className="flex items-center justify-between mb-1">
             <h4
-              className={`text-sm font-semibold truncate pr-2 ${isActive ? 'text-[#4F75FF]' : 'text-dark'}`}
+              className={`text-sm font-semibold truncate pr-2 ${isActive ? 'text-[var(--color-primary)]' : 'text-dark'}`}
             >
               {lesson.title}
             </h4>

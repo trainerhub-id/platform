@@ -75,7 +75,7 @@ const KelasArchive = () => {
                 className={`p-0 overflow-hidden border rounded-2xl border-gray-200 bg-white transition-all ${
                   course.hasAccess === false
                     ? 'opacity-60 cursor-not-allowed'
-                    : 'cursor-pointer hover:border-[#B58E36] hover:ring-1 hover:ring-[#B58E36]/20'
+                    : 'cursor-pointer hover:border-[var(--color-gold)] hover:ring-1 hover:ring-[var(--color-gold)]/20'
                 }`}
                 onClick={() => handleCourseClick(course.id, course.hasAccess !== false)}
               >
@@ -83,7 +83,7 @@ const KelasArchive = () => {
                   {/* Header */}
                   <div className="px-4 py-3 border-b border-ld flex items-center justify-between">
                     <div className="flex items-center gap-2 flex-1">
-                      <h5 className="font-bold text-[#AA8D55] text-base">{course.title}</h5>
+                      <h5 className="font-bold text-[var(--color-gold)] text-base">{course.title}</h5>
                       {course.hasAccess === false && (
                         <Icon icon="solar:lock-bold" className="text-gray-400" height={16} />
                       )}
@@ -91,7 +91,7 @@ const KelasArchive = () => {
                     {course.progress !== undefined &&
                       course.progress > 0 &&
                       course.hasAccess !== false && (
-                        <Badge className="bg-[#E6D6BC] text-[#8D6E33] hover:bg-[#E6D6BC] font-medium text-xs px-2 py-0.5">
+                        <Badge className="bg-[var(--color-gold-light)] text-[var(--color-gold-hover)] hover:bg-[var(--color-gold-light)] font-medium text-xs px-2 py-0.5">
                           {course.progress}%
                         </Badge>
                       )}
@@ -151,7 +151,7 @@ const KelasArchive = () => {
                           Terkunci
                         </Badge>
                       ) : (
-                        <Button className="bg-[#AA8D55] hover:bg-[#AA8D55]/90 text-white rounded-xl px-4 py-1.5 h-auto text-[10px] font-bold shadow-none transition-colors border-none outline-none uppercase tracking-wider">
+                        <Button className="bg-[var(--color-gold)] hover:bg-[var(--color-gold)]/90 text-white rounded-xl px-4 py-1.5 h-auto text-[10px] font-bold shadow-none transition-colors border-none outline-none uppercase tracking-wider">
                           {course.progress && course.progress > 0 ? 'Lanjutkan' : 'Mulai'}
                         </Button>
                       )}

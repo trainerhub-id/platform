@@ -17,7 +17,7 @@ export const TodoItem: React.FC<Props> = ({ item }) => {
       {/* Checkbox Icon */}
       <div className={`mt-0.5 flex-shrink-0 ${isDone ? 'text-blue-500' : 'text-gray-300'}`}>
         {isDone ? (
-          <IconSquareRoundedCheckFilled size={24} className="text-[#5D87FF]" />
+          <IconSquareRoundedCheckFilled size={24} className="text-[var(--color-primary)]" />
         ) : (
           <IconSquareRounded size={24} stroke={1.5} />
         )}
@@ -37,7 +37,7 @@ export const TodoItem: React.FC<Props> = ({ item }) => {
         <div className="mt-0.5">
           {isDone ? (
             <button
-              className="text-[10px] font-semibold uppercase tracking-wider text-white bg-[#5D87FF] px-2 py-0.5 rounded-md cursor-default"
+              className="text-[10px] font-semibold uppercase tracking-wider text-white bg-[var(--color-primary)] px-2 py-0.5 rounded-md cursor-default"
               disabled
             >
               Selesai

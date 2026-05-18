@@ -180,7 +180,7 @@ const ManageTraining = () => {
                             <p className="text-base font-bold text-dark leading-tight">
                               {batch.name}
                             </p>
-                            <p className="text-xs text-[#B58E36] font-medium mt-1">
+                            <p className="text-xs text-[var(--color-gold)] font-medium mt-1">
                               Trainer: {batch.trainerName}
                             </p>
                           </div>
@@ -191,7 +191,7 @@ const ManageTraining = () => {
                           <div className="flex items-center gap-1.5 text-sm text-bodytext font-medium">
                             <Icon
                               icon="solar:calendar-linear"
-                              className="text-[#B58E36]"
+                              className="text-[var(--color-gold)]"
                               height={16}
                             />
                             <span>
@@ -242,7 +242,7 @@ const ManageTraining = () => {
                           <Button
                             variant="ghost"
                             size="icon"
-                            className="h-9 w-9 p-0 rounded-xl hover:bg-blue-50 text-[#4287F5] transition-all hover:scale-110"
+                            className="h-9 w-9 p-0 rounded-xl hover:bg-blue-50 text-[var(--color-primary)] transition-all hover:scale-110"
                             onClick={(e) => {
                               e.stopPropagation()
                               handleEdit(batch)

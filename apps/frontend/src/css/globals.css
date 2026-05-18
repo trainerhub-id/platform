@@ -89,6 +89,11 @@
   --color-link: var(--link);
   --color-sky: var(--sky);
 
+  --color-gold: var(--color-gold);
+  --color-gold-hover: var(--color-gold-hover);
+  --color-gold-light: var(--color-gold-light);
+  --color-lightgold: color-mix(in oklab, var(--color-gold) 12%, transparent);
+
   --color-darkgray: var(--darkgray);
   --color-darkinfo: var(--darkinfo);
   --color-destructive-foreground: var(--destructive-foreground);
@@ -663,10 +668,6 @@ body {
     @apply text-darklink;
   }
 
-  span {
-    @apply leading-none;
-  }
-
   .ai-response h1,
   .ai-response h2,
   .ai-response h3,
@@ -697,39 +698,6 @@ body {
   .ai-response li {
     margin-bottom: 0.7rem;
   }
-}
-
-/* Headlessui */
-.ui-button {
-  @apply flex items-stretch justify-between text-center py-2.5 px-5 text-white text-center font-medium rounded-md;
-}
-
-.ui-button-small {
-  @apply flex items-stretch justify-between text-center py-2 px-6 text-white text-center font-medium rounded-md;
-}
-
-.ui-dropdown {
-  @apply text-ld w-full !max-w-56 bg-white dark:bg-dark shadow-md dark:shadow-dark-md text-start rounded-sm py-3;
-}
-
-.ui-dropdown-item {
-  @apply flex w-full gap-3 cursor-pointer items-center justify-start px-4 py-2 text-sm text-ld hover:text-primary bg-hover focus:bg-hover focus:outline-none;
-}
-
-.ui-dropdown-animation {
-  @apply origin-top-right transition duration-100 ease-out [--anchor-gap:var(--spacing-1)] focus:outline-none data-[closed]:scale-95 data-[closed]:opacity-0;
-}
-
-.ui-form-control {
-  @apply border border-border dark:border-darkborder bg-transparent dark:bg-transparent w-full text-sm;
-}
-
-.ui-form-control:focus {
-  @apply border-primary dark:border-primary outline-none shadow-none ring-offset-0 ring-transparent dark:ring-transparent focus:dark:ring-0;
-}
-
-.ui-checkbox {
-  @apply h-[18px] w-[18px] border border-border dark:border-darkborder bg-white dark:bg-transparent data-[checked]:bg-primary dark:data-[checked]:bg-primary rounded cursor-pointer focus:ring-0 focus:ring-offset-0 outline-none;
 }
 
 @layer utilities {
@@ -782,7 +750,7 @@ body {
 }
 
 .aui-thread-viewport-root:hover::-webkit-scrollbar-thumb {
-  background: #d1d5db;
+  background: var(--color-border);
 }
 
 /* Firefox */
@@ -792,7 +760,7 @@ body {
 }
 
 .aui-thread-viewport-root:hover {
-  scrollbar-color: #d1d5db transparent;
+  scrollbar-color: var(--color-border) transparent;
 }
 
 /* Force white text inside user chat bubbles */
@@ -811,5 +779,5 @@ body {
 .is-user .bg-primary h4,
 .is-user .bg-primary h5,
 .is-user .bg-primary h6 {
-  color: #ffffff !important;
+  color: var(--color-white) !important;
 }

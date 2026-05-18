@@ -121,7 +121,7 @@ const CertificateDetailCard = ({
       <div className="flex flex-col gap-4 pt-2 border-t border-gray-100 mt-2">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           {!isReady && (
-            <Alert className="bg-[#EBF3FF] border-none flex items-center gap-3 py-2 px-4 rounded-md md:w-auto w-full flex-1">
+            <Alert className="bg-[var(--color-lightprimary)] border-none flex items-center gap-3 py-2 px-4 rounded-md md:w-auto w-full flex-1">
               <Icon icon="solar:info-circle-bold" className="text-primary shrink-0" height={18} />
               <AlertDescription className="text-xs text-primary">
                 {alertMessage || 'Sertifikat belum tersedia.'}

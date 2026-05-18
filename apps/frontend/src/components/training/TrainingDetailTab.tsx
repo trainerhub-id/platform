@@ -24,56 +24,56 @@ const TrainingDetailTab = ({ selectedTraining }: TrainingDetailTabProps) => {
             />
           </div>
           <div>
-            <h4 className="text-lg font-bold text-[#1A2537] mb-0">
+            <h4 className="text-lg font-bold text-dark mb-0">
               {selectedTraining.participant.name}
             </h4>
-            <p className="text-[#98A4AE] text-sm">Informasi Profile user</p>
+            <p className="text-lightmuted text-sm">Informasi Profile user</p>
           </div>
         </div>
 
         {/* Info Grid */}
         <div className="grid grid-cols-2 gap-y-6 gap-x-4">
           <div>
-            <p className="text-[#98A4AE] text-[11px] mb-1 font-bold uppercase tracking-wider">
+            <p className="text-lightmuted text-[11px] mb-1 font-bold uppercase tracking-wider">
               Nama batch
             </p>
-            <h5 className="text-sm font-bold text-[#1A2537]">{selectedTraining.title}</h5>
+            <h5 className="text-sm font-bold text-dark">{selectedTraining.title}</h5>
           </div>
           <div>
-            <p className="text-[#98A4AE] text-[11px] mb-1 font-bold uppercase tracking-wider">
+            <p className="text-lightmuted text-[11px] mb-1 font-bold uppercase tracking-wider">
               Tanggal training
             </p>
-            <h5 className="text-sm font-bold text-[#1A2537]">
+            <h5 className="text-sm font-bold text-dark">
               {selectedTraining.dateStart} - {selectedTraining.dateEnd}
             </h5>
           </div>
           <div className="col-span-2">
-            <p className="text-[#98A4AE] text-[11px] mb-1 font-bold uppercase tracking-wider">
+            <p className="text-lightmuted text-[11px] mb-1 font-bold uppercase tracking-wider">
               Address
             </p>
-            <h5 className="text-sm font-bold text-[#1A2537] leading-normal">
+            <h5 className="text-sm font-bold text-dark leading-normal">
               {selectedTraining.location}
             </h5>
           </div>
           <div>
-            <p className="text-[#98A4AE] text-[11px] mb-1 font-bold uppercase tracking-wider">
+            <p className="text-lightmuted text-[11px] mb-1 font-bold uppercase tracking-wider">
               Jam registrasi
             </p>
-            <h5 className="text-sm font-bold text-[#1A2537]">
+            <h5 className="text-sm font-bold text-dark">
               {trainingStaticInfo.registrationTime}
             </h5>
           </div>
           <div>
-            <p className="text-[#98A4AE] text-[11px] mb-1 font-bold uppercase tracking-wider">
+            <p className="text-lightmuted text-[11px] mb-1 font-bold uppercase tracking-wider">
               Jam sesi
             </p>
-            <h5 className="text-sm font-bold text-[#1A2537]">{trainingStaticInfo.sessionTime}</h5>
+            <h5 className="text-sm font-bold text-dark">{trainingStaticInfo.sessionTime}</h5>
           </div>
           <div className="col-span-2">
-            <p className="text-[#98A4AE] text-[11px] mb-1 font-bold uppercase tracking-wider">
+            <p className="text-lightmuted text-[11px] mb-1 font-bold uppercase tracking-wider">
               Kelengkapan. Apa yang Perlu Dibawa
             </p>
-            <h5 className="text-sm font-medium text-[#1A2537] leading-relaxed">
+            <h5 className="text-sm font-medium text-dark leading-relaxed">
               {trainingStaticInfo.requirements}
             </h5>
           </div>
@@ -81,12 +81,12 @@ const TrainingDetailTab = ({ selectedTraining }: TrainingDetailTabProps) => {
 
         {/* Action Buttons */}
         <div className="flex flex-wrap items-center gap-3 pt-2">
-          <Button className="bg-[#E8F2FF] hover:bg-[#D6E8FF] text-[#3C88FE] font-bold rounded-xl px-4 py-2 h-auto text-xs shadow-none transition-all border-none outline-none">
+          <Button className="bg-lightinfo hover:bg-[#D6E8FF] text-info font-bold rounded-xl px-4 py-2 h-auto text-xs shadow-none transition-all border-none outline-none">
             Cek Status Pembayaran: {selectedTraining.paymentStatus || 'PENDING'}
           </Button>
           <Button
             variant="outline"
-            className="border-gray-200 text-[#1A2537] font-bold rounded-xl px-4 py-2 h-auto text-xs hover:bg-gray-50 transition-all"
+            className="border-gray-200 text-dark font-bold rounded-xl px-4 py-2 h-auto text-xs hover:bg-lightgray transition-all"
           >
             Panitia
           </Button>
@@ -95,10 +95,10 @@ const TrainingDetailTab = ({ selectedTraining }: TrainingDetailTabProps) => {
 
       {/* Right Column (Trainer Box) */}
       <div className="2xl:col-span-4 col-span-12">
-        <CardBox className="bg-[#F4F7FB] border-[#E9F0F8] shadow-none!">
-          <div className="px-3 py-2 border-b border-[#E9F0F8] flex items-center gap-2">
-            <Icon icon="solar:user-rounded-bold" className="text-[#98A4AE]" height={18} />
-            <span className="text-[11px] font-bold text-[#1A2537] uppercase tracking-wider">
+        <CardBox className="bg-lightgray border-ld shadow-none!">
+          <div className="px-3 py-2 border-b border-ld flex items-center gap-2">
+            <Icon icon="solar:user-rounded-bold" className="text-lightmuted" height={18} />
+            <span className="text-[11px] font-bold text-dark uppercase tracking-wider">
               Informasi Trainer
             </span>
           </div>
@@ -115,27 +115,27 @@ const TrainingDetailTab = ({ selectedTraining }: TrainingDetailTabProps) => {
                 />
               </div>
               <div>
-                <h5 className="text-base font-bold text-[#1A2537] mb-0">
+                <h5 className="text-base font-bold text-dark mb-0">
                   {selectedTraining.trainer.name}
                 </h5>
-                <p className="text-[#98A4AE] text-xs font-bold">
+                <p className="text-lightmuted text-xs font-bold">
                   {selectedTraining.trainer.position}
                 </p>
               </div>
             </div>
 
             <div className="space-y-2">
-              <p className="text-[#1A2537] text-sm leading-relaxed">
+              <p className="text-dark text-sm leading-relaxed">
                 Hello {selectedTraining.trainer.name},
               </p>
-              <p className="text-[#1A2537] text-xs leading-relaxed opacity-80">
+              <p className="text-dark text-xs leading-relaxed opacity-80">
                 {selectedTraining.trainer.bio || 'No biography available for this trainer.'}
               </p>
               <div className="pt-1">
-                <p className="text-[#98A4AE] text-[10px] mb-0.5 font-bold uppercase tracking-wider">
+                <p className="text-lightmuted text-[10px] mb-0.5 font-bold uppercase tracking-wider">
                   Regards,
                 </p>
-                <h5 className="text-sm font-bold text-[#1A2537]">
+                <h5 className="text-sm font-bold text-dark">
                   {selectedTraining.trainer.assignedBy || 'Admin'}
                 </h5>
               </div>

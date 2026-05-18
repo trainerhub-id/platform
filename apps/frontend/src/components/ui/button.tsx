@@ -40,7 +40,7 @@ const buttonVariants = cva(
         lightprimary: 'bg-lightprimary text-primary hover:bg-primary hover:text-white',
         lightsecondary: 'bg-lightsecondary text-secondary hover:bg-secondary hover:text-white',
         lightsuccess: 'bg-lightsuccess text-success hover:bg-success hover:text-white',
-        lightsarning: 'bg-lightwarning text-warning hover:bg-warning hover:text-white',
+        lightwarning: 'bg-lightwarning text-warning hover:bg-warning hover:text-white',
         lightinfo: 'bg-lightinfo text-info hover:bg-info hover:text-white',
         lighterror: 'bg-lighterror text-error hover:bg-error hover:text-white',
         white: 'bg-white text-primary hover:bg-white/80',

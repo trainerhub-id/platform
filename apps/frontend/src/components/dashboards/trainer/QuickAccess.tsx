@@ -109,7 +109,7 @@ const QuickAccess = () => {
 
   return (
     <div className="py-2">
-      <h4 className="text-lg font-bold text-gray-800 mb-6">Akses Cepat</h4>
+      <h4 className="text-lg font-bold text-dark mb-6">Akses Cepat</h4>
 
       {/* Top row: Profile Peserta and Informasi Training (larger) */}
       <div className="grid grid-cols-3 gap-4 mb-4">

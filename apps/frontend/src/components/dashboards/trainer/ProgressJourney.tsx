@@ -63,7 +63,7 @@ const ProgressJourney = ({ journey = [] }: ProgressJourneyProps) => {
         <div className="absolute top-6 left-6 right-6 h-0.5 bg-gray-100">
           <div
             className="h-full transition-all duration-500"
-            style={{ width: `${progressPercentage}%`, backgroundColor: '#B8935E' }}
+            style={{ width: `${progressPercentage}%`, backgroundColor: 'var(--color-gold)' }}
           ></div>
         </div>
 
@@ -86,16 +86,16 @@ const ProgressJourney = ({ journey = [] }: ProgressJourneyProps) => {
                 }`}
                 style={
                   step.status === 'completed'
-                    ? { backgroundColor: '#B8935E' }
+                    ? { backgroundColor: 'var(--color-gold)' }
                     : step.status === 'current'
-                      ? { borderWidth: '2px', borderColor: '#B8935E', backgroundColor: '#fff' }
+                      ? { borderWidth: '2px', borderColor: 'var(--color-gold)', backgroundColor: '#fff' }
                       : { borderWidth: '1px', borderColor: '#e5e7eb' }
                 }
               >
                 {step.status === 'completed' ? (
                   <Icon icon="solar:check-read-outline" className="text-white" height={24} />
                 ) : step.status === 'current' ? (
-                  <span className="text-sm font-bold text-[#B8935E]">{step.id}</span>
+                  <span className="text-sm font-bold text-[var(--color-gold)]">{step.id}</span>
                 ) : (
                   <span className="text-sm font-bold text-gray-400">{step.id}</span>
                 )}
@@ -107,10 +107,10 @@ const ProgressJourney = ({ journey = [] }: ProgressJourneyProps) => {
                   step.status === 'completed'
                     ? ''
                     : step.status === 'current'
-                      ? 'text-[#B8935E]'
+                      ? 'text-[var(--color-gold)]'
                       : 'text-gray-500'
                 }`}
-                style={step.status === 'completed' ? { color: '#B8935E' } : {}}
+                style={step.status === 'completed' ? { color: 'var(--color-gold)' } : {}}
               >
                 {step.title}
               </p>

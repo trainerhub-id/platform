@@ -10,7 +10,7 @@ const getRundownColor = (type: string) => {
     case 'registration':
       return '#F8C20A' // Warning/Gold
     case 'session':
-      return '#B58E36' // Primary/Gold
+      return 'var(--color-gold)' // Primary/Gold
     case 'break':
       return '#3C88FE' // Info/Blue
     default:

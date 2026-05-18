@@ -25,7 +25,7 @@ const AdminStatsCard = ({ title, subtitle, value, icon, colors }: AdminStatsCard
         <h3 className={`${colors.text} font-bold text-lg leading-tight mb-2 whitespace-pre-line`}>
           {title}
         </h3>
-        <p className="text-gray-500 text-xs mb-1">{subtitle}</p>
+        <p className="text-bodytext text-xs mb-1">{subtitle}</p>
         <div className={`${colors.text} text-3xl font-bold`}>{value}</div>
       </div>
     </Card>

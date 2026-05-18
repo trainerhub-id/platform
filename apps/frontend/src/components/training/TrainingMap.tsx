@@ -74,7 +74,7 @@ const TrainingMap = ({ selectedTraining }: TrainingMapProps) => {
               </div>
 
               {/* Content Area with Gold Background */}
-              <div className="bg-[#AA8D55] p-5 pt-10 relative">
+              <div className="bg-[var(--color-gold)] p-5 pt-10 relative">
                 {/* Overlapping Avatar */}
                 <div className="absolute -top-8 left-5">
                   <img

@@ -134,7 +134,7 @@ const ManageKelas = () => {
                         <Button
                           variant="ghost"
                           size="icon"
-                          className="h-9 w-9 p-0 rounded-xl hover:bg-blue-50 text-[#4287F5] transition-all"
+                          className="h-9 w-9 p-0 rounded-xl hover:bg-blue-50 text-[var(--color-primary)] transition-all"
                           onClick={(e) => {
                             e.stopPropagation()
                             handleEdit(course)

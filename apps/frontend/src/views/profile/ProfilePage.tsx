@@ -162,17 +162,17 @@ const ProfilePage = () => {
       {/* Basic Info Section */}
       <Card className="p-6">
         <div className="flex items-center gap-3 mb-6 pb-4 border-b">
-          <Icon icon="solar:user-circle-bold" className="text-[#AA8D55]" height={28} />
+          <Icon icon="solar:user-circle-bold" className="text-[var(--color-gold)]" height={28} />
           <div>
             <h2 className="text-xl font-bold text-dark">Informasi Dasar</h2>
-            <p className="text-sm text-gray-500">Data pendaftaran TrainerHub</p>
+            <p className="text-sm text-bodytext">Data pendaftaran TrainerHub</p>
           </div>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
             <Label htmlFor="nama">
-              Nama Lengkap Sesuai KTP <span className="text-red-500">*</span>
+              Nama Lengkap Sesuai KTP <span className="text-error">*</span>
             </Label>
             <Input
               id="nama"
@@ -185,7 +185,7 @@ const ProfilePage = () => {
 
           <div>
             <Label htmlFor="email">
-              Email Aktif <span className="text-red-500">*</span>
+              Email Aktif <span className="text-error">*</span>
             </Label>
             <Input
               id="email"
@@ -194,12 +194,12 @@ const ProfilePage = () => {
               disabled
               className="mt-2 bg-gray-50"
             />
-            <p className="text-xs text-gray-500 mt-1">Email tidak dapat diubah</p>
+            <p className="text-xs text-bodytext mt-1">Email tidak dapat diubah</p>
           </div>
 
           <div>
             <Label htmlFor="noWa">
-              No. WhatsApp Aktif <span className="text-red-500">*</span>
+              No. WhatsApp Aktif <span className="text-error">*</span>
             </Label>
             <Input
               id="noWa"
@@ -234,17 +234,17 @@ const ProfilePage = () => {
       {/* BNSP Data Section */}
       <Card className="p-6">
         <div className="flex items-center gap-3 mb-6 pb-4 border-b">
-          <Icon icon="solar:diploma-verified-bold" className="text-[#AA8D55]" height={28} />
+          <Icon icon="solar:diploma-verified-bold" className="text-[var(--color-gold)]" height={28} />
           <div>
             <h2 className="text-xl font-bold text-dark">Data BNSP</h2>
-            <p className="text-sm text-gray-500">Keperluan pengajuan sertifikasi ke LSP</p>
+            <p className="text-sm text-bodytext">Keperluan pengajuan sertifikasi ke LSP</p>
           </div>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
             <Label htmlFor="nik">
-              NIK <span className="text-red-500">*</span>
+              NIK <span className="text-error">*</span>
             </Label>
             <Input
               id="nik"
@@ -254,12 +254,12 @@ const ProfilePage = () => {
               maxLength={16}
               className="mt-2"
             />
-            <p className="text-xs text-gray-500 mt-1">16 digit NIK sesuai KTP</p>
+            <p className="text-xs text-bodytext mt-1">16 digit NIK sesuai KTP</p>
           </div>
 
           <div>
             <Label htmlFor="ttl">
-              Tempat, Tanggal Lahir <span className="text-red-500">*</span>
+              Tempat, Tanggal Lahir <span className="text-error">*</span>
             </Label>
             <Input
               id="ttl"
@@ -272,7 +272,7 @@ const ProfilePage = () => {
 
           <div>
             <Label htmlFor="jk">
-              Jenis Kelamin <span className="text-red-500">*</span>
+              Jenis Kelamin <span className="text-error">*</span>
             </Label>
             <Select value={formData.jk} onValueChange={(value) => handleChange('jk', value)}>
               <SelectTrigger className="mt-2">
@@ -287,7 +287,7 @@ const ProfilePage = () => {
 
           <div>
             <Label htmlFor="kota">
-              Nama Kota <span className="text-red-500">*</span>
+              Nama Kota <span className="text-error">*</span>
             </Label>
             <Input
               id="kota"
@@ -300,7 +300,7 @@ const ProfilePage = () => {
 
           <div>
             <Label htmlFor="provinsi">
-              Nama Provinsi <span className="text-red-500">*</span>
+              Nama Provinsi <span className="text-error">*</span>
             </Label>
             <Input
               id="provinsi"
@@ -313,7 +313,7 @@ const ProfilePage = () => {
 
           <div>
             <Label htmlFor="pendidikan">
-              Pendidikan Terakhir <span className="text-red-500">*</span>
+              Pendidikan Terakhir <span className="text-error">*</span>
             </Label>
             <Input
               id="pendidikan"
@@ -326,7 +326,7 @@ const ProfilePage = () => {
 
           <div>
             <Label htmlFor="pekerjaan">
-              Pekerjaan <span className="text-red-500">*</span>
+              Pekerjaan <span className="text-error">*</span>
             </Label>
             <Input
               id="pekerjaan"
@@ -339,7 +339,7 @@ const ProfilePage = () => {
 
           <div className="md:col-span-2">
             <Label htmlFor="alamat">
-              Alamat Tempat Tinggal <span className="text-red-500">*</span>
+              Alamat Tempat Tinggal <span className="text-error">*</span>
             </Label>
             <Textarea
               id="alamat"
@@ -362,7 +362,7 @@ const ProfilePage = () => {
         <Button
           onClick={handleSave}
           disabled={saving}
-          className="bg-[#AA8D55] hover:bg-[#8B7346] text-white"
+          className="bg-[var(--color-gold)] hover:bg-[var(--color-gold-hover)] text-white"
         >
           {saving ? (
             <>

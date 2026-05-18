@@ -272,8 +272,8 @@ const Kelas = () => {
             >
               <Icon icon="solar:arrow-left-outline" height={20} className="text-gray-600" />
             </Button>
-            <div className="w-10 h-10 rounded-lg bg-[#E6D6BC] flex items-center justify-center shrink-0">
-              <Icon icon="solar:bookmark-linear" className="text-[#8D6E33]" height={20} />
+            <div className="w-10 h-10 rounded-lg bg-[var(--color-gold-light)] flex items-center justify-center shrink-0">
+              <Icon icon="solar:bookmark-linear" className="text-[var(--color-gold-hover)]" height={20} />
             </div>
             <div className="flex-1 min-w-0">
               <h1 className="text-base font-bold text-dark leading-tight">{selectedKelas.title}</h1>
@@ -373,7 +373,7 @@ const Kelas = () => {
                         checked={activeLesson.status === 'selesai'}
                         onChange={handleCheckboxChange}
                       />
-                      <div className="w-5 h-5 border-2 border-[#AA8D55] rounded flex items-center justify-center peer-checked:bg-[#AA8D55] peer-checked:border-[#AA8D55] transition-all group-hover:border-[#AA8D55]/80">
+                      <div className="w-5 h-5 border-2 border-[var(--color-gold)] rounded flex items-center justify-center peer-checked:bg-[var(--color-gold)] peer-checked:border-[var(--color-gold)] transition-all group-hover:border-[var(--color-gold)]/80">
                         <Icon
                           icon="solar:check-read-linear"
                           className="text-white opacity-0 peer-checked:opacity-100"
@@ -408,7 +408,7 @@ const Kelas = () => {
                   </Button>
                   <Button
                     size="sm"
-                    className="flex-1 sm:flex-none bg-[#4F75FF] hover:bg-[#4F75FF]/90 text-white h-9 px-3"
+                    className="flex-1 sm:flex-none bg-[var(--color-primary)] hover:bg-[var(--color-primary)]/90 text-white h-9 px-3"
                     onClick={goToNextLesson}
                   >
                     Selanjutnya
@@ -418,7 +418,7 @@ const Kelas = () => {
               </div>
 
               {/* Progress Bar (Moved to bottom) */}
-              <div className="mt-4 bg-[#AA8D55] rounded-md p-3 border border-[#AA8D55]">
+              <div className="mt-4 bg-[var(--color-gold)] rounded-md p-3 border border-[var(--color-gold)]">
                 <div className="flex justify-between items-center mb-1">
                   <h3 className="font-semibold text-xs text-white">Progress Kelas</h3>
                   <span className="font-bold text-xs text-white">{selectedKelas.progress}%</span>
