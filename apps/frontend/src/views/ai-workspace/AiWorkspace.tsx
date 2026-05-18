@@ -34,6 +34,11 @@ import {
   updateDocument,
 } from './ai-workspace.api'
 import { checkpointConfig, getEffectiveStatus, getProgress } from './checkpoints'
+import {
+  type DocCategory,
+  TRAINER_DOC_CATEGORIES,
+  TRAINER_DOC_CATEGORIES_GENERATING,
+} from './document-generation'
 
 type UiMessage =
   | ConversationMessage
@@ -768,169 +773,427 @@ function CheckpointPanel({
   readiness: InterviewReadiness | null
   progress: number
 }) {
-  const groups = checkpointConfig[flow]
-  const requiredFields = groups.flatMap((group) => group.fields).filter((field) => !field.optional)
-  const completedFields = requiredFields.filter((field) =>
-    ['captured', 'confirmed'].includes(getEffectiveStatus(readiness, field)),
-  )
-  const completedGroups = groups.filter((group) =>
-    group.fields
-      .filter((field) => !field.optional)
-      .every((field) => ['captured', 'confirmed'].includes(getEffectiveStatus(readiness, field))),
-  )
-  const missingFields = requiredFields
-    .filter((field) => !['captured', 'confirmed'].includes(getEffectiveStatus(readiness, field)))
-    .map((field) => field.label)
-    .slice(0, 3)
-  const documentLabel = flow === 'master' ? 'Dokumen Master' : 'Dokumen Trainer'
-  const activeGroup = groups.find((group) => group.phaseKey === readiness?.phase) ?? groups[0]
-  const nextField = missingFields[0] ?? null
+  // Derive docGenStatus from readiness
+  // In production this would come from document generation API
+  const isReady = readiness?.ready ?? false
+
+  const categories = isReady ? TRAINER_DOC_CATEGORIES : TRAINER_DOC_CATEGORIES_GENERATING
 
   return (
     <aside
       className="hidden w-72 flex-shrink-0 overflow-y-auto lg:block"
       style={{ background: 'var(--ai-bg, #F8F6F2)' }}
     >
-      <div className="p-5 space-y-5">
-        {/* Header */}
-        <div>
-          <div className="flex items-center justify-between gap-2">
-            <div>
-              <h4 className="text-sm font-bold" style={{ color: 'var(--ai-text-primary, #1F2937)' }}>
-                Progress Dokumen
-              </h4>
-              <p className="mt-0.5 text-xs" style={{ color: 'var(--ai-text-secondary, #6B7280)' }}>
-                {documentLabel}
-              </p>
-            </div>
-            <span
-              className="rounded-lg px-2 py-1 text-xs font-semibold"
-              style={{ background: 'var(--ai-accent-bg, #F5EBDD)', color: 'var(--ai-gold, #B8863B)' }}
-            >
-              {progress}%
-            </span>
-          </div>
-
-          {/* Progress bar */}
-          <div className="mt-3 h-1.5 rounded-full overflow-hidden" style={{ background: 'var(--ai-border, #E8E2D8)' }}>
-            <div
-              className="h-full rounded-full transition-all duration-500"
-              style={{ width: `${progress}%`, background: readiness?.ready ? '#34A853' : 'var(--ai-gold, #B8863B)' }}
-            />
-          </div>
-          <div className="mt-2 flex items-center justify-between text-[11px]" style={{ color: 'var(--ai-text-secondary, #6B7280)' }}>
-            <span>{completedFields.length}/{requiredFields.length} field</span>
-            <span>{completedGroups.length}/{groups.length} fase</span>
-          </div>
-        </div>
-
-        {/* Current phase card */}
-        <div
-          className="rounded-xl p-3.5"
-          style={{ background: 'var(--ai-accent-bg, #F5EBDD)', border: '1px solid var(--ai-border, #E8E2D8)' }}
-        >
-          <p className="text-[10px] font-semibold uppercase tracking-wider mb-2.5" style={{ color: 'var(--ai-gold, #B8863B)' }}>
-            Fase Saat Ini
-          </p>
-          <div className="flex items-start gap-2.5">
-            <div
-              className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg"
-              style={{ background: 'var(--ai-gold, #B8863B)' }}
-            >
-              <Icon icon="solar:clock-circle-bold-duotone" height={16} className="text-white" />
-            </div>
-            <div className="min-w-0">
-              <p className="text-sm font-semibold" style={{ color: 'var(--ai-text-primary, #1F2937)' }}>
-                {activeGroup?.label || 'Brainstorming'}
-              </p>
-              <p className="mt-1 text-xs leading-5" style={{ color: 'var(--ai-text-secondary, #6B7280)' }}>
-                {activeGroup?.description || 'Lengkapi informasi utama melalui chat.'}
-              </p>
-            </div>
-          </div>
-        </div>
-
-        {/* Ready or next field */}
-        {readiness?.ready ? (
-          <div
-            className="rounded-xl p-3.5"
-            style={{ background: '#f0fdf4', border: '1px solid #bbf7d0' }}
-          >
-            <p className="text-sm font-semibold" style={{ color: '#16a34a' }}>Siap generate</p>
-            <p className="mt-1 text-xs leading-5" style={{ color: '#6B7280' }}>
-              Field utama sudah lengkap untuk lanjut ke dokumen.
-            </p>
-          </div>
-        ) : nextField ? (
-          <div
-            className="rounded-xl p-3.5"
-            style={{ background: 'var(--ai-surface, #FFFFFF)', border: '1px solid var(--ai-border, #E8E2D8)' }}
-          >
-            <p className="text-[10px] font-semibold uppercase tracking-wider mb-2" style={{ color: 'var(--ai-text-secondary, #6B7280)' }}>
-              Berikutnya
-            </p>
-            <p className="text-sm font-semibold" style={{ color: 'var(--ai-text-primary, #1F2937)' }}>
-              {nextField}
-            </p>
-            {missingFields.length > 1 ? (
-              <p className="mt-1 text-xs leading-5" style={{ color: 'var(--ai-text-secondary, #6B7280)' }}>
-                Lainnya: {missingFields.slice(1).join(', ')}
-              </p>
-            ) : null}
-          </div>
-        ) : null}
-
-        {/* Phase checklist */}
-        <div className="space-y-1">
-          {groups.map((group) => {
-            const requiredGroupFields = group.fields.filter((field) => !field.optional)
-            const completedGroupFields = requiredGroupFields.filter((field) =>
-              ['captured', 'confirmed'].includes(getEffectiveStatus(readiness, field)),
-            )
-            const groupProgress = requiredGroupFields.length
-              ? Math.round((completedGroupFields.length / requiredGroupFields.length) * 100)
-              : 100
-            const groupDone = groupProgress === 100
-            const isCurrent = readiness?.phase === group.phaseKey
-
-            return (
-              <div
-                key={group.phaseKey}
-                className="flex items-center gap-2.5 rounded-lg px-3 py-2.5 transition-colors"
-                style={{
-                  background: isCurrent ? 'var(--ai-accent-bg, #F5EBDD)' : 'transparent',
-                }}
-              >
-                <StatusIcon done={groupDone} current={isCurrent} />
-                <div className="min-w-0 flex-1">
-                  <p
-                    className="truncate text-xs font-medium"
-                    style={{ color: isCurrent ? 'var(--ai-gold, #B8863B)' : 'var(--ai-text-secondary, #6B7280)' }}
-                  >
-                    {group.label}
-                  </p>
-                </div>
-                <span
-                  className="text-[11px] font-medium"
-                  style={{ color: groupDone ? '#16a34a' : isCurrent ? 'var(--ai-gold, #B8863B)' : 'var(--ai-text-secondary, #6B7280)' }}
-                >
-                  {groupProgress}%
-                </span>
-              </div>
-            )
-          })}
-        </div>
+      <div className="p-5">
+        {isReady ? (
+          <SidebarSiapDiunduh categories={TRAINER_DOC_CATEGORIES} />
+        ) : progress > 0 && progress < 100 ? (
+          <SidebarSedangGenerate categories={categories} />
+        ) : (
+          <SidebarBelumGenerate flow={flow} readiness={readiness} progress={progress} />
+        )}
       </div>
     </aside>
   )
 }
 
-function StatusIcon({ done, current }: { done: boolean; current: boolean }) {
-  if (done) {
-    return <Icon icon="solar:check-circle-bold" height={18} style={{ color: '#34A853', flexShrink: 0 }} />
-  }
-  if (current) {
-    return <Icon icon="solar:clock-circle-bold-duotone" height={18} style={{ color: 'var(--ai-gold, #B8863B)', flexShrink: 0 }} />
-  }
-  return <Icon icon="solar:record-circle-linear" height={18} style={{ color: 'var(--ai-border, #E8E2D8)', flexShrink: 0 }} />
+// ─── Shared helpers ──────────────────────────────────────────────────────────
+
+const S = {
+  gold: '#B8863B',
+  goldDark: '#A67831',
+  goldSoft: '#F4E8D2',
+  cream: '#F7F1E8',
+  border: '#E8E2D8',
+  bg: '#FAF8F3',
+  white: '#FFFFFF',
+  textPrimary: '#1F2937',
+  textSecondary: '#6B7280',
+  textMuted: '#9CA3AF',
+  green: '#34A853',
+  greenBg: '#EAF7EE',
+  processBg: '#FFF4DC',
+  track: '#E5E7EB',
+  tipsBg: '#FBF7EF',
+} as const
+
+function ProgressBar({ value, color = S.gold }: { value: number; color?: string }) {
+  return (
+    <div className="w-full rounded-full overflow-hidden" style={{ height: 8, background: S.track }}>
+      <div
+        className="h-full rounded-full transition-all duration-500"
+        style={{ width: `${Math.min(100, value)}%`, background: color }}
+      />
+    </div>
+  )
 }
+
+// ─── State 1: Belum Generate ─────────────────────────────────────────────────
+
+function SidebarBelumGenerate({
+  flow,
+  readiness,
+  progress,
+}: {
+  flow: AiFlow
+  readiness: InterviewReadiness | null
+  progress: number
+}) {
+  const groups = checkpointConfig[flow]
+  const requiredFields = groups.flatMap((g) => g.fields).filter((f) => !f.optional)
+  const completedFields = requiredFields.filter((f) =>
+    ['captured', 'confirmed'].includes(getEffectiveStatus(readiness, f)),
+  )
+  const completedGroups = groups.filter((g) =>
+    g.fields
+      .filter((f) => !f.optional)
+      .every((f) => ['captured', 'confirmed'].includes(getEffectiveStatus(readiness, f))),
+  )
+  const missingFields = requiredFields
+    .filter((f) => !['captured', 'confirmed'].includes(getEffectiveStatus(readiness, f)))
+    .map((f) => f.label)
+    .slice(0, 3)
+  const activeGroup = groups.find((g) => g.phaseKey === readiness?.phase) ?? groups[0]
+  const nextField = missingFields[0] ?? null
+
+  return (
+    <div className="space-y-5">
+      {/* Header */}
+      <div>
+        <div className="flex items-center justify-between gap-2">
+          <div>
+            <p className="text-[15px] font-bold" style={{ color: S.textPrimary }}>Progress Dokumen</p>
+            <p className="text-[13px] mt-0.5" style={{ color: S.textSecondary }}>Dokumen Trainer</p>
+          </div>
+          <span className="rounded-full px-3 py-1 text-[13px] font-bold" style={{ background: S.goldSoft, color: S.gold }}>
+            {progress}%
+          </span>
+        </div>
+        <div className="mt-3">
+          <ProgressBar value={progress} />
+        </div>
+        <div className="mt-2 flex justify-between text-[13px]" style={{ color: '#374151' }}>
+          <span>{completedFields.length}/{requiredFields.length} field</span>
+          <span>{completedGroups.length}/{groups.length} fase</span>
+        </div>
+      </div>
+
+      {/* Current phase */}
+      <div className="rounded-[18px] p-5" style={{ border: `1px solid ${S.border}`, background: S.white }}>
+        <p className="text-[12px] font-bold uppercase tracking-wider mb-3" style={{ color: S.textSecondary }}>
+          Fase Saat Ini
+        </p>
+        <div className="flex items-start gap-3">
+          <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full" style={{ background: '#E8C681' }}>
+            <Icon icon="solar:clock-circle-bold" height={14} style={{ color: S.gold }} />
+          </div>
+          <div className="min-w-0">
+            <p className="text-[17px] font-bold leading-tight" style={{ color: S.textPrimary }}>
+              {activeGroup?.label || 'Brainstorming'}
+            </p>
+            <p className="mt-1.5 text-[14px] leading-relaxed" style={{ color: '#4B5563' }}>
+              {activeGroup?.description || 'Arah kelas, audiens, hasil belajar, dan institusi.'}
+            </p>
+          </div>
+        </div>
+      </div>
+
+      {/* Next field */}
+      {nextField ? (
+        <div className="rounded-[18px] p-5" style={{ border: `1px solid ${S.border}`, background: S.white }}>
+          <p className="text-[12px] font-bold uppercase tracking-wider mb-2" style={{ color: S.textSecondary }}>
+            Berikutnya
+          </p>
+          <p className="text-[15px] font-bold" style={{ color: S.textPrimary }}>{nextField}</p>
+          {missingFields.length > 1 && (
+            <p className="mt-1 text-[13px]" style={{ color: S.textSecondary }}>
+              Lainnya: {missingFields.slice(1).join(', ')}
+            </p>
+          )}
+        </div>
+      ) : null}
+
+      {/* Phase checklist */}
+      <div className="space-y-1">
+        {groups.map((group) => {
+          const req = group.fields.filter((f) => !f.optional)
+          const done = req.filter((f) =>
+            ['captured', 'confirmed'].includes(getEffectiveStatus(readiness, f)),
+          )
+          const pct = req.length ? Math.round((done.length / req.length) * 100) : 100
+          const isDone = pct === 100
+          const isCurrent = readiness?.phase === group.phaseKey
+
+          return (
+            <div
+              key={group.phaseKey}
+              className="flex items-center gap-3 rounded-[14px] px-4"
+              style={{
+                height: 48,
+                background: isCurrent ? S.cream : 'transparent',
+              }}
+            >
+              {isDone ? (
+                <Icon icon="solar:check-circle-bold" height={20} style={{ color: S.green, flexShrink: 0 }} />
+              ) : isCurrent ? (
+                <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full" style={{ background: '#E8C681' }}>
+                  <Icon icon="solar:clock-circle-bold" height={13} style={{ color: S.gold }} />
+                </div>
+              ) : (
+                <Icon icon="solar:record-circle-linear" height={20} style={{ color: S.track, flexShrink: 0 }} />
+              )}
+              <span className="flex-1 truncate text-[14px] font-medium" style={{ color: isCurrent ? S.gold : '#374151' }}>
+                {group.label}
+              </span>
+              <span className="text-[13px] font-medium" style={{ color: isDone ? S.green : isCurrent ? S.gold : '#374151' }}>
+                {pct}%
+              </span>
+            </div>
+          )
+        })}
+      </div>
+
+      {/* Tips */}
+      <div className="rounded-[14px] p-4 flex gap-3" style={{ background: S.tipsBg, border: `1px solid ${S.border}` }}>
+        <Icon icon="solar:lightbulb-bold-duotone" height={18} style={{ color: S.gold, flexShrink: 0, marginTop: 1 }} />
+        <div>
+          <p className="text-[13px] font-semibold mb-0.5" style={{ color: S.textPrimary }}>Tips</p>
+          <p className="text-[13px] leading-relaxed" style={{ color: '#4B5563' }}>
+            Lengkapi semua field untuk mempercepat pembuatan dokumen.
+          </p>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+// ─── State 2: Sedang Generate ────────────────────────────────────────────────
+
+function CategoryStatusPill({ status }: { status: 'done' | 'processing' | 'waiting' }) {
+  if (status === 'done')
+    return (
+      <span className="rounded-full px-3 py-1 text-[12px] font-semibold" style={{ background: S.greenBg, color: '#1F8F45' }}>
+        Selesai
+      </span>
+    )
+  if (status === 'processing')
+    return (
+      <span className="rounded-full px-3 py-1 text-[12px] font-semibold" style={{ background: S.processBg, color: S.gold }}>
+        Proses
+      </span>
+    )
+  return (
+    <span className="rounded-full px-3 py-1 text-[12px] font-semibold" style={{ background: '#F3F4F6', color: S.textSecondary }}>
+      Menunggu
+    </span>
+  )
+}
+
+function CategoryIcon({ status }: { status: 'done' | 'processing' | 'waiting' }) {
+  if (status === 'done')
+    return <Icon icon="solar:check-circle-bold" height={22} style={{ color: S.green, flexShrink: 0 }} />
+  if (status === 'processing')
+    return <Icon icon="svg-spinners:ring-resize" height={20} style={{ color: S.gold, flexShrink: 0 }} />
+  return <Icon icon="solar:clock-circle-linear" height={22} style={{ color: S.textMuted, flexShrink: 0 }} />
+}
+
+function SidebarSedangGenerate({ categories }: { categories: DocCategory[] }) {
+  const totalDocs = categories.reduce((s, c) => s + c.total, 0)
+  const doneDocs = categories.reduce((s, c) => s + c.done, 0)
+  const pct = Math.round((doneDocs / totalDocs) * 100)
+
+  const catStatus = (c: DocCategory): 'done' | 'processing' | 'waiting' => {
+    if (c.done === c.total) return 'done'
+    if (c.done > 0 || c.items.some((i) => i.status === 'processing')) return 'processing'
+    return 'waiting'
+  }
+
+  return (
+    <div className="space-y-5">
+      {/* Header */}
+      <div>
+        <div className="flex items-center justify-between gap-2">
+          <div>
+            <p className="text-[15px] font-bold" style={{ color: S.textPrimary }}>Progress Dokumen</p>
+            <p className="text-[13px] mt-0.5" style={{ color: S.textSecondary }}>Dokumen Trainer</p>
+          </div>
+          <span className="rounded-full px-3 py-1 text-[13px] font-bold" style={{ background: S.goldSoft, color: S.gold }}>
+            {pct}%
+          </span>
+        </div>
+        <div className="mt-3">
+          <ProgressBar value={pct} />
+        </div>
+        <div className="mt-2 flex justify-between text-[13px]" style={{ color: '#374151' }}>
+          <span>{doneDocs}/{totalDocs} dokumen selesai</span>
+          <span>{categories.filter((c) => catStatus(c) === 'done').length}/{categories.length} fase</span>
+        </div>
+      </div>
+
+      {/* Generating banner */}
+      <div
+        className="flex items-center justify-center gap-3 rounded-xl"
+        style={{ height: 54, background: '#C89335', cursor: 'not-allowed' }}
+      >
+        <Icon icon="svg-spinners:ring-resize" height={18} className="text-white" />
+        <span className="text-[15px] font-semibold text-white">Membuat Dokumen...</span>
+      </div>
+
+      {/* Category cards */}
+      <div className="space-y-3">
+        {categories.map((cat) => {
+          const st = catStatus(cat)
+          return (
+            <div
+              key={cat.id}
+              className="flex items-center gap-3 rounded-[14px] px-4"
+              style={{ height: 64, border: `1px solid ${S.border}`, background: S.white }}
+            >
+              <CategoryIcon status={st} />
+              <div className="flex-1 min-w-0">
+                <p className="text-[14px] font-semibold truncate" style={{ color: S.textPrimary }}>{cat.name}</p>
+                <p className="text-[12px]" style={{ color: S.textSecondary }}>
+                  {cat.done}/{cat.total} {st === 'done' ? 'selesai' : st === 'processing' ? 'proses' : 'menunggu'}
+                </p>
+              </div>
+              <CategoryStatusPill status={st} />
+            </div>
+          )
+        })}
+      </div>
+
+      {/* Info */}
+      <div className="rounded-[14px] p-4 flex gap-3" style={{ background: S.tipsBg, border: `1px solid ${S.border}` }}>
+        <Icon icon="solar:info-circle-bold-duotone" height={18} style={{ color: S.gold, flexShrink: 0, marginTop: 1 }} />
+        <p className="text-[13px] leading-relaxed" style={{ color: '#4B5563' }}>
+          Dokumen dibuat bertahap dan akan muncul saat siap diunduh.
+        </p>
+      </div>
+    </div>
+  )
+}
+
+// ─── State 3: Siap Diunduh ───────────────────────────────────────────────────
+
+function SidebarSiapDiunduh({ categories }: { categories: DocCategory[] }) {
+  const [expanded, setExpanded] = useState<Record<string, boolean>>({
+    program: true,
+    kurikulum: true,
+    asesmen: false,
+    administrasi: false,
+  })
+
+  const totalDocs = categories.reduce((s, c) => s + c.total, 0)
+
+  const toggle = (id: string) => setExpanded((prev) => ({ ...prev, [id]: !prev[id] }))
+
+  return (
+    <div className="space-y-5">
+      {/* Header */}
+      <div>
+        <div className="flex items-center justify-between gap-2">
+          <div>
+            <p className="text-[15px] font-bold" style={{ color: S.textPrimary }}>Dokumen Siap Diunduh</p>
+            <p className="text-[13px] mt-0.5" style={{ color: S.textSecondary }}>Dokumen Trainer</p>
+          </div>
+          <span className="rounded-full px-3 py-1 text-[13px] font-bold" style={{ background: S.greenBg, color: '#1F8F45' }}>
+            100%
+          </span>
+        </div>
+        <div className="mt-3">
+          <ProgressBar value={100} color={S.green} />
+        </div>
+        <p className="mt-2 text-[13px]" style={{ color: '#374151' }}>
+          {totalDocs}/{totalDocs} dokumen selesai
+        </p>
+      </div>
+
+      {/* Download all button */}
+      <button
+        type="button"
+        className="flex w-full items-center justify-center gap-2.5 rounded-xl transition-colors"
+        style={{ height: 58, background: S.gold, color: '#fff' }}
+        onMouseEnter={(e) => { (e.currentTarget as HTMLButtonElement).style.background = S.goldDark }}
+        onMouseLeave={(e) => { (e.currentTarget as HTMLButtonElement).style.background = S.gold }}
+      >
+        <Icon icon="solar:download-bold" height={20} />
+        <span className="text-[15px] font-bold">Unduh Semua .ZIP</span>
+      </button>
+
+      {/* Accordion categories */}
+      <div className="space-y-3">
+        {categories.map((cat) => {
+          const isOpen = expanded[cat.id] ?? false
+          return (
+            <div key={cat.id} className="overflow-hidden rounded-[14px]" style={{ border: `1px solid ${S.border}`, background: S.white }}>
+              {/* Header row */}
+              <button
+                type="button"
+                className="flex w-full items-center gap-3 px-4 text-left"
+                style={{ height: 54 }}
+                onClick={() => toggle(cat.id)}
+              >
+                <Icon icon="solar:check-circle-bold" height={20} style={{ color: S.green, flexShrink: 0 }} />
+                <span className="flex-1 text-[14px] font-semibold truncate" style={{ color: S.textPrimary }}>
+                  {cat.name}
+                </span>
+                <span className="text-[13px]" style={{ color: '#374151' }}>{cat.done}/{cat.total}</span>
+                <Icon
+                  icon="solar:alt-arrow-down-bold"
+                  height={14}
+                  style={{
+                    color: S.textMuted,
+                    flexShrink: 0,
+                    transform: isOpen ? 'rotate(180deg)' : 'rotate(0deg)',
+                    transition: 'transform 0.2s',
+                  }}
+                />
+              </button>
+
+              {/* Expanded rows */}
+              {isOpen && (
+                <div style={{ borderTop: `1px solid #EFEAE2` }}>
+                  {cat.items.map((item) => (
+                    <div
+                      key={item.id}
+                      className="flex items-center gap-2 px-3"
+                      style={{ height: 48, paddingLeft: 46 }}
+                    >
+                      <span className="flex-1 truncate text-[13px]" style={{ color: '#4B5563' }}>
+                        {item.name}
+                      </span>
+                      <span
+                        className="rounded-full text-[11px] font-semibold"
+                        style={{ background: S.greenBg, color: '#1F8F45', padding: '3px 10px' }}
+                      >
+                        Siap
+                      </span>
+                      <button
+                        type="button"
+                        className="flex items-center justify-center rounded-[10px] ml-2"
+                        style={{ width: 32, height: 32, border: `1px solid #DDB878`, background: S.white, flexShrink: 0 }}
+                        aria-label={`Unduh ${item.name}`}
+                      >
+                        <Icon icon="solar:download-linear" height={14} style={{ color: S.gold }} />
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          )
+        })}
+      </div>
+
+      {/* Info */}
+      <div className="rounded-[14px] p-4 flex gap-3" style={{ background: S.tipsBg, border: `1px solid ${S.border}` }}>
+        <Icon icon="solar:shield-check-bold-duotone" height={18} style={{ color: S.green, flexShrink: 0, marginTop: 1 }} />
+        <p className="text-[13px] leading-relaxed" style={{ color: '#4B5563' }}>
+          Semua dokumen tersimpan aman dan dapat diunduh kapan saja.
+        </p>
+      </div>
+    </div>
+  )
+}
+
+// ─── CheckpointPanel (orchestrator) ──────────────────────────────────────────
