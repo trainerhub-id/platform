@@ -172,9 +172,11 @@ export class ResponseService implements ResponseServiceLike {
 }
 
 function isSearchConfirmation(message: string): boolean {
-  return /^(?:ya+a*|iya+h*|yes+|y+|ok+e*|oke+y*|setuju|lanjut|lanjutkan|siap|gas|boleh)(?:\s+(?:ya+a*|iya+h*|ok+e*|oke+y*|lanjut|lanjutkan|dong|aja|saja|nih))?$/i.test(
-    message.trim(),
-  )
+  const trimmed = message.trim().toLowerCase()
+  // Match any message that starts with a confirmation word and is short (no question, no unit code)
+  return /^(?:ya+h?|iya+h?|yes+|y+|ok+e*|oke+y*|setuju|lanjut(?:kan)?|siap|gas|boleh|silakan|silahkan)(?:\s+\S+){0,3}$/i.test(trimmed) &&
+    !trimmed.includes('?') &&
+    !/[A-Z]\.\d{2}/.test(message) // not a unit code selection
 }
 
 function isConfirmation(message: string): boolean {
