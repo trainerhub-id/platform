@@ -7,6 +7,7 @@ import SimpleBar from 'simplebar-react'
 import { useSidebar } from 'src/components/ui/sidebar'
 import { CustomizerContext } from 'src/context/CustomizerContext'
 import { useUserRole } from 'src/hooks/useUserRole'
+import { WorkspaceSwitcher } from 'src/components/workspace/WorkspaceSwitcher'
 import FullLogo from '../../shared/logo/FullLogo'
 import LogoIcon from '../../shared/logo/LogoIcon'
 import NavCollapse from './NavCollapse'
@@ -95,6 +96,12 @@ const SidebarLayout = () => {
 
         <SimpleBar className="h-[calc(100vh-100px)]">
           <div className="list-none ps-4 rtl:pe-4 rtl:ps-0 pe-4">
+            {role !== 'admin' && (
+              <div className="mb-6">
+                <WorkspaceSwitcher placement="sidebar" collapsed={isMiniSidebar} />
+              </div>
+            )}
+
             {SidebarContent?.map((section) =>
               section.items?.map((item) => (
                 <div className="mb-8" key={item.heading || section.id}>
