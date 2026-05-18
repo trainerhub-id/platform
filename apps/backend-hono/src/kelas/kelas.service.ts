@@ -195,27 +195,6 @@ export class KelasService {
     }
   }
 
-      const header = Buffer.from(JSON.stringify({ alg: 'RS256', typ: 'JWT', kid: keyId })).toString('base64url')
-      const payload = Buffer.from(JSON.stringify({
-        sub: lesson.muxPlaybackId,
-        aud: 'v',
-        exp: Math.floor(Date.now() / 1000) + 3600,
-        kid: keyId,
-      })).toString('base64url')
-
-      const signingInput = `${header}.${payload}`
-      const sign = createSign('RSA-SHA256')
-      sign.update(signingInput)
-      const sig = sign.sign(privateKey, 'base64url')
-      const token = `${signingInput}.${sig}`
-
-      return { token }
-    } catch (err) {
-      console.error('[KelasService] getPlaybackToken error:', err)
-      return { token: null }
-    }
-  }
-
   private async getAccessibleCourseIds(pesertaId: string) {
     const enrollments = await db
       .select({ courseIds: batchTiers.courseIds })
