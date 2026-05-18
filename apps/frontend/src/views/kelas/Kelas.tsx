@@ -277,6 +277,8 @@ const Kelas = () => {
                   } as React.CSSProperties}
                   streamType="on-demand"
                   preload="metadata"
+                  muted={false}
+                  volume={1}
                 />
               ) : activeLesson.videoUrl && isYouTubeUrl(activeLesson.videoUrl) ? (
                 <iframe
