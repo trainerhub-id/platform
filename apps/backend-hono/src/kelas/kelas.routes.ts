@@ -35,7 +35,7 @@ export function createKelasRoutes(service: KelasServiceLike = new KelasService()
     '/kelas/lessons/:lessonId/playback-token',
     requireAuth,
     requireRole(['peserta', 'admin']),
-    async (c) => c.json(await service.getPlaybackToken()),
+    async (c) => c.json(await service.getPlaybackToken(c.req.param('lessonId'))),
   )
 
   app.get('/kelas/:id', requireAuth, requireRole(['peserta', 'admin']), async (c) => {
