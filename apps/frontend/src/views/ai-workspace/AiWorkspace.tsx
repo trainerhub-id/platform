@@ -26,9 +26,14 @@ import {
   type ConversationMessage,
   createDocument,
   deleteDocument,
+  type GeneratedFile,
+  type GenerationJob,
+  generateDocuments,
   getReadiness,
   type InterviewReadiness,
   listDocuments,
+  listGeneratedFiles,
+  listGenerationJobs,
   listMessages,
   sendInterviewMessage,
   updateDocument,
@@ -135,6 +140,9 @@ export default function AiWorkspace({ flow }: AiWorkspaceProps) {
   const [isSending, setIsSending] = useState(false)
   const [isSearchingTool, setIsSearchingTool] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [generationJob, setGenerationJob] = useState<GenerationJob | null>(null)
+  const [generatedFiles, setGeneratedFiles] = useState<GeneratedFile[]>([])
+  const [isGenerating, setIsGenerating] = useState(false)
 
   const activeDocument = useMemo(
     () => documents.find((document) => document.id === activeDocumentId) ?? null,
@@ -337,6 +345,74 @@ export default function AiWorkspace({ flow }: AiWorkspaceProps) {
     }
   }, [activeDocumentId, flow, input, isSending, loadConversation, loadDocuments])
 
+  // Load generation state when active document changes
+  useEffect(() => {
+    if (!activeDocumentId) {
+      setGenerationJob(null)
+      setGeneratedFiles([])
+      return
+    }
+    void listGenerationJobs(activeDocumentId).then((jobs) => {
+      const latest = jobs[0] ?? null
+      setGenerationJob(latest)
+    })
+    void listGeneratedFiles(activeDocumentId).then(setGeneratedFiles)
+  }, [activeDocumentId])
+
+  // Poll generation job while active/pending
+  useEffect(() => {
+    if (!generationJob || !activeDocumentId) return
+    if (generationJob.status === 'completed' || generationJob.status === 'failed' || generationJob.status === 'cancelled') return
+
+    const id = setInterval(async () => {
+      try {
+        const jobs = await listGenerationJobs(activeDocumentId)
+        const latest = jobs[0] ?? null
+        setGenerationJob(latest)
+        if (latest?.status === 'completed') {
+          const files = await listGeneratedFiles(activeDocumentId)
+          setGeneratedFiles(files)
+          setIsGenerating(false)
+        } else if (latest?.status === 'failed' || latest?.status === 'cancelled') {
+          setIsGenerating(false)
+        }
+      } catch { /* ignore */ }
+    }, 3000)
+
+    return () => clearInterval(id)
+  }, [generationJob, activeDocumentId])
+
+  const handleGenerate = useCallback(async () => {
+    if (!activeDocumentId || isGenerating) return
+    setIsGenerating(true)
+    setError(null)
+    try {
+      const { job } = await generateDocuments(
+        activeDocumentId,
+        Array.from({ length: 14 }, (_, i) => [
+          'trainer-program-pelatihan',
+          'trainer-lesson-plan',
+          'trainer-job-safety-analysis',
+          'trainer-pre-test',
+          'trainer-post-test',
+          'trainer-tna',
+          'trainer-peta-kompetensi',
+          'trainer-daftar-bahan',
+          'trainer-daftar-peralatan',
+          'trainer-evaluasi-pelatihan',
+          'trainer-fr-ia-01',
+          'trainer-fr-ia-02',
+          'trainer-fr-ia-03',
+          'trainer-penilaian-pre-test',
+        ][i]),
+      )
+      setGenerationJob(job)
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Gagal memulai generate dokumen')
+      setIsGenerating(false)
+    }
+  }, [activeDocumentId, isGenerating])
+
   const progress = getProgress(flow, readiness)
 
   return (
@@ -459,7 +535,15 @@ export default function AiWorkspace({ flow }: AiWorkspaceProps) {
         </div>
       </div>
 
-      <CheckpointPanel flow={flow} readiness={readiness} progress={progress} />
+      <CheckpointPanel
+        flow={flow}
+        readiness={readiness}
+        progress={progress}
+        generationJob={generationJob}
+        generatedFiles={generatedFiles}
+        isGenerating={isGenerating}
+        onGenerate={handleGenerate}
+      />
     </div>
   )
 }
@@ -880,21 +964,41 @@ function CheckpointPanel({
   flow,
   readiness,
   progress,
+  generationJob,
+  generatedFiles,
+  isGenerating,
+  onGenerate,
 }: {
   flow: AiFlow
   readiness: InterviewReadiness | null
   progress: number
+  generationJob: GenerationJob | null
+  generatedFiles: GeneratedFile[]
+  isGenerating: boolean
+  onGenerate: () => void
 }) {
-  // Sidebar state is driven by interview readiness only.
-  // Document generation state (Sedang Generate / Siap Diunduh) will be
-  // connected to the document generation API when that feature is built.
+  const jobStatus = generationJob?.status ?? null
+  const isJobActive = jobStatus === 'pending' || jobStatus === 'active' || isGenerating
+  const isJobDone = jobStatus === 'completed' && generatedFiles.length > 0
+
   return (
     <aside
       className="hidden w-72 flex-shrink-0 overflow-y-auto lg:block"
       style={{ background: 'var(--ai-bg, #F8F6F2)' }}
     >
       <div className="p-5">
-        <SidebarBelumGenerate flow={flow} readiness={readiness} progress={progress} />
+        {isJobDone ? (
+          <SidebarSiapDiunduh generatedFiles={generatedFiles} />
+        ) : isJobActive ? (
+          <SidebarSedangGenerate generationJob={generationJob} />
+        ) : (
+          <SidebarBelumGenerate
+            flow={flow}
+            readiness={readiness}
+            progress={progress}
+            onGenerate={onGenerate}
+          />
+        )}
       </div>
     </aside>
   )
@@ -937,10 +1041,12 @@ function SidebarBelumGenerate({
   flow,
   readiness,
   progress,
+  onGenerate,
 }: {
   flow: AiFlow
   readiness: InterviewReadiness | null
   progress: number
+  onGenerate: () => void
 }) {
   const groups = checkpointConfig[flow]
   const requiredFields = groups.flatMap((g) => g.fields).filter((f) => !f.optional)
@@ -1066,6 +1172,21 @@ function SidebarBelumGenerate({
           </p>
         </div>
       </div>
+
+      {/* Generate button when ready */}
+      {readiness?.ready && (
+        <button
+          type="button"
+          onClick={onGenerate}
+          className="flex w-full items-center justify-center gap-2.5 rounded-xl transition-colors"
+          style={{ height: 52, background: S.green, color: '#fff', marginTop: 4 }}
+          onMouseEnter={(e) => { (e.currentTarget as HTMLButtonElement).style.background = '#2a9447' }}
+          onMouseLeave={(e) => { (e.currentTarget as HTMLButtonElement).style.background = S.green }}
+        >
+          <Icon icon="solar:document-add-bold" height={18} />
+          <span className="text-[14px] font-bold">Generate Semua Dokumen</span>
+        </button>
+      )}
     </div>
   )
 }
@@ -1100,16 +1221,9 @@ function CategoryIcon({ status }: { status: 'done' | 'processing' | 'waiting' })
   return <Icon icon="solar:clock-circle-linear" height={22} style={{ color: S.textMuted, flexShrink: 0 }} />
 }
 
-function SidebarSedangGenerate({ categories }: { categories: DocCategory[] }) {
-  const totalDocs = categories.reduce((s, c) => s + c.total, 0)
-  const doneDocs = categories.reduce((s, c) => s + c.done, 0)
-  const pct = Math.round((doneDocs / totalDocs) * 100)
-
-  const catStatus = (c: DocCategory): 'done' | 'processing' | 'waiting' => {
-    if (c.done === c.total) return 'done'
-    if (c.done > 0 || c.items.some((i) => i.status === 'processing')) return 'processing'
-    return 'waiting'
-  }
+function SidebarSedangGenerate({ generationJob }: { generationJob: GenerationJob | null }) {
+  const total = generationJob?.documentTypes?.length ?? 14
+  const pct = generationJob?.status === 'active' ? 50 : 10 // rough estimate while polling
 
   return (
     <div className="space-y-5">
@@ -1127,10 +1241,9 @@ function SidebarSedangGenerate({ categories }: { categories: DocCategory[] }) {
         <div className="mt-3">
           <ProgressBar value={pct} />
         </div>
-        <div className="mt-2 flex justify-between text-[13px]" style={{ color: '#374151' }}>
-          <span>{doneDocs}/{totalDocs} dokumen selesai</span>
-          <span>{categories.filter((c) => catStatus(c) === 'done').length}/{categories.length} fase</span>
-        </div>
+        <p className="mt-2 text-[13px]" style={{ color: '#374151' }}>
+          Membuat {total} dokumen...
+        </p>
       </div>
 
       {/* Generating banner */}
@@ -1140,29 +1253,6 @@ function SidebarSedangGenerate({ categories }: { categories: DocCategory[] }) {
       >
         <Icon icon="svg-spinners:ring-resize" height={18} className="text-white" />
         <span className="text-[15px] font-semibold text-white">Membuat Dokumen...</span>
-      </div>
-
-      {/* Category cards */}
-      <div className="space-y-3">
-        {categories.map((cat) => {
-          const st = catStatus(cat)
-          return (
-            <div
-              key={cat.id}
-              className="flex items-center gap-3 rounded-[14px] px-4"
-              style={{ height: 64, border: `1px solid ${S.border}`, background: S.white }}
-            >
-              <CategoryIcon status={st} />
-              <div className="flex-1 min-w-0">
-                <p className="text-[14px] font-semibold truncate" style={{ color: S.textPrimary }}>{cat.name}</p>
-                <p className="text-[12px]" style={{ color: S.textSecondary }}>
-                  {cat.done}/{cat.total} {st === 'done' ? 'selesai' : st === 'processing' ? 'proses' : 'menunggu'}
-                </p>
-              </div>
-              <CategoryStatusPill status={st} />
-            </div>
-          )
-        })}
       </div>
 
       {/* Info */}
@@ -1178,7 +1268,7 @@ function SidebarSedangGenerate({ categories }: { categories: DocCategory[] }) {
 
 // ─── State 3: Siap Diunduh ───────────────────────────────────────────────────
 
-function SidebarSiapDiunduh({ categories }: { categories: DocCategory[] }) {
+function SidebarSiapDiunduh({ generatedFiles }: { generatedFiles: GeneratedFile[] }) {
   const [expanded, setExpanded] = useState<Record<string, boolean>>({
     program: true,
     kurikulum: true,
@@ -1186,9 +1276,38 @@ function SidebarSiapDiunduh({ categories }: { categories: DocCategory[] }) {
     administrasi: false,
   })
 
-  const totalDocs = categories.reduce((s, c) => s + c.total, 0)
-
   const toggle = (id: string) => setExpanded((prev) => ({ ...prev, [id]: !prev[id] }))
+
+  const CATEGORIES = [
+    { id: 'program', label: 'Program Dasar', types: ['trainer-program-pelatihan'] },
+    { id: 'kurikulum', label: 'Kurikulum & Materi', types: ['trainer-lesson-plan', 'trainer-job-safety-analysis'] },
+    { id: 'asesmen', label: 'Asesmen & Evaluasi', types: ['trainer-pre-test', 'trainer-post-test'] },
+    {
+      id: 'administrasi', label: 'Administrasi', types: [
+        'trainer-tna', 'trainer-peta-kompetensi', 'trainer-daftar-bahan', 'trainer-daftar-peralatan',
+        'trainer-evaluasi-pelatihan', 'trainer-fr-ia-01', 'trainer-fr-ia-02', 'trainer-fr-ia-03', 'trainer-penilaian-pre-test',
+      ],
+    },
+  ]
+
+  const LABELS: Record<string, string> = {
+    'trainer-program-pelatihan': 'Program Pelatihan',
+    'trainer-lesson-plan': 'Lesson Plan',
+    'trainer-job-safety-analysis': 'Job Safety Analysis',
+    'trainer-pre-test': 'Pre-Test',
+    'trainer-post-test': 'Post-Test',
+    'trainer-tna': 'Training Needs Analysis',
+    'trainer-peta-kompetensi': 'Peta Kompetensi',
+    'trainer-daftar-bahan': 'Daftar Bahan',
+    'trainer-daftar-peralatan': 'Daftar Peralatan',
+    'trainer-evaluasi-pelatihan': 'Evaluasi Pelatihan',
+    'trainer-fr-ia-01': 'FR.IA.01 Observasi',
+    'trainer-fr-ia-02': 'FR.IA.02 Demonstrasi',
+    'trainer-fr-ia-03': 'FR.IA.03 Lisan',
+    'trainer-penilaian-pre-test': 'Penilaian Pre-Test',
+  }
+
+  const fileByType = Object.fromEntries(generatedFiles.map((f) => [f.documentType, f]))
 
   return (
     <div className="space-y-5">
@@ -1200,14 +1319,14 @@ function SidebarSiapDiunduh({ categories }: { categories: DocCategory[] }) {
             <p className="text-[13px] mt-0.5" style={{ color: S.textSecondary }}>Dokumen Trainer</p>
           </div>
           <span className="rounded-full px-3 py-1 text-[13px] font-bold" style={{ background: S.greenBg, color: '#1F8F45' }}>
-            100%
+            {generatedFiles.length}/14
           </span>
         </div>
         <div className="mt-3">
-          <ProgressBar value={100} color={S.green} />
+          <ProgressBar value={Math.round((generatedFiles.length / 14) * 100)} color={S.green} />
         </div>
         <p className="mt-2 text-[13px]" style={{ color: '#374151' }}>
-          {totalDocs}/{totalDocs} dokumen selesai
+          {generatedFiles.length}/14 dokumen selesai
         </p>
       </div>
 
@@ -1215,69 +1334,52 @@ function SidebarSiapDiunduh({ categories }: { categories: DocCategory[] }) {
       <button
         type="button"
         className="flex w-full items-center justify-center gap-2.5 rounded-xl transition-colors"
-        style={{ height: 58, background: S.gold, color: '#fff' }}
+        style={{ height: 52, background: S.gold, color: '#fff' }}
         onMouseEnter={(e) => { (e.currentTarget as HTMLButtonElement).style.background = S.goldDark }}
         onMouseLeave={(e) => { (e.currentTarget as HTMLButtonElement).style.background = S.gold }}
+        onClick={() => {
+          for (const file of generatedFiles) {
+            window.open(`/api/documents/${file.documentId}/files/${file.id}/download`, '_blank')
+          }
+        }}
       >
-        <Icon icon="solar:download-bold" height={20} />
-        <span className="text-[15px] font-bold">Unduh Semua .ZIP</span>
+        <Icon icon="solar:download-bold" height={18} />
+        <span className="text-[14px] font-bold">Unduh Semua ({generatedFiles.length})</span>
       </button>
 
       {/* Accordion categories */}
       <div className="space-y-3">
-        {categories.map((cat) => {
+        {CATEGORIES.map((cat) => {
+          const catFiles = cat.types.map((t) => fileByType[t]).filter(Boolean) as GeneratedFile[]
           const isOpen = expanded[cat.id] ?? false
+          if (catFiles.length === 0) return null
           return (
             <div key={cat.id} className="overflow-hidden rounded-[14px]" style={{ border: `1px solid ${S.border}`, background: S.white }}>
-              {/* Header row */}
               <button
                 type="button"
                 className="flex w-full items-center gap-3 px-4 text-left"
-                style={{ height: 54 }}
+                style={{ height: 52 }}
                 onClick={() => toggle(cat.id)}
               >
-                <Icon icon="solar:check-circle-bold" height={20} style={{ color: S.green, flexShrink: 0 }} />
-                <span className="flex-1 text-[14px] font-semibold truncate" style={{ color: S.textPrimary }}>
-                  {cat.name}
-                </span>
-                <span className="text-[13px]" style={{ color: '#374151' }}>{cat.done}/{cat.total}</span>
-                <Icon
-                  icon="solar:alt-arrow-down-bold"
-                  height={14}
-                  style={{
-                    color: S.textMuted,
-                    flexShrink: 0,
-                    transform: isOpen ? 'rotate(180deg)' : 'rotate(0deg)',
-                    transition: 'transform 0.2s',
-                  }}
-                />
+                <Icon icon="solar:check-circle-bold" height={18} style={{ color: S.green, flexShrink: 0 }} />
+                <span className="flex-1 text-[13px] font-semibold truncate" style={{ color: S.textPrimary }}>{cat.label}</span>
+                <span className="text-[12px]" style={{ color: '#374151' }}>{catFiles.length}/{cat.types.length}</span>
+                <Icon icon="solar:alt-arrow-down-bold" height={13} style={{ color: S.textMuted, flexShrink: 0, transform: isOpen ? 'rotate(180deg)' : 'none', transition: 'transform 0.2s' }} />
               </button>
-
-              {/* Expanded rows */}
               {isOpen && (
                 <div style={{ borderTop: `1px solid #EFEAE2` }}>
-                  {cat.items.map((item) => (
-                    <div
-                      key={item.id}
-                      className="flex items-center gap-2 px-3"
-                      style={{ height: 48, paddingLeft: 46 }}
-                    >
-                      <span className="flex-1 truncate text-[13px]" style={{ color: '#4B5563' }}>
-                        {item.name}
-                      </span>
-                      <span
-                        className="rounded-full text-[11px] font-semibold"
-                        style={{ background: S.greenBg, color: '#1F8F45', padding: '3px 10px' }}
-                      >
-                        Siap
-                      </span>
+                  {catFiles.map((file) => (
+                    <div key={file.id} className="flex items-center gap-2 px-3" style={{ height: 46, paddingLeft: 44 }}>
+                      <span className="flex-1 truncate text-[12px]" style={{ color: '#4B5563' }}>{LABELS[file.documentType] ?? file.documentType}</span>
+                      <span className="rounded-full text-[11px] font-semibold" style={{ background: S.greenBg, color: '#1F8F45', padding: '3px 8px' }}>Siap</span>
                       <button
                         type="button"
-                        className="flex items-center justify-center rounded-[10px] ml-2"
-                        style={{ width: 32, height: 32, border: `1px solid #DDB878`, background: S.white, flexShrink: 0 }}
-                        aria-label={`Unduh ${item.name}`}
+                        className="flex items-center justify-center rounded-[10px] ml-1"
+                        style={{ width: 30, height: 30, border: `1px solid #DDB878`, background: S.white, flexShrink: 0 }}
+                        onClick={() => window.open(`/api/documents/${file.documentId}/files/${file.id}/download`, '_blank')}
+                        aria-label={`Unduh ${LABELS[file.documentType]}`}
                       >
-                        <Icon icon="solar:download-linear" height={14} style={{ color: S.gold }} />
+                        <Icon icon="solar:download-linear" height={13} style={{ color: S.gold }} />
                       </button>
                     </div>
                   ))}
