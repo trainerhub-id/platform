@@ -142,3 +142,55 @@ export async function sendInterviewMessage(input: {
 
   return text
 }
+
+// ─── Document Generation API ─────────────────────────────────────────────────
+
+export type GenerationJobStatus = 'pending' | 'active' | 'completed' | 'failed' | 'cancelled'
+
+export type GenerationJob = {
+  id: string
+  documentId: string
+  jobType: string
+  status: GenerationJobStatus
+  documentTypes: string[]
+  createdAt?: string
+  completedAt?: string
+  error?: string
+}
+
+export type GeneratedFile = {
+  id: string
+  documentId: string
+  documentType: string
+  filePath: string
+  filename: string
+  createdAt?: string
+}
+
+export async function generateDocuments(documentId: string, documentTypes: string[]) {
+  return apiJson<{ job: GenerationJob }>(`/documents/${documentId}/generate`, {
+    method: 'POST',
+    body: JSON.stringify({ documentTypes }),
+  })
+}
+
+export async function listGenerationJobs(documentId: string) {
+  const payload = await apiJson<{ jobs: GenerationJob[] }>(
+    `/documents/${documentId}/generation-jobs`,
+  )
+  return payload.jobs
+}
+
+export async function getGenerationJob(jobId: string) {
+  const payload = await apiJson<{ job: GenerationJob }>(`/generation-jobs/${jobId}`)
+  return payload.job
+}
+
+export async function listGeneratedFiles(documentId: string) {
+  const payload = await apiJson<{ files: GeneratedFile[] }>(`/documents/${documentId}/files`)
+  return payload.files
+}
+
+export async function downloadFile(documentId: string, fileId: string) {
+  window.open(`${API_URL}/documents/${documentId}/files/${fileId}/download`, '_blank')
+}
