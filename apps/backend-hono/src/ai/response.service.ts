@@ -99,10 +99,16 @@ export class ResponseService implements ResponseServiceLike {
     const shouldSearchSkkni =
       input.phase === 'unit_selection' && isSearchConfirmation(input.message)
 
-    // Fetch unit detail when entering competency_map phase and user confirms a unit code
-    const selectedUnitCode = getSelectedUnitCode(input)
+    // Detect unit code from message directly (e.g. "Aku pilih unit ini N.79JPW00.139.1")
+    const unitCodeInMessage = extractUnitCodeFromMessage(input.message)
+    // Also check capturedFields for already-saved unit code
+    const selectedUnitCode = unitCodeInMessage ?? getSelectedUnitCode(input)
+    // Trigger fetch when user explicitly picks a unit (any phase after brainstorming)
     const shouldFetchUnit =
-      input.phase === 'competency_map' && selectedUnitCode !== null && isConfirmation(input.message)
+      !shouldSearchSkkni &&
+      selectedUnitCode !== null &&
+      (unitCodeInMessage !== null ||
+        (input.phase === 'competency_map' && isConfirmation(input.message)))
 
     const result = streamText({
       model: this.modelService.getLanguageModel(),
@@ -175,6 +181,11 @@ function isConfirmation(message: string): boolean {
   return /^(?:ya+a*|iya+h*|yes+|y+|ok+e*|oke+y*|setuju|lanjut|lanjutkan|siap|gas|boleh|pakai|pake|gunakan|konfirmasi)(?:\s+\S*)?$/i.test(
     message.trim(),
   )
+}
+
+function extractUnitCodeFromMessage(message: string): string | null {
+  const match = message.match(/[A-Z]\.\d{2}[A-Z0-9]+\.\d{3}\.\d+/)
+  return match ? match[0] : null
 }
 
 function getSelectedUnitCode(input: ResponseInput): string | null {
