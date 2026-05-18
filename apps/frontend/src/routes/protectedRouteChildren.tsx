@@ -30,6 +30,9 @@ const ManageKelas = Loadable(lazy(() => import('../views/admin/ManageKelas')))
 const EditKelas = Loadable(lazy(() => import('../views/admin/EditKelas')))
 const Dokumen = Loadable(lazy(() => import('../views/dokumen/Dokumen')))
 const Workspaces = Loadable(lazy(() => import('../views/workspaces/Workspaces')))
+const WorkspaceDashboard = Loadable(
+  lazy(() => import('../views/workspace-dashboard/WorkspaceDashboard')),
+)
 
 export const protectedRouteChildren = [
   { path: '/', exact: true, element: <RoleBasedRedirect /> },
@@ -271,7 +274,7 @@ export const protectedRouteChildren = [
       </UserRoute>
     ),
     children: [
-      { index: true, element: <Navigate to="/user/home" replace /> },
+      { index: true, element: <WorkspaceDashboard /> },
       { path: 'dokumen', element: <Dokumen /> },
       { path: 'sertifikat', element: <Sertifikat /> },
     ],
