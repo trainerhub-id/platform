@@ -267,7 +267,14 @@ const Kelas = () => {
                   onLoadedMetadata={handleLoadedMetadata}
                   onEnded={handleVideoEnded}
                   className="w-full h-full"
-                  style={{ '--controls': 'auto', aspectRatio: '16/9' } as React.CSSProperties}
+                  style={{
+                    '--controls': 'auto',
+                    '--media-object-fit': 'contain',
+                    '--center-controls': 'none',
+                    aspectRatio: '16/9',
+                    width: '100%',
+                    height: '100%',
+                  } as React.CSSProperties}
                   streamType="on-demand"
                   preload="metadata"
                 />
