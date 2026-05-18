@@ -1,4 +1,4 @@
-import { and, asc, eq, inArray, isNull, notInArray } from 'drizzle-orm'
+import { and, asc, eq, inArray, isNull } from 'drizzle-orm'
 import { db } from '../db/client'
 import {
   documents,
@@ -50,17 +50,11 @@ export class TodosRepository {
     return created ?? null
   }
 
-  async findByUserId(userId: string) {
-    return db.select().from(todos).where(eq(todos.userId, userId)).orderBy(asc(todos.createdAt))
-  }
-
-  async findAdmin(batchId?: string) {
-    const conditions = [eq(todos.category, 'Admin' as never)]
-    if (batchId) conditions.push(eq(todos.batchId, batchId))
+  async findByWorkspace(workspaceId: string) {
     return db
       .select()
       .from(todos)
-      .where(and(...conditions))
+      .where(eq(todos.workspaceId, workspaceId))
       .orderBy(asc(todos.createdAt))
   }
 
@@ -69,23 +63,24 @@ export class TodosRepository {
     return db.insert(todos).values(values).returning()
   }
 
-  async insertMissing(values: NewTodo[]) {
+  async insertMissingForWorkspace(workspaceId: string, values: NewTodo[]) {
     if (values.length === 0) return []
-    const userId = values[0]?.userId
-    if (!userId) return this.insertMany(values)
-    const existing = await this.findByUserId(userId)
+    const existing = await this.findByWorkspace(workspaceId)
     const existingKeys = new Set(existing.map((row) => row.key))
     const missing = values.filter((value) => !existingKeys.has(value.key))
     if (missing.length === 0) return []
     return this.insertMany(missing)
   }
 
-  async pruneUserTodosToKeys(userId: string, keys: string[]) {
+  async pruneWorkspaceTodosToKeys(workspaceId: string, keys: string[]) {
     if (keys.length === 0) return
-    await db.delete(todos).where(and(eq(todos.userId, userId), notInArray(todos.key, keys)))
+    const { notInArray } = await import('drizzle-orm')
+    await db
+      .delete(todos)
+      .where(and(eq(todos.workspaceId, workspaceId), notInArray(todos.key, keys)))
   }
 
-  async updateDefinitionMetadata(userId: string, values: NewTodo[]) {
+  async updateDefinitionMetadataForWorkspace(workspaceId: string, values: NewTodo[]) {
     await Promise.all(
       values.map((value) =>
         db
@@ -96,38 +91,33 @@ export class TodosRepository {
             isBlocking: value.isBlocking ?? false,
             updatedAt: new Date(),
           })
-          .where(and(eq(todos.userId, userId), eq(todos.key, value.key))),
+          .where(and(eq(todos.workspaceId, workspaceId), eq(todos.key, value.key))),
       ),
     )
   }
 
-  async updateStatus(id: string, status: 'todo' | 'in_progress' | 'waiting_review' | 'done') {
+  async updateStatus(
+    id: string,
+    workspaceId: string,
+    status: 'todo' | 'in_progress' | 'waiting_review' | 'done',
+  ) {
     const [row] = await db
       .update(todos)
       .set({ status, completedAt: status === 'done' ? new Date() : null, updatedAt: new Date() })
-      .where(eq(todos.id, id))
-      .returning()
-    return row ?? null
-  }
-
-  async markDone(userId: string, key: string) {
-    const [row] = await db
-      .update(todos)
-      .set({ status: 'done', completedAt: new Date(), updatedAt: new Date() })
-      .where(and(eq(todos.userId, userId), eq(todos.key, key)))
+      .where(and(eq(todos.id, id), eq(todos.workspaceId, workspaceId)))
       .returning()
     return row ?? null
   }
 
   async setStatusByKey(
-    userId: string,
+    workspaceId: string,
     key: string,
     status: 'todo' | 'in_progress' | 'waiting_review' | 'done',
   ) {
     const [row] = await db
       .update(todos)
       .set({ status, completedAt: status === 'done' ? new Date() : null, updatedAt: new Date() })
-      .where(and(eq(todos.userId, userId), eq(todos.key, key)))
+      .where(and(eq(todos.workspaceId, workspaceId), eq(todos.key, key)))
       .returning()
     return row ?? null
   }
@@ -141,11 +131,11 @@ export class TodosRepository {
     return !!row
   }
 
-  async hasUploadedDocument(pesertaId: string) {
+  async hasUploadedDocument(workspaceId: string) {
     const [row] = await db
       .select({ id: dokumenPeserta.id })
       .from(dokumenPeserta)
-      .where(eq(dokumenPeserta.pesertaId, pesertaId))
+      .where(eq(dokumenPeserta.workspaceId, workspaceId))
       .limit(1)
     return !!row
   }

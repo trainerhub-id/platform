@@ -29,6 +29,7 @@ type CertificateRepositoryLike = {
   findPesertaById(id: string): Promise<{ id: string; nama: string } | null>
   findCourseById(courseId: string): Promise<{ id: string; title: string } | null>
   findByCourseAndPeserta(pesertaId: string, courseId: string): Promise<CertificateRecord | null>
+  findByWorkspace(workspaceId: string): Promise<CertificateRecord[]>
   listByPeserta(pesertaId: string): Promise<CertificateRecord[]>
   listAllByPeserta?(pesertaId: string): Promise<CertificateRecord[]>
   listCourses(): Promise<{ id: string; title: string }[]>
@@ -44,6 +45,7 @@ type CertificateRepositoryLike = {
   countCourseCertificatesForYear(courseId: string, year: number): Promise<number>
   createTrainerhubCertificate(input: {
     pesertaId: string
+    workspaceId: string
     courseId: string
     certificateNumber: string
     courseName: string
@@ -54,6 +56,7 @@ type CertificateRepositoryLike = {
   findBnspByPeserta(pesertaId: string): Promise<CertificateRecord | null>
   createBnspCertificate(input: {
     pesertaId: string
+    workspaceId: string
     nomorSertifikat?: string
     lsp?: string
     fileUrl: string
@@ -103,9 +106,19 @@ export class CertificateService {
     this.qr = deps.qr ?? QRCode
   }
 
+  async listForWorkspace(workspaceId: string) {
+    const certs = await this.repository.findByWorkspace(workspaceId)
+    return Promise.all(
+      certs.map(async (cert) => ({
+        ...cert,
+        fileUrl: cert.fileUrl ? await this.storage.getPublicUrl(cert.fileUrl) : null,
+      })),
+    )
+  }
+
   async uploadBnspCertificate(
     file: { originalname: string; buffer: Buffer | Uint8Array; mimetype: string; size: number },
-    input: { pesertaId: string; nomorSertifikat?: string; lsp?: string },
+    input: { pesertaId: string; workspaceId: string; nomorSertifikat?: string; lsp?: string },
   ) {
     const peserta = await this.repository.findPesertaById(input.pesertaId)
     if (!peserta) throw new Error('PESERTA_NOT_FOUND')
@@ -123,6 +136,7 @@ export class CertificateService {
     }
     return this.repository.createBnspCertificate({
       pesertaId: input.pesertaId,
+      workspaceId: input.workspaceId,
       ...(input.nomorSertifikat ? { nomorSertifikat: input.nomorSertifikat } : {}),
       ...(input.lsp ? { lsp: input.lsp } : {}),
       fileUrl: upload.key,
@@ -185,13 +199,13 @@ export class CertificateService {
     return this.repository.findById(id)
   }
 
-  async generateCertificateForUser(userId: string, courseId: string) {
+  async generateCertificateForUser(userId: string, courseId: string, workspaceId?: string) {
     const peserta = await this.repository.findPesertaByUserId(userId)
     if (!peserta) throw new Error('PESERTA_NOT_FOUND')
-    return this.generateForCourse(peserta.id, peserta.nama, courseId)
+    return this.generateForCourse(peserta.id, peserta.nama, courseId, workspaceId)
   }
 
-  async generateForCourse(pesertaId: string, pesertaName: string, courseId: string) {
+  async generateForCourse(pesertaId: string, pesertaName: string, courseId: string, workspaceId?: string) {
     const existing = await this.repository.findByCourseAndPeserta(pesertaId, courseId)
     if (existing)
       return mapCertificateListItem({ ...existing, id: existing.id }, (key) =>
@@ -232,6 +246,7 @@ export class CertificateService {
     )
     const certificate = await this.repository.createTrainerhubCertificate({
       pesertaId,
+      workspaceId: workspaceId ?? '',
       courseId,
       certificateNumber,
       courseName: course.title,

@@ -74,15 +74,6 @@ export const protectedRouteChildren = [
   },
 
   {
-    path: '/user/sertifikat',
-    exact: true,
-    element: (
-      <UserRoute>
-        <Sertifikat />
-      </UserRoute>
-    ),
-  },
-  {
     path: '/user/ai-generator',
     exact: true,
     element: <Navigate to="/user/ai-hub/trainer-workspace" replace />,
@@ -285,6 +276,7 @@ export const protectedRouteChildren = [
     children: [
       { index: true, element: <WorkspaceDashboard /> },
       { path: 'dokumen', element: <Dokumen /> },
+      { path: 'sertifikat', element: <Sertifikat /> },
     ],
   },
   { path: '*', element: <Navigate to="/auth/404" /> },

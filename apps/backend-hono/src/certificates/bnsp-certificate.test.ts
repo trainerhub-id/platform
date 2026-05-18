@@ -38,7 +38,7 @@ describe('BNSP certificate migration', () => {
         mimetype: 'application/pdf',
         size: 3,
       },
-      { pesertaId: 'peserta_1', nomorSertifikat: 'BNSP-001', lsp: 'LSP TrainerHub' },
+      { pesertaId: 'peserta_1', workspaceId: 'ws_1', nomorSertifikat: 'BNSP-001', lsp: 'LSP TrainerHub' },
     )
 
     expect(created).toHaveLength(1)

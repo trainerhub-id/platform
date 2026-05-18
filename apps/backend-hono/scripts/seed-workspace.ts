@@ -8,6 +8,8 @@ import {
   dokumenJenisProgram,
   peserta,
   pesertaBatch,
+  sertifikat,
+  todos,
   users,
   workspaces,
 } from '../src/db/schema'
@@ -155,12 +157,13 @@ async function main() {
     .from(workspaces)
     .where(eq(workspaces.enrollmentId, enrollment.id))
     .limit(1)
+  let workspaceId: string
   if (existingWs.length === 0) {
     const slug = generateWorkspaceSlug({
       batchNumber: batchRow.batchNumber,
       courseShortCode: courseRow.shortCode,
     })
-    await db.insert(workspaces).values({
+    const [wsRow] = await db.insert(workspaces).values({
       slug,
       userId,
       pesertaId: pesertaRow.id,
@@ -169,9 +172,11 @@ async function main() {
       courseId: courseRow.id,
       displayName: `${courseRow.title} - Batch ${batchRow.batchNumber}`,
       status: 'active',
-    })
+    }).returning()
+    workspaceId = wsRow.id
     console.log(`[seed-workspace] created workspace ${slug} for ${userEmail}`)
   } else {
+    workspaceId = existingWs[0].id
     console.log(`[seed-workspace] workspace already exists for enrollment ${enrollment.id}`)
   }
 
@@ -251,6 +256,54 @@ async function main() {
     } else {
       console.log(`[seed-workspace] junction ${def.namaJenis}->trainers already exists`)
     }
+  }
+
+  // 11. Seed sample todos
+  const todoDefinitions = [
+    { key: 'upload_dokumen', title: 'Upload dokumen persyaratan', category: 'Pra-Training' as const, isBlocking: true },
+    { key: 'lakukan_pembayaran', title: 'Lakukan pembayaran', category: 'Pra-Training' as const, isBlocking: true },
+  ]
+  for (const def of todoDefinitions) {
+    const [existing] = await db
+      .select()
+      .from(todos)
+      .where(and(eq(todos.workspaceId, workspaceId), eq(todos.key, def.key)))
+      .limit(1)
+    if (!existing) {
+      await db.insert(todos).values({
+        workspaceId,
+        userId,
+        key: def.key,
+        title: def.title,
+        category: def.category,
+        status: 'todo',
+        isBlocking: def.isBlocking,
+      })
+      console.log(`[seed-workspace] created todo ${def.key}`)
+    } else {
+      console.log(`[seed-workspace] todo ${def.key} already exists`)
+    }
+  }
+
+  // 12. Seed sertifikat
+  const [existingCert] = await db
+    .select()
+    .from(sertifikat)
+    .where(and(eq(sertifikat.workspaceId, workspaceId), eq(sertifikat.type, 'trainerhub')))
+    .limit(1)
+  if (!existingCert) {
+    await db.insert(sertifikat).values({
+      pesertaId: pesertaRow.id,
+      workspaceId,
+      courseId: courseRow.id,
+      type: 'trainerhub',
+      status: 'not_submitted',
+      pesertaName: pesertaRow.nama,
+      courseName: courseRow.title,
+    })
+    console.log('[seed-workspace] created sertifikat placeholder')
+  } else {
+    console.log('[seed-workspace] sertifikat already exists')
   }
 }
 
