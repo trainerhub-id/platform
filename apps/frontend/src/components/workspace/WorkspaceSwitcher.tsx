@@ -10,6 +10,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '../ui/dropdown-menu'
+import { formatWorkspaceLabel } from '../../utils/workspaceLabel'
 
 type WorkspaceSwitcherProps = {
   placement?: 'header' | 'sidebar'
@@ -35,7 +36,7 @@ export function WorkspaceSwitcher({
     return bTs - aTs
   })
   const active = current ?? sorted[0]
-  const label = active?.displayName ?? 'Workspace'
+  const label = active ? formatWorkspaceLabel(active) : 'Workspace'
   const isSidebar = placement === 'sidebar'
 
   const goTo = (slug: string) => {
@@ -95,14 +96,14 @@ export function WorkspaceSwitcher({
             className={ws.id === current?.id ? 'font-bold' : ''}
             data-testid={`workspace-switcher-item-${ws.slug}`}
           >
-            {ws.displayName}
+            {formatWorkspaceLabel(ws)}
             {ws.id === current?.id ? ' ✓' : ''}
           </DropdownMenuItem>
         ))}
         <DropdownMenuSeparator />
         {active && (
           <DropdownMenuItem onSelect={handleCurrentClick}>
-            Buka {active.displayName}
+            Buka {formatWorkspaceLabel(active)}
           </DropdownMenuItem>
         )}
         <DropdownMenuItem onSelect={() => navigate('/workspaces')}>

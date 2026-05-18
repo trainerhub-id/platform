@@ -2,6 +2,7 @@ import { Icon } from '@iconify/react'
 import { Alert, AlertDescription, AlertTitle } from 'src/components/ui/alert'
 import { Loading } from 'src/components/ui/loading'
 import { useWorkspace } from 'src/context/WorkspaceContext'
+import { formatWorkspaceLabel } from 'src/utils/workspaceLabel'
 import { DocumentCategoryList } from './components/DocumentCategoryList'
 import { useDokumen } from './hooks/useDokumen'
 
@@ -17,7 +18,7 @@ const Dokumen = () => {
     <>
       <div className="space-y-6">
         <div className="text-sm text-muted-foreground mb-4">
-          Dokumen untuk <span className="font-medium">{ws.displayName}</span>
+          Dokumen untuk <span className="font-medium">{formatWorkspaceLabel(ws)}</span>
         </div>
 
         {/* Info Card */}

@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import api from 'src/api/axios'
-import { useUser } from 'src/lib/better-auth'
+import { useAuth, useUser } from 'src/lib/better-auth'
 
 const ID_LOCALE = 'id-ID'
 
@@ -141,8 +141,22 @@ export const useTrainingInfo = () => {
   const [selectedTraining, setSelectedTraining] = useState<any>(null)
   const [loading, setLoading] = useState(true)
   const { user: authUser } = useUser()
+  const { getToken, isLoaded, isSignedIn } = useAuth()
 
   useEffect(() => {
+    if (!isLoaded) {
+      return
+    }
+
+    if (!isSignedIn) {
+      setTrainings([])
+      setSelectedTraining(null)
+      setLoading(false)
+      return
+    }
+
+    let isCancelled = false
+
     const fetchData = async () => {
       setLoading(true)
 
@@ -184,12 +198,18 @@ export const useTrainingInfo = () => {
       }
 
       try {
+        const token = await getToken({ skipCache: true })
+        const authHeaders = token ? { Authorization: `Bearer ${token}` } : {}
         const [batchesRes, profileRes] = await Promise.all([
-          api.get('/batch/list'),
-          api.get('/peserta/me'),
+          api.get('/batch/list', { headers: authHeaders }),
+          api.get('/peserta/me', { headers: authHeaders }),
         ])
 
-        const batches = Array.isArray(batchesRes.data) ? batchesRes.data : []
+        const batches = Array.isArray(batchesRes.data)
+          ? batchesRes.data
+          : Array.isArray(batchesRes.data?.batches)
+            ? batchesRes.data.batches
+            : []
 
         // Fetch rundown templates for all batches
         const adaptedTrainings = await Promise.all(
@@ -198,26 +218,35 @@ export const useTrainingInfo = () => {
           ),
         )
 
+        if (isCancelled) {
+          return
+        }
+
         setTrainings(adaptedTrainings)
         if (adaptedTrainings.length > 0) {
           setSelectedTraining(adaptedTrainings[0])
+        } else {
+          setSelectedTraining(null)
         }
       } catch (err) {
         console.error('Error fetching training info:', err)
+        if (!isCancelled) {
+          setTrainings([])
+          setSelectedTraining(null)
+        }
       } finally {
-        setLoading(false)
+        if (!isCancelled) {
+          setLoading(false)
+        }
       }
     }
 
-    if (authUser) {
-      fetchData()
-    } else {
-      // If authUser is not ready, maybe wait?
-      // But useEffect depends on authUser.
-      // Let's allow fetching even if authUser undefined, but depend on it.
-      fetchData()
+    fetchData()
+
+    return () => {
+      isCancelled = true
     }
-  }, [authUser])
+  }, [authUser, getToken, isLoaded, isSignedIn])
 
   return {
     trainings,

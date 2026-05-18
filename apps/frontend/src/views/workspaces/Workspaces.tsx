@@ -1,5 +1,6 @@
 import { Link } from 'react-router'
 import { useWorkspaces } from '../../hooks/useWorkspaces'
+import { formatWorkspaceLabel } from '../../utils/workspaceLabel'
 
 export default function Workspaces() {
   const { data: workspaces, isLoading } = useWorkspaces()
@@ -32,7 +33,7 @@ export default function Workspaces() {
         {workspaces.map((ws) => (
           <div key={ws.id} className="border rounded-md p-4 flex items-center justify-between">
             <div>
-              <div className="font-medium">{ws.displayName}</div>
+              <div className="font-medium">{formatWorkspaceLabel(ws)}</div>
               <div className="text-xs text-muted-foreground">
                 Status: {ws.status}
                 {ws.lastAccessedAt
