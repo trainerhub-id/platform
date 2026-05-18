@@ -1,0 +1,17 @@
+{
+  "name": "trainerhub-document-api",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "node --watch src/server.mjs",
+    "start": "node src/server.mjs",
+    "test:request": "npx hono request src/app.mjs -P /health"
+  },
+  "dependencies": {
+    "@hono/node-server": "^1.14.4",
+    "docx": "^9.6.1",
+    "hono": "^4.8.4",
+    "yazl": "^3.3.1"
+  }
+}

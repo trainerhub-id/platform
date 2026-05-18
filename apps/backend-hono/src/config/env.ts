@@ -14,6 +14,7 @@ const envSchema = z.object({
   WSP_API_URL: z.string().url().default('https://wsp.sertifikasitrainer.com'),
   OUTPUT_DIR: z.string().min(1).default('./outputs'),
   PGBOSS_SCHEMA: z.string().min(1).default('pgboss'),
+  DOCX_RENDERER_URL: z.string().url().default('http://127.0.0.1:3741'),
   FRONTEND_URL: z.string().url().default('http://localhost:5757'),
   FRONTEND_ORIGINS: z.string().optional(),
   AWS_REGION: z.string().min(1).default('auto'),

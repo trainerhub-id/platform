@@ -1,3 +1,4 @@
+import { env } from '../config/env'
 import { PayloadSnapshotRepository } from './payload-snapshot.repository'
 import { DocxTemplateRenderer } from './renderers/docx-template-renderer'
 import { ProgrammaticDocxRenderer } from './renderers/programmatic-docx-renderer'
@@ -86,15 +87,33 @@ export class DocumentGeneratorService {
         schemaVersion: input.document.schemaVersion ?? 'hono_alpha_v1',
       })
 
-      const context: RenderContext = {
-        flow: manifest.flow,
-        documentType: manifest.documentType,
-        renderer: manifest.renderer,
-        outputFormat: manifest.outputFormat,
-        templatePath: manifest.templatePath,
+      let rendered: RenderResult
+
+      // Trainer documents → call docx-renderer microservice
+      if (manifest.flow === 'trainer') {
+        const res = await fetch(`${env.DOCX_RENDERER_URL}/api/trainer/${documentType}/docx`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload),
+        })
+        if (!res.ok) {
+          const err = await res.text().catch(() => res.statusText)
+          throw new GenerationValidationError(`DOCX_RENDERER_ERROR:${documentType}:${err}`)
+        }
+        const bytes = new Uint8Array(await res.arrayBuffer())
+        rendered = { bytes, mimeType: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', outputFormat: 'docx' }
+      } else {
+        const context: RenderContext = {
+          flow: manifest.flow,
+          documentType: manifest.documentType,
+          renderer: manifest.renderer,
+          outputFormat: manifest.outputFormat,
+          templatePath: manifest.templatePath,
+        }
+        const renderer = this.rendererRegistry.getRenderer(context)
+        rendered = await renderer.render({ context, payload })
       }
-      const renderer = this.rendererRegistry.getRenderer(context)
-      const rendered = await renderer.render({ context, payload })
+
       results.push({
         ...rendered,
         documentType,

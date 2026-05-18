@@ -1,0 +1,301 @@
+{
+  "bukti-1": {
+    "document_title": "TRAINING NEED ANALYSIS",
+    "document_subtitle": "TNA MAKRO",
+    "program_title": "Pelatihan Menyusun Strategi dan Rencana Pengelolaan SDM",
+    "region_context": {
+      "organization_name": "PT Maju Bersama Indonesia",
+      "organization_city": "Bekasi",
+      "primary_region": "Jabodetabek",
+      "sector": "Human Resource Development",
+      "target_context": "Manajer SDM dan Supervisor",
+      "generated_opportunity_summary": "Peluang pengembangan SDM di sektor manufaktur Jabodetabek sangat besar mengingat pertumbuhan industri 4.0",
+      "generated_regional_profile": "Wilayah Jabodetabek memiliki konsentrasi industri manufaktur tertinggi di Indonesia",
+      "generated_business_landscape": "Persaingan tenaga kerja terampil semakin ketat dengan masuknya investasi asing"
+    },
+    "introduction": {
+      "background": "Kebutuhan pelatihan SDM meningkat seiring transformasi digital di sektor manufaktur.",
+      "problem_statement": "Banyak manajer SDM belum memiliki kompetensi dalam menyusun strategi pengelolaan SDM berbasis data.",
+      "training_objective": "Meningkatkan kompetensi manajer SDM dalam menyusun strategi dan rencana pengelolaan SDM yang terukur.",
+      "report_objective": "Mengidentifikasi gap kompetensi dan merumuskan kebutuhan pelatihan yang tepat sasaran.",
+      "program_overview": "Program pelatihan berbasis SKKNI dengan pendekatan blended learning selama 3 hari."
+    },
+    "competency_reference": {
+      "unit_code": "M.70SDM01.001.2",
+      "unit_title": "Menyusun Strategi dan Rencana Pengelolaan SDM"
+    },
+    "methodology": {
+      "approach_summary": "Analisis dilakukan dengan pendekatan mixed-method menggunakan data kuantitatif dan kualitatif.",
+      "methods_used": [
+        { "name": "Survey Online", "description": "Kuesioner terstruktur kepada 50 manajer SDM" },
+        { "name": "Wawancara Mendalam", "description": "Diskusi dengan 10 praktisi senior HR" },
+        { "name": "Observasi Lapangan", "description": "Pengamatan langsung di 5 perusahaan" }
+      ]
+    },
+    "data_collection": {
+      "survey_summary": "Dari 50 responden, 72% menyatakan belum pernah mengikuti pelatihan formal pengelolaan SDM berbasis SKKNI.",
+      "interview_summary": "Praktisi senior mengidentifikasi gap utama pada kemampuan analisis data SDM dan perencanaan strategis.",
+      "secondary_data_summary": "Data BPS menunjukkan kebutuhan tenaga kerja terampil di sektor manufaktur meningkat 15% per tahun."
+    },
+    "needs_analysis": {
+      "current_condition": "Mayoritas manajer SDM masih menggunakan pendekatan administratif tradisional tanpa perencanaan strategis.",
+      "ideal_condition": "Manajer SDM mampu menyusun strategi pengelolaan SDM yang terukur dan berbasis data.",
+      "gap_analysis": "Terdapat gap signifikan antara kompetensi saat ini dengan standar SKKNI M.70SDM01.001.2.",
+      "priority_needs": [
+        "Kemampuan analisis data SDM",
+        "Penyusunan strategi SDM berbasis SKKNI",
+        "Perencanaan program pengembangan kompetensi"
+      ]
+    },
+    "key_findings": [
+      { "title": "Gap Kompetensi Strategis", "description": "80% peserta sasaran belum mampu menyusun rencana SDM jangka panjang" },
+      { "title": "Kebutuhan Sertifikasi", "description": "Regulasi baru mensyaratkan sertifikasi kompetensi untuk posisi manajerial SDM" }
+    ],
+    "recommendations": [
+      { "title": "Pelatihan Intensif 3 Hari", "description": "Program berbasis SKKNI dengan praktik langsung" },
+      { "title": "Pendampingan Pasca Pelatihan", "description": "Mentoring selama 1 bulan setelah pelatihan" }
+    ],
+    "conclusion": "Berdasarkan analisis kebutuhan pelatihan, program Menyusun Strategi dan Rencana Pengelolaan SDM sangat diperlukan untuk meningkatkan kompetensi manajer SDM di wilayah Jabodetabek.",
+    "sign_off": { "prepared_by": "Budi Santoso", "city": "Bekasi", "date": "15 Mei 2026" }
+  },
+  "bukti-2": {
+    "document_title": "TRAINING NEED ANALYSIS",
+    "document_subtitle": "TNA MIKRO",
+    "organization_profile": {
+      "organization_name": "PT Maju Bersama Indonesia",
+      "sector": "Human Resource Development"
+    },
+    "program_identity": {
+      "program_name": "Menyusun Strategi dan Rencana Pengelolaan SDM",
+      "target_participants": "Manajer SDM dan Supervisor",
+      "competency_focus": "Perencanaan Strategis SDM",
+      "core_problem": "Kurangnya kemampuan analisis dan perencanaan strategis SDM"
+    },
+    "target_role_analysis": {
+      "role_title": "Manajer SDM",
+      "role_description": "Bertanggung jawab atas perencanaan dan pengelolaan sumber daya manusia organisasi.",
+      "main_function": "Menyusun dan mengimplementasikan strategi pengelolaan SDM",
+      "main_tasks": [
+        "Menganalisis kebutuhan SDM organisasi",
+        "Menyusun rencana pengembangan kompetensi",
+        "Mengelola program pelatihan dan sertifikasi",
+        "Mengevaluasi efektivitas program SDM"
+      ],
+      "performance_standards": [
+        "Mampu menyusun rencana SDM tahunan",
+        "Mampu mengidentifikasi gap kompetensi",
+        "Mampu merancang program pengembangan berbasis SKKNI"
+      ]
+    },
+    "competency_needs_analysis": {
+      "analysis_summary": "Analisis menunjukkan gap signifikan pada kemampuan perencanaan strategis SDM.",
+      "assessment_method": "Observasi dan Wawancara Terstruktur",
+      "assessment_scale": "Skala 1-5 (1=Sangat Kurang, 5=Sangat Baik)",
+      "assessment_rows": [
+        { "indicator": "Kemampuan analisis data SDM", "score_average": "2.3", "gap_note": "Perlu peningkatan signifikan" },
+        { "indicator": "Penyusunan strategi SDM", "score_average": "2.1", "gap_note": "Gap kritis" },
+        { "indicator": "Perencanaan program pengembangan", "score_average": "2.5", "gap_note": "Perlu penguatan" }
+      ],
+      "key_gap_findings": [
+        "Belum mampu menggunakan data untuk pengambilan keputusan SDM",
+        "Kurang memahami framework SKKNI untuk perencanaan SDM"
+      ],
+      "priority_competencies": [
+        "Analisis kebutuhan SDM berbasis data",
+        "Penyusunan strategi SDM jangka panjang",
+        "Implementasi standar kompetensi kerja"
+      ]
+    },
+    "training_recommendations": [
+      { "title": "Pelatihan Berbasis SKKNI", "description": "Program 3 hari dengan praktik langsung" },
+      { "title": "Workshop Analisis Data SDM", "description": "Penguatan kemampuan analisis kuantitatif" }
+    ],
+    "training_unit_recommendations": [
+      { "unit_code": "M.70SDM01.001.2", "unit_title": "Menyusun Strategi dan Rencana Pengelolaan SDM", "reason": "Unit utama yang menjawab gap kompetensi" }
+    ],
+    "conclusion": "Program pelatihan Menyusun Strategi dan Rencana Pengelolaan SDM sangat relevan untuk menjawab gap kompetensi yang teridentifikasi.",
+    "sign_off": { "prepared_by": "Budi Santoso", "city": "Bekasi", "date": "15 Mei 2026" }
+  },
+  "bukti-3": {
+    "document_title": "PEMETAAN KOMPETENSI",
+    "rows": [
+      { "tujuan_utama": "Pengelolaan SDM yang efektif dan efisien", "fungsi_kunci": "Manajemen SDM Strategis", "fungsi_utama": "Perencanaan dan Pengembangan SDM", "fungsi_dasar": "Menyusun strategi dan rencana pengelolaan SDM" },
+      { "tujuan_utama": "Pengelolaan SDM yang efektif dan efisien", "fungsi_kunci": "Manajemen SDM Strategis", "fungsi_utama": "Perencanaan dan Pengembangan SDM", "fungsi_dasar": "Mengidentifikasi kebutuhan kompetensi" },
+      { "tujuan_utama": "Pengelolaan SDM yang efektif dan efisien", "fungsi_kunci": "Manajemen SDM Operasional", "fungsi_utama": "Pelaksanaan Program SDM", "fungsi_dasar": "Mengelola program pelatihan dan pengembangan" }
+    ],
+    "document_city": "Bekasi",
+    "document_date": "15 Mei 2026",
+    "prepared_by": "Budi Santoso"
+  },
+  "bukti-4": {
+    "unit_code": "M.70SDM01.001.2",
+    "unit_title": "Menyusun Strategi dan Rencana Pengelolaan SDM",
+    "unit_description": "Unit kompetensi ini berhubungan dengan pengetahuan, keterampilan, dan sikap kerja yang dibutuhkan dalam menyusun strategi dan rencana pengelolaan SDM.",
+    "elements": [
+      {
+        "element_number": 1,
+        "element_title": "Mengidentifikasi kebutuhan pengelolaan SDM",
+        "performance_criteria": [
+          { "code": "1.1", "description": "Visi, misi, dan strategi organisasi diidentifikasi" },
+          { "code": "1.2", "description": "Kebutuhan SDM organisasi dianalisis berdasarkan rencana bisnis" },
+          { "code": "1.3", "description": "Gap kompetensi SDM diidentifikasi" }
+        ]
+      },
+      {
+        "element_number": 2,
+        "element_title": "Menyusun strategi pengelolaan SDM",
+        "performance_criteria": [
+          { "code": "2.1", "description": "Strategi pengelolaan SDM disusun berdasarkan hasil analisis" },
+          { "code": "2.2", "description": "Program pengembangan SDM dirancang sesuai kebutuhan" },
+          { "code": "2.3", "description": "Indikator keberhasilan program ditetapkan" }
+        ]
+      }
+    ],
+    "variable_constraints": {
+      "context": {
+        "scope": ["Unit kompetensi ini berlaku untuk menyusun strategi dan rencana pengelolaan SDM di berbagai jenis organisasi"],
+        "definitions": ["Pengelolaan diri meliputi: perencanaan kerja; pengelolaan waktu; pengelolaan prioritas; pemecahan masalah"],
+        "explanatory_notes": ["Strategi SDM harus selaras dengan strategi bisnis organisasi"]
+      },
+      "equipment": ["Komputer/Laptop", "Software HRIS", "Alat presentasi"],
+      "materials": ["Formulir analisis kebutuhan SDM", "Formulir rencana pengembangan"],
+      "regulations": ["UU No. 13 Tahun 2003 tentang Ketenagakerjaan", "PP No. 31 Tahun 2006 tentang Sistem Pelatihan Kerja Nasional"],
+      "norms_and_standards": ["Norma-norma kerja yang berlaku di tempat kerja", "Standard Operating Procedure (SOP) pengelolaan SDM"]
+    },
+    "assessment_context": ["Asesmen dilakukan di tempat kerja atau tempat kerja simulasi", "Metode asesmen meliputi observasi, wawancara, dan portofolio"],
+    "competency_requirements": [],
+    "required_knowledge": ["Manajemen SDM strategis", "Analisis kebutuhan pelatihan", "Perencanaan program pengembangan SDM", "Regulasi ketenagakerjaan"],
+    "required_skills": ["Menganalisis data SDM", "Menyusun rencana strategis", "Komunikasi efektif", "Pengambilan keputusan berbasis data"],
+    "work_attitudes": ["Teliti dan cermat", "Berorientasi pada hasil", "Komunikatif dan kolaboratif"],
+    "critical_aspects": ["Kemampuan menganalisis kebutuhan SDM secara komprehensif", "Kemampuan menyusun strategi yang terukur dan realistis"],
+    "sign_off": { "city": "Bekasi", "date": "15 Mei 2026", "prepared_by": "Budi Santoso" }
+  },
+  "bukti-5": {
+    "document_title": "BUKTI PELAKSANAAN KELAS",
+    "program_identity": { "program_name": "Menyusun Strategi dan Rencana Pengelolaan SDM" },
+    "evidence_images": [
+      { "title": "Pembuatan Google Classroom", "dataUri": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+/p9sAAAAASUVORK5CYII=" },
+      { "title": "Tampilan Beranda Kelas", "dataUri": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+/p9sAAAAASUVORK5CYII=" }
+    ]
+  },
+  "bukti-6": {
+    "document_title": "MARKETING PLAN",
+    "executive_summary": "Rencana pemasaran program pelatihan Menyusun Strategi dan Rencana Pengelolaan SDM yang ditujukan untuk manajer SDM di wilayah Jabodetabek.",
+    "program_identity": {
+      "program_name": "Menyusun Strategi dan Rencana Pengelolaan SDM",
+      "training_name": "Pelatihan Berbasis SKKNI M.70SDM01.001.2",
+      "organization_name": "PT Maju Bersama Indonesia",
+      "organization_city": "Bekasi",
+      "sector": "Human Resource Development",
+      "target_participants": "Manajer SDM dan Supervisor",
+      "delivery_method": "Blended Learning",
+      "duration": "3 Hari (24 JP)"
+    },
+    "market_analysis": {
+      "current_market_condition": "Permintaan pelatihan SDM berbasis SKKNI meningkat 25% per tahun.",
+      "target_market_overview": "Manajer SDM di perusahaan menengah-besar wilayah Jabodetabek.",
+      "problem_context": "Regulasi baru mensyaratkan sertifikasi kompetensi untuk posisi manajerial.",
+      "opportunity_analysis": "Potensi pasar 500+ perusahaan di Jabodetabek yang belum memiliki SDM tersertifikasi."
+    },
+    "marketing_objectives": [
+      { "objective": "Merekrut 30 peserta per batch", "target_metric": "30 peserta", "timeframe": "Per kuartal" },
+      { "objective": "Mencapai tingkat kepuasan 90%", "target_metric": "NPS > 50", "timeframe": "Per batch" }
+    ],
+    "value_proposition": {
+      "main_value": "Pelatihan berbasis SKKNI dengan jaminan kompetensi terukur",
+      "key_differentiators": ["Instruktur bersertifikat BNSP", "Praktik langsung dengan studi kasus nyata", "Pendampingan pasca pelatihan"]
+    },
+    "marketing_strategy": {
+      "product_strategy": "Program modular yang bisa disesuaikan kebutuhan organisasi",
+      "pricing_strategy": "Harga kompetitif dengan opsi early bird dan group discount",
+      "promotion_strategy": "Digital marketing melalui LinkedIn dan komunitas HR",
+      "distribution_strategy": "Online dan offline di Bekasi, Jakarta, dan Tangerang",
+      "communication_strategy": "Webinar gratis sebagai lead magnet"
+    },
+    "conclusion": "Marketing plan ini dirancang untuk memaksimalkan jangkauan dan konversi peserta pelatihan SDM berbasis SKKNI.",
+    "sign_off": { "prepared_by": "Budi Santoso", "city": "Bekasi", "date": "15 Mei 2026" }
+  },
+  "bukti-7": {
+    "document_title": "PERJANJIAN KERJASAMA PENYELENGGARAAN PELATIHAN",
+    "document_subtitle": "Surat Perjanjian Kerjasama",
+    "document_number": "PKS/001/V/2026",
+    "agreement_date": "15 Mei 2026",
+    "agreement_location": "Bekasi",
+    "party_one": {
+      "organization_name": "PT Maju Bersama Indonesia",
+      "representative_name": "Budi Santoso",
+      "representative_title": "Direktur Utama",
+      "address": "Jl. Industri Raya No. 45, Bekasi 17530"
+    },
+    "party_two": {
+      "organization_name": "LSP Manajemen SDM Indonesia",
+      "representative_name": "Dr. Siti Rahayu",
+      "representative_title": "Ketua LSP",
+      "address": "Jl. HR Rasuna Said Kav. 10, Jakarta Selatan"
+    },
+    "premise_points": [
+      "Pihak Pertama adalah lembaga pelatihan yang memiliki kompetensi dalam penyelenggaraan pelatihan SDM.",
+      "Pihak Kedua adalah Lembaga Sertifikasi Profesi yang berwenang melakukan sertifikasi kompetensi.",
+      "Kedua belah pihak sepakat untuk bekerjasama dalam penyelenggaraan pelatihan dan sertifikasi kompetensi SDM."
+    ],
+    "pasal_1_ruang_lingkup": {
+      "title": "Ruang Lingkup Kerjasama",
+      "content": "Kerjasama ini meliputi penyelenggaraan pelatihan berbasis SKKNI dan pelaksanaan uji kompetensi bagi peserta yang telah menyelesaikan program pelatihan."
+    },
+    "pasal_2_hak_kewajiban": {
+      "title": "Hak dan Kewajiban",
+      "content": "Pihak Pertama bertanggung jawab atas penyelenggaraan pelatihan dan penyediaan fasilitas. Pihak Kedua bertanggung jawab atas pelaksanaan asesmen dan penerbitan sertifikat kompetensi."
+    },
+    "pasal_3_pembiayaan": {
+      "title": "Pembiayaan",
+      "content": "Biaya penyelenggaraan pelatihan ditanggung oleh peserta. Biaya sertifikasi ditanggung terpisah sesuai ketentuan LSP.",
+      "payment_terms": "Pembayaran dilakukan paling lambat 7 hari sebelum pelaksanaan pelatihan."
+    },
+    "closing_paragraph": "Demikian perjanjian kerjasama ini dibuat dan ditandatangani oleh kedua belah pihak dalam keadaan sadar dan tanpa paksaan dari pihak manapun."
+  },
+  "bukti-8": {
+    "document_title": "LAPORAN EVALUASI PELATIHAN",
+    "document_subtitle": "Evaluasi Pelaksanaan Program",
+    "implementation_info": {
+      "training_name": "Menyusun Strategi dan Rencana Pengelolaan SDM",
+      "theme": "Peningkatan Kompetensi Manajer SDM",
+      "date": "10-12 Mei 2026",
+      "location": "Hotel Grand Bekasi",
+      "organizer": "PT Maju Bersama Indonesia",
+      "trainer": "Budi Santoso, S.Psi., M.M.",
+      "participant_count": "25",
+      "respondent_count": "23"
+    },
+    "evaluation_objective": "Mengukur efektivitas pelaksanaan pelatihan dan tingkat kepuasan peserta terhadap seluruh aspek penyelenggaraan.",
+    "methodology": {
+      "method": "Kuesioner Kepuasan Peserta",
+      "scale": "Skala Likert 1-5",
+      "data_collection_time": "Hari terakhir pelatihan",
+      "respondent_count": "23 dari 25 peserta"
+    },
+    "chart": {
+      "title": "Grafik Kepuasan Peserta per Aspek",
+      "scale_label": "Persentase kepuasan (%)",
+      "bars": [
+        { "label": "Materi Pelatihan", "percentage": 92, "favorable_count": 21 },
+        { "label": "Kompetensi Instruktur", "percentage": 96, "favorable_count": 22 },
+        { "label": "Metode Pembelajaran", "percentage": 88, "favorable_count": 20 },
+        { "label": "Fasilitas & Logistik", "percentage": 85, "favorable_count": 19 },
+        { "label": "Manajemen Waktu", "percentage": 83, "favorable_count": 19 }
+      ]
+    },
+    "result_sections": [
+      { "title": "Aspek Materi", "summary": "Materi pelatihan dinilai sangat relevan dengan kebutuhan peserta. 92% peserta menyatakan materi dapat langsung diterapkan di tempat kerja." },
+      { "title": "Aspek Instruktur", "summary": "Instruktur mendapat penilaian tertinggi dengan skor 96%. Peserta mengapresiasi pengalaman praktis dan kemampuan komunikasi instruktur." },
+      { "title": "Aspek Metode", "summary": "Metode blended learning dengan kombinasi teori dan praktik mendapat respons positif. Studi kasus nyata sangat membantu pemahaman." }
+    ],
+    "analysis": "Secara keseluruhan, pelatihan berhasil mencapai target kepuasan di atas 80% untuk semua aspek. Aspek yang perlu ditingkatkan adalah manajemen waktu dan fasilitas logistik.",
+    "conclusion": "Program pelatihan Menyusun Strategi dan Rencana Pengelolaan SDM berhasil dilaksanakan dengan tingkat kepuasan rata-rata 89%. Program layak untuk dilanjutkan dengan perbaikan pada aspek manajemen waktu.",
+    "recommendations": [
+      "Menambah durasi sesi praktik dari 40% menjadi 50% total waktu",
+      "Menyediakan modul digital untuk pembelajaran mandiri pasca pelatihan",
+      "Mengoptimalkan jadwal dengan buffer time antar sesi"
+    ],
+    "sign_off": { "prepared_by": "Budi Santoso", "city": "Bekasi", "date": "15 Mei 2026" }
+  }
+}
