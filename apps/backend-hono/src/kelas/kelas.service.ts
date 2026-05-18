@@ -1,4 +1,5 @@
 import { and, eq, inArray } from 'drizzle-orm'
+import { execSync } from 'node:child_process'
 import { createPrivateKey, createSign } from 'node:crypto'
 import { db } from '../db/client'
 import {
@@ -172,7 +173,9 @@ export class KelasService {
       }
 
       const privateKeyPem = Buffer.from(privateKeyB64, 'base64').toString('utf-8')
-      const privateKey = createPrivateKey({ key: privateKeyPem, format: 'pem' })
+      // Convert PKCS#1 to PKCS#8 (BoringSSL in Bun requires PKCS#8)
+      const pkcs8Pem = execSync('openssl pkcs8 -topk8 -nocrypt', { input: privateKeyPem }).toString()
+      const privateKey = createPrivateKey({ key: pkcs8Pem, format: 'pem' })
 
       const header = Buffer.from(JSON.stringify({ alg: 'RS256', typ: 'JWT', kid: keyId })).toString('base64url')
       const payload = Buffer.from(JSON.stringify({
