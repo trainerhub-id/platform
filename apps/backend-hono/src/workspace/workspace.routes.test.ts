@@ -1,11 +1,11 @@
 import { describe, expect, it } from 'vitest'
 import { createApp } from '../app'
-import { createWorkspaceRoutes } from './workspace.routes'
 
 function appWithRoutes(service: any) {
-  const app = createApp({ testUser: { id: 'user_1', email: 'u@example.com', name: 'U' } })
-  app.route('/api', createWorkspaceRoutes(service))
-  return app
+  return createApp({
+    testUser: { id: 'user_1', email: 'u@example.com', name: 'U' },
+    workspaceService: service,
+  })
 }
 
 describe('GET /api/workspaces', () => {
@@ -35,8 +35,7 @@ describe('GET /api/workspaces', () => {
   })
 
   it('returns 401 when no user in session', async () => {
-    const app = createApp() // no testUser
-    app.route('/api', createWorkspaceRoutes({ listForUser: async () => [] } as any))
+    const app = createApp({ workspaceService: { listForUser: async () => [] } as any }) // no testUser
 
     const res = await app.request('/api/workspaces')
 

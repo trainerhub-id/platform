@@ -23,14 +23,18 @@ import { createReadinessRoutes } from './routes/readiness.routes'
 import { createSkkniRoutes } from './skkni/skkni.routes'
 import { createTodosRoutes } from './todos/todos.routes'
 import { createTugasRoutes } from './tugas/tugas.routes'
+import { createWorkspaceRoutes } from './workspace/workspace.routes'
+import { WorkspaceService } from './workspace/workspace.service'
 
 type AppVariables = AuthVariables & {
   requestId: string
 }
 
 type TestUser = { id: string; email: string; name: string; role?: string }
+type ServiceLike = Pick<WorkspaceService, 'listForUser' | 'findByUserAndSlug'>
+type CreateAppOptions = { testUser?: TestUser; workspaceService?: ServiceLike; generationJobs?: import('./generation/generation-job.service').GenerationJobService }
 
-export function createApp(options: { testUser?: TestUser; generationJobs?: import('./generation/generation-job.service').GenerationJobService } = {}) {
+export function createApp(options: CreateAppOptions = {}) {
   const app = new OpenAPIHono<{ Variables: AppVariables }>()
 
   app.use(
@@ -99,6 +103,10 @@ export function createApp(options: { testUser?: TestUser; generationJobs?: impor
   app.route('/', createDokumenRoutes())
   app.route('/', createAuditLogRoutes())
   app.route('/', createEnrollmentRoutes())
+
+  const workspaceService = options.workspaceService ?? new WorkspaceService()
+  app.route('/api', createWorkspaceRoutes(workspaceService))
+  app.route('/', createWorkspaceRoutes(workspaceService))
 
   app.notFound((c) => errorResponse(c, 404, 'NOT_FOUND', 'Not found'))
   app.onError(handleAppError)
