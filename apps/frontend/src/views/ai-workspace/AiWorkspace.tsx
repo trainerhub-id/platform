@@ -934,7 +934,7 @@ function ToolSearchAnimation() {
 }
 
 // Detect if assistant message is asking for SKKNI search confirmation
-const SKKNI_CONFIRM_RE = /(?:apakah|boleh|mau|ingin|lanjut|cari|pencarian|skkni|unit kompetensi).*(?:\?|lanjutkan|cari)/i
+const SKKNI_CONFIRM_RE = /(?:skkni|unit kompetensi).*\?|(?:cari|pencarian).*(?:skkni|unit kompetensi)/i
 
 function stripSkkniLines(content: string): string {
   const re = /[A-Z]\.\d{2}[A-Z0-9]+\.\d{3}\.\d+/
