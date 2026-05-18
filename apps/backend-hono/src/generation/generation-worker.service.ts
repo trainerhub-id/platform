@@ -28,12 +28,16 @@ type DocumentGeneratorLike = Pick<DocumentGeneratorService, 'generateFromJob'>
 type ObjectStorageLike = Pick<ObjectStorageService, 'uploadBuffer'>
 
 type GeneratedFilesLike = Pick<GeneratedFileRepository, 'create'>
+type DocumentsLike = Pick<DocumentRepository, 'findById'>
+type JobsLike = Pick<DbGenerationJobsRepository, 'listByDocument' | 'updateStatus'>
 
 export class GenerationWorkerService {
   private readonly boss: BossLike
   private readonly documentGenerator: DocumentGeneratorLike
   private readonly objectStorage: ObjectStorageLike
   private readonly generatedFiles: GeneratedFilesLike
+  private readonly documents: DocumentsLike
+  private readonly jobsRepo: JobsLike
 
   constructor(
     deps: {
@@ -41,6 +45,8 @@ export class GenerationWorkerService {
       documentGenerator?: DocumentGeneratorLike
       objectStorage?: ObjectStorageLike
       generatedFiles?: GeneratedFilesLike
+      documents?: DocumentsLike
+      jobsRepo?: JobsLike
     } = {},
   ) {
     this.boss =
@@ -48,6 +54,8 @@ export class GenerationWorkerService {
     this.documentGenerator = deps.documentGenerator ?? new DocumentGeneratorService()
     this.objectStorage = deps.objectStorage ?? new ObjectStorageService()
     this.generatedFiles = deps.generatedFiles ?? new GeneratedFileRepository()
+    this.documents = deps.documents ?? new DocumentRepository()
+    this.jobsRepo = deps.jobsRepo ?? new DbGenerationJobsRepository()
   }
 
   async start(): Promise<void> {
@@ -65,18 +73,20 @@ export class GenerationWorkerService {
       throw new Error('INVALID_GENERATION_JOB_PAYLOAD')
     }
 
-    const documents = new DocumentRepository()
-    const jobsRepo = new DbGenerationJobsRepository()
-
-    const doc = await documents.findById(req.documentId)
+    const doc = await this.documents.findById(req.documentId)
     if (!doc) throw new Error(`DOCUMENT_NOT_FOUND:${req.documentId}`)
 
-    const jobs = await jobsRepo.listByDocument(req.documentId)
+    const jobs = await this.jobsRepo.listByDocument(req.documentId)
     const job = jobs.find((j) => j.status === 'queued') ?? jobs[0]
-    if (job) await jobsRepo.updateStatus(job.id, 'active', null)
+    if (job) await this.jobsRepo.updateStatus(job.id, 'active', null)
 
     const results = await this.documentGenerator.generateFromJob({
-      document: { id: doc.id, flow: doc.flow, masterJson: doc.masterJson, readiness: doc.readiness },
+      document: {
+        id: doc.id,
+        flow: doc.flow,
+        masterJson: doc.masterJson,
+        readiness: doc.readiness,
+      },
       documentTypes: req.documentTypes,
     })
 
@@ -98,7 +108,7 @@ export class GenerationWorkerService {
       })
     }
 
-    if (job) await jobsRepo.updateStatus(job.id, 'completed', null)
+    if (job) await this.jobsRepo.updateStatus(job.id, 'completed', null)
     return results
   }
 

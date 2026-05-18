@@ -72,11 +72,23 @@ describe('GenerationWorkerService', () => {
         }),
       } as any,
       generatedFiles: { create: async (input: unknown) => savedFiles.push(input) } as any,
+      documents: {
+        findById: async () => ({
+          id: 'doc_1',
+          flow: 'master',
+          masterJson: {},
+          readiness: { ready: true, missing: [] },
+        }),
+      } as any,
+      jobsRepo: {
+        listByDocument: async () => [{ id: 'job_1', status: 'queued' }],
+        updateStatus: async () => null,
+      } as any,
     })
 
     await worker.start()
     await boss.handlers.get('generate-master-documents')?.([
-      { data: { jobId: 'job_1', document: { id: 'doc_1' }, documentTypes: ['bukti-1'] } },
+      { data: { documentId: 'doc_1', documentTypes: ['bukti-1'] } },
     ])
 
     expect(savedFiles).toHaveLength(1)
@@ -84,7 +96,7 @@ describe('GenerationWorkerService', () => {
       'bukti-1',
     )
     expect((savedFiles[0] as { filePath: string }).filePath).toBe(
-      'generated/doc_1/job_1/bukti-1.docx',
+      'generated/doc_1/job_1/bukti-1/bukti-1.docx',
     )
   })
 })
