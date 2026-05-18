@@ -37,7 +37,7 @@ type JobsRepository = {
   updateStatus(id: string, status: string, error?: unknown): Promise<GenerationJobRecord | null>
 }
 
-class DbGenerationJobsRepository implements JobsRepository {
+export class DbGenerationJobsRepository implements JobsRepository {
   async listByDocument(documentId: string) {
     return db
       .select()

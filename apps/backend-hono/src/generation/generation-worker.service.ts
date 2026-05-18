@@ -1,10 +1,10 @@
 import { PgBoss } from 'pg-boss'
 import { env } from '../config/env'
 import { DocumentRepository } from '../documents/document.repository'
-import { GenerationJobService } from './generation-job.service'
 import { ObjectStorageService } from '../storage/object-storage.service'
 import { DocumentGeneratorService } from './document-generator.service'
 import { GeneratedFileRepository } from './generated-file.repository'
+import { DbGenerationJobsRepository } from './generation-job.service'
 import type { GenerationJobType } from './generation-job.service'
 
 export const generationWorkerJobNames = [
@@ -60,51 +60,45 @@ export class GenerationWorkerService {
   }
 
   private async processJob(data: unknown) {
-    // data is GenerationRequest: { jobType, documentId, documentTypes, jobId? }
-    const req = data as { documentId?: string; documentTypes?: string[]; jobId?: string }
+    const req = data as { documentId?: string; documentTypes?: string[] }
     if (!req.documentId || !Array.isArray(req.documentTypes)) {
       throw new Error('INVALID_GENERATION_JOB_PAYLOAD')
     }
 
     const documents = new DocumentRepository()
+    const jobsRepo = new DbGenerationJobsRepository()
+
     const doc = await documents.findById(req.documentId)
     if (!doc) throw new Error(`DOCUMENT_NOT_FOUND:${req.documentId}`)
 
-    // Update job status to active
-    const jobService = new GenerationJobService()
-    const jobs = await jobService.listByDocument(req.documentId)
-    const job = jobs.find((j) => (j as { bossJobId?: string }).bossJobId === req.jobId) ?? jobs[0]
-    if (job) await jobService.updateStatus(job.id, 'active', null)
+    const jobs = await jobsRepo.listByDocument(req.documentId)
+    const job = jobs.find((j) => j.status === 'queued') ?? jobs[0]
+    if (job) await jobsRepo.updateStatus(job.id, 'active', null)
 
-    const payload = {
+    const results = await this.documentGenerator.generateFromJob({
       document: { id: doc.id, flow: doc.flow, masterJson: doc.masterJson, readiness: doc.readiness },
       documentTypes: req.documentTypes,
-      jobId: job?.id,
+    })
+
+    for (const result of results) {
+      const upload = await this.objectStorage.uploadBuffer(
+        result.bytes,
+        `generated/${doc.id}/${job?.id ?? 'unknown'}/${result.documentType}`,
+        result.mimeType,
+      )
+      await this.generatedFiles.create({
+        documentId: doc.id,
+        generationJobId: job?.id ?? '',
+        documentType: result.documentType,
+        outputFormat: result.outputFormat,
+        filePath: upload.key,
+        filename: result.filename,
+        mimeType: result.mimeType,
+        sizeBytes: result.bytes.byteLength,
+      })
     }
 
-    const results = await this.documentGenerator.generateFromJob(payload)
-
-    if (job) {
-      for (const result of results) {
-        const upload = await this.objectStorage.uploadBuffer(
-          result.bytes,
-          `generated/${doc.id}/${job.id}/${result.documentType}`,
-          result.mimeType,
-        )
-        await this.generatedFiles.create({
-          documentId: doc.id,
-          generationJobId: job.id,
-          documentType: result.documentType,
-          outputFormat: result.outputFormat,
-          filePath: upload.key,
-          filename: result.filename,
-          mimeType: result.mimeType,
-          sizeBytes: result.bytes.byteLength,
-        })
-      }
-      await jobService.updateStatus(job.id, 'completed', null)
-    }
-
+    if (job) await jobsRepo.updateStatus(job.id, 'completed', null)
     return results
   }
 
