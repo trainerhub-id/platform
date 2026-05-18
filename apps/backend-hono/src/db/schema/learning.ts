@@ -3,6 +3,7 @@ import { peserta } from './people'
 
 export const courses = pgTable('courses', {
   id: uuid('id').primaryKey().defaultRandom(),
+  shortCode: varchar('short_code', { length: 30 }).unique().notNull(),
   title: varchar('title', { length: 255 }).notNull(),
   description: text('description'),
   imageUrl: text('image_url'),
