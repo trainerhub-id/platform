@@ -3,12 +3,15 @@ import {
   batchTiers,
   batchTraining,
   courses,
+  dokumenKategori,
+  dokumenJenis,
+  dokumenJenisProgram,
   peserta,
   pesertaBatch,
   users,
   workspaces,
 } from '../src/db/schema'
-import { eq } from 'drizzle-orm'
+import { and, eq } from 'drizzle-orm'
 import { generateWorkspaceSlug } from '../src/workspace/slug-generator'
 
 async function main() {
@@ -170,6 +173,84 @@ async function main() {
     console.log(`[seed-workspace] created workspace ${slug} for ${userEmail}`)
   } else {
     console.log(`[seed-workspace] workspace already exists for enrollment ${enrollment.id}`)
+  }
+
+  // 8. Seed dokumen kategori, jenis, and jenis-program mapping
+  let kategoriRow = (
+    await db
+      .select()
+      .from(dokumenKategori)
+      .where(eq(dokumenKategori.nama, 'Persyaratan Trainer'))
+      .limit(1)
+  )[0]
+  if (!kategoriRow) {
+    const [created] = await db
+      .insert(dokumenKategori)
+      .values({ nama: 'Persyaratan Trainer' })
+      .returning()
+    kategoriRow = created
+    console.log('[seed-workspace] created dokumen kategori: Persyaratan Trainer')
+  } else {
+    console.log('[seed-workspace] dokumen kategori already exists')
+  }
+
+  const jenisDefinitions = [
+    { namaJenis: 'KTP', opsional: false, orderIndex: 1 },
+    { namaJenis: 'NPWP', opsional: true, orderIndex: 2 },
+    { namaJenis: 'Foto Profesional', opsional: false, orderIndex: 3 },
+    { namaJenis: 'Surat Pernyataan Komitmen', opsional: false, orderIndex: 4 },
+  ]
+
+  for (const def of jenisDefinitions) {
+    let jenisRow = (
+      await db
+        .select()
+        .from(dokumenJenis)
+        .where(
+          and(
+            eq(dokumenJenis.kategoriId, kategoriRow.id),
+            eq(dokumenJenis.namaJenis, def.namaJenis),
+          ),
+        )
+        .limit(1)
+    )[0]
+    if (!jenisRow) {
+      const [created] = await db
+        .insert(dokumenJenis)
+        .values({
+          kategoriId: kategoriRow.id,
+          namaJenis: def.namaJenis,
+          opsional: def.opsional,
+        })
+        .returning()
+      jenisRow = created
+      console.log(`[seed-workspace] created dokumen jenis: ${def.namaJenis}`)
+    } else {
+      console.log(`[seed-workspace] dokumen jenis ${def.namaJenis} already exists`)
+    }
+
+    // Junction: map jenis to trainers course
+    const existingJunction = await db
+      .select()
+      .from(dokumenJenisProgram)
+      .where(
+        and(
+          eq(dokumenJenisProgram.jenisId, jenisRow.id),
+          eq(dokumenJenisProgram.courseId, courseRow.id),
+        ),
+      )
+      .limit(1)
+    if (existingJunction.length === 0) {
+      await db.insert(dokumenJenisProgram).values({
+        jenisId: jenisRow.id,
+        courseId: courseRow.id,
+        orderIndex: def.orderIndex,
+        required: !def.opsional,
+      })
+      console.log(`[seed-workspace] mapped ${def.namaJenis} to trainers course`)
+    } else {
+      console.log(`[seed-workspace] junction ${def.namaJenis}->trainers already exists`)
+    }
   }
 }
 
