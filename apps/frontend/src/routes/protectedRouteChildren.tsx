@@ -72,15 +72,7 @@ export const protectedRouteChildren = [
       </UserRoute>
     ),
   },
-  {
-    path: '/user/dokumen',
-    exact: true,
-    element: (
-      <UserRoute>
-        <Dokumen />
-      </UserRoute>
-    ),
-  },
+
   {
     path: '/user/sertifikat',
     exact: true,
@@ -290,7 +282,10 @@ export const protectedRouteChildren = [
         <WorkspaceRouteWrapper />
       </UserRoute>
     ),
-    children: [{ index: true, element: <WorkspaceDashboard /> }],
+    children: [
+      { index: true, element: <WorkspaceDashboard /> },
+      { path: 'dokumen', element: <Dokumen /> },
+    ],
   },
   { path: '*', element: <Navigate to="/auth/404" /> },
 ]
