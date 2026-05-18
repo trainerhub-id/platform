@@ -3,9 +3,9 @@ import { useEffect } from 'react'
 import { MapContainer, Marker, Popup, TileLayer, useMap } from 'react-leaflet'
 import 'leaflet/dist/leaflet.css'
 import { Icon } from '@iconify/react'
-
 import icon from 'leaflet/dist/images/marker-icon.png'
 import iconShadow from 'leaflet/dist/images/marker-shadow.png'
+
 
 const DefaultIcon = L.icon({
   iconUrl: icon,
@@ -45,28 +45,6 @@ function ChangeView({ center }: { center: [number, number] }) {
 
 const TrainingMap = ({ selectedTraining }: TrainingMapProps) => {
   const coordinates = selectedTraining.coordinates || [-6.2088, 106.8456]
-  const isOnline =
-    !selectedTraining.location ||
-    selectedTraining.location.toLowerCase() === 'online'
-
-  if (isOnline) {
-    return (
-      <div
-        className="h-full w-full flex flex-col items-center justify-center bg-[#FBF9F5]"
-        style={{ minHeight: '280px' }}
-      >
-        <div className="flex flex-col items-center gap-3 text-center px-6">
-          <div className="w-14 h-14 rounded-full bg-[#F5EBDD] flex items-center justify-center">
-            <Icon icon="solar:monitor-bold" className="text-[#B8863B]" height={28} />
-          </div>
-          <p className="text-[15px] font-semibold text-[#1F2937]">Training Online</p>
-          <p className="text-[13px] text-[#9CA3AF]">
-            Lokasi tidak tersedia untuk training online.
-          </p>
-        </div>
-      </div>
-    )
-  }
 
   return (
     <div className="h-full w-full" style={{ minHeight: '280px' }}>
