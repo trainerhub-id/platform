@@ -7,7 +7,6 @@ import {
   ConversationScrollButton,
 } from 'src/components/ai-elements/conversation'
 import { Message, MessageContent, MessageResponse } from 'src/components/ai-elements/message'
-import { Badge } from 'src/components/ui/badge'
 import { Button } from 'src/components/ui/button'
 import {
   Dialog,
@@ -18,7 +17,6 @@ import {
   DialogTrigger,
 } from 'src/components/ui/dialog'
 import { Input } from 'src/components/ui/input'
-import { Progress } from 'src/components/ui/progress'
 import { ScrollArea } from 'src/components/ui/scroll-area'
 import { Textarea } from 'src/components/ui/textarea'
 import { cn } from 'src/lib/utils'
@@ -330,26 +328,32 @@ export default function AiWorkspace({ flow }: AiWorkspaceProps) {
   return (
     <div
       className="flex -mx-5 -my-8 min-h-0 overflow-hidden lg:-mx-8"
-      style={{ height: 'calc(100dvh - 79px)' }}
+      style={{ height: 'calc(100dvh - 79px)', background: 'var(--ai-bg, #F8F6F2)' }}
     >
-      <div className="relative flex min-w-0 flex-1 flex-col overflow-hidden border-r border-ld bg-white dark:bg-dark">
-        <div className="z-10 border-b border-border bg-white/95 px-4 py-2 backdrop-blur dark:bg-dark/95 md:px-6">
+      {/* Main chat column */}
+      <div className="relative flex min-w-0 flex-1 flex-col overflow-hidden" style={{ borderRight: '1px solid var(--ai-border, #E8E2D8)', background: 'var(--ai-surface, #FFFFFF)' }}>
+
+        {/* Top info bar */}
+        <div className="z-10 px-4 py-2.5 md:px-6" style={{ borderBottom: '1px solid var(--ai-border, #E8E2D8)', background: 'var(--ai-surface, #FFFFFF)' }}>
           <div className="flex min-w-0 items-center justify-between gap-3">
-            <div className="min-w-0">
+            <div className="flex min-w-0 items-center gap-3">
               <div className="flex min-w-0 items-center gap-2">
-                <span className="truncate text-sm font-semibold text-ld">
+                <span
+                  className="inline-flex items-center rounded-md px-2 py-0.5 text-xs font-semibold"
+                  style={{ background: 'var(--ai-accent-bg, #F5EBDD)', color: 'var(--ai-gold, #B8863B)' }}
+                >
                   {activeDocument?.title || copy.newTitle}
                 </span>
-                <Badge
-                  variant={readiness?.ready ? 'lightSuccess' : 'lightPrimary'}
-                  className="shrink-0 px-2 py-0.5 text-[11px]"
+                <span
+                  className="inline-flex items-center rounded-full px-2 py-0.5 text-[11px] font-medium"
+                  style={{ background: 'var(--ai-accent-bg, #F5EBDD)', color: 'var(--ai-gold, #B8863B)' }}
                 >
-                  {readiness?.ready ? 'Siap generate' : `${progress}%`}
-                </Badge>
+                  {progress}%
+                </span>
               </div>
-              <p className="mt-0.5 truncate text-xs text-bodytext">
-                Fase: {readiness?.phase || activeDocument?.currentPhase || 'draft'}
-              </p>
+              <span className="text-xs" style={{ color: 'var(--ai-text-secondary, #6B7280)' }}>
+                Fase: <span className="font-medium" style={{ color: 'var(--ai-text-primary, #1F2937)' }}>{readiness?.phase || activeDocument?.currentPhase || 'brainstorming'}</span>
+              </span>
             </div>
 
             <DocumentManager
@@ -366,32 +370,33 @@ export default function AiWorkspace({ flow }: AiWorkspaceProps) {
           </div>
 
           {error ? (
-            <div className="mt-3 rounded-md border border-error/30 bg-lighterror px-3 py-2 text-xs text-error">
+            <div className="mt-2 rounded-lg border px-3 py-2 text-xs" style={{ borderColor: '#fca5a5', background: '#fef2f2', color: '#dc2626' }}>
               {error}
             </div>
           ) : null}
         </div>
 
+        {/* Chat area */}
         <div className="min-h-0 flex-1 overflow-hidden">
           <div className="flex h-full flex-col">
-            <div className="min-h-0 flex-1 bg-muted/20">
+            <div className="min-h-0 flex-1" style={{ background: 'var(--ai-bg, #F8F6F2)' }}>
               {messages.length === 0 ? (
                 <Conversation className="h-full">
                   <ConversationEmptyState
                     description={copy.emptyPrompt}
-                    icon={<Icon icon="solar:chat-round-dots-bold-duotone" height={30} />}
+                    icon={<Icon icon="solar:chat-round-dots-bold-duotone" height={32} style={{ color: 'var(--ai-gold, #B8863B)' }} />}
                     title="Mulai percakapan terarah"
                   />
                 </Conversation>
               ) : (
                 <Conversation className="h-full">
-                  <ConversationContent className="mx-auto min-h-full w-full max-w-3xl px-4 py-5 md:px-6">
+                  <ConversationContent className="mx-auto min-h-full w-full max-w-3xl px-4 py-6 md:px-6">
                     {messages.map((message) => (
                       <MessageBubble key={message.id} message={message} />
                     ))}
                     {isSending ? (
-                      <div className="flex items-center gap-2 pl-1 text-xs text-bodytext">
-                        <span className="h-2 w-2 animate-pulse rounded-full bg-primary" />
+                      <div className="flex items-center gap-2 pl-1 text-xs" style={{ color: 'var(--ai-text-secondary, #6B7280)' }}>
+                        <span className="h-1.5 w-1.5 animate-pulse rounded-full" style={{ background: 'var(--ai-gold, #B8863B)' }} />
                         Sedang memproses...
                       </div>
                     ) : null}
@@ -401,8 +406,12 @@ export default function AiWorkspace({ flow }: AiWorkspaceProps) {
               )}
             </div>
 
-            <div className="shrink-0 border-t border-border bg-white px-3 py-2 dark:bg-dark">
-              <div className="mx-auto flex max-w-3xl items-center gap-2 rounded-lg border border-border bg-white px-3 py-2 shadow-sm dark:bg-dark">
+            {/* Input area */}
+            <div className="shrink-0 px-4 py-3 md:px-6" style={{ borderTop: '1px solid var(--ai-border, #E8E2D8)', background: 'var(--ai-surface, #FFFFFF)' }}>
+              <div
+                className="mx-auto flex max-w-3xl items-end gap-3 rounded-2xl px-4 py-3"
+                style={{ border: '1px solid var(--ai-border, #E8E2D8)', background: 'var(--ai-surface, #FFFFFF)', boxShadow: '0 1px 4px 0 rgba(0,0,0,0.06)' }}
+              >
                 <Textarea
                   value={input}
                   onChange={(event) => setInput(event.target.value)}
@@ -415,16 +424,19 @@ export default function AiWorkspace({ flow }: AiWorkspaceProps) {
                   disabled={isSending}
                   placeholder={copy.emptyPrompt}
                   aria-label="Tulis pesan"
-                  className="max-h-[112px] min-h-[40px] resize-none border-0 bg-transparent px-1 pt-2 pb-1.5 text-sm leading-5 shadow-none focus-visible:ring-0"
+                  className="max-h-[120px] min-h-[40px] flex-1 resize-none border-0 bg-transparent px-0 py-0 text-sm leading-6 shadow-none focus-visible:ring-0"
+                  style={{ color: 'var(--ai-text-primary, #1F2937)' }}
                 />
-                <Button
+                <button
+                  type="button"
                   aria-label="Kirim pesan"
-                  className="h-8 w-8 shrink-0 rounded-md p-0"
                   onClick={() => void handleSend()}
                   disabled={!input.trim() || isSending}
+                  className="mb-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-xl transition-opacity disabled:opacity-40"
+                  style={{ background: 'var(--ai-gold, #B8863B)', color: '#fff' }}
                 >
                   <Icon icon="solar:plain-bold" height={16} />
-                </Button>
+                </button>
               </div>
             </div>
           </div>
@@ -523,10 +535,15 @@ function DocumentManager({
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant="outline" size="sm" disabled={isBusy}>
-          <Icon icon="solar:folder-with-files-bold" height={16} />
+        <button
+          type="button"
+          disabled={isBusy}
+          className="inline-flex items-center gap-1.5 rounded-xl border px-3 py-1.5 text-xs font-medium transition-colors disabled:opacity-50"
+          style={{ borderColor: 'var(--ai-border, #E8E2D8)', color: 'var(--ai-text-primary, #1F2937)', background: 'var(--ai-surface, #FFFFFF)' }}
+        >
+          <Icon icon="solar:folder-with-files-bold" height={14} style={{ color: 'var(--ai-gold, #B8863B)' }} />
           Kelola Dokumen
-        </Button>
+        </button>
       </DialogTrigger>
       <DialogContent className="max-w-[520px]" hideCloseButton>
         <DialogHeader className="pr-8">
@@ -661,12 +678,12 @@ function DocumentManager({
                               {document.title}
                             </span>
                             {isActive ? (
-                              <Badge
-                                variant="primary"
-                                className="shrink-0 px-1.5 py-0.5 text-[10px]"
+                              <span
+                                className="shrink-0 rounded-md px-1.5 py-0.5 text-[10px] font-semibold"
+                                style={{ background: 'var(--ai-accent-bg, #F5EBDD)', color: 'var(--ai-gold, #B8863B)' }}
                               >
                                 Aktif
-                              </Badge>
+                              </span>
                             ) : null}
                           </div>
                           <p className="ml-6 mt-0.5 truncate text-xs text-bodytext">
@@ -720,12 +737,21 @@ function MessageBubble({ message }: { message: UiMessage }) {
   return (
     <Message from={isUser ? 'user' : 'assistant'}>
       <MessageContent
-        className={cn(
-          'max-w-[min(72ch,86vw)]',
+        className={cn('max-w-[min(72ch,86vw)]')}
+        style={
           isUser
-            ? 'rounded-lg bg-primary px-4 py-3 text-sm font-medium shadow-sm dark:bg-primary/90'
-            : 'rounded-none bg-transparent px-0 py-0 text-foreground shadow-none',
-        )}
+            ? {
+                background: 'var(--ai-gold, #B8863B)',
+                color: '#fff',
+                boxShadow: '0 1px 3px 0 rgba(184,134,59,0.2)',
+              }
+            : {
+                background: 'var(--ai-surface, #FFFFFF)',
+                borderColor: 'var(--ai-border, #E8E2D8)',
+                color: 'var(--ai-text-primary, #1F2937)',
+                boxShadow: '0 1px 3px 0 rgba(0,0,0,0.04)',
+              }
+        }
       >
         <MessageResponse whiteText={isUser}>{message.content || '...'}</MessageResponse>
       </MessageContent>
@@ -761,73 +787,101 @@ function CheckpointPanel({
   const nextField = missingFields[0] ?? null
 
   return (
-    <aside className="hidden w-80 flex-shrink-0 overflow-y-auto bg-white p-5 dark:bg-dark lg:block">
-      <div className="space-y-5">
+    <aside
+      className="hidden w-72 flex-shrink-0 overflow-y-auto lg:block"
+      style={{ background: 'var(--ai-bg, #F8F6F2)' }}
+    >
+      <div className="p-5 space-y-5">
+        {/* Header */}
         <div>
-          <div className="flex items-center justify-between gap-3">
+          <div className="flex items-center justify-between gap-2">
             <div>
-              <h4 className="text-sm font-bold text-dark dark:text-white">Progress Dokumen</h4>
-              <p className="mt-1 text-xs text-bodytext">{documentLabel}</p>
+              <h4 className="text-sm font-bold" style={{ color: 'var(--ai-text-primary, #1F2937)' }}>
+                Progress Dokumen
+              </h4>
+              <p className="mt-0.5 text-xs" style={{ color: 'var(--ai-text-secondary, #6B7280)' }}>
+                {documentLabel}
+              </p>
             </div>
-            <span className="rounded-md bg-lightprimary px-2 py-1 text-xs font-semibold text-primary">
+            <span
+              className="rounded-lg px-2 py-1 text-xs font-semibold"
+              style={{ background: 'var(--ai-accent-bg, #F5EBDD)', color: 'var(--ai-gold, #B8863B)' }}
+            >
               {progress}%
             </span>
           </div>
 
-          <Progress
-            value={progress}
-            className="mt-3 h-1.5"
-            variant={readiness?.ready ? 'success' : 'primary'}
-          />
-          <div className="mt-2 flex items-center justify-between text-[11px] text-bodytext">
-            <span>
-              {completedFields.length}/{requiredFields.length} field
-            </span>
-            <span>
-              {completedGroups.length}/{groups.length} fase
-            </span>
+          {/* Progress bar */}
+          <div className="mt-3 h-1.5 rounded-full overflow-hidden" style={{ background: 'var(--ai-border, #E8E2D8)' }}>
+            <div
+              className="h-full rounded-full transition-all duration-500"
+              style={{ width: `${progress}%`, background: readiness?.ready ? '#34A853' : 'var(--ai-gold, #B8863B)' }}
+            />
+          </div>
+          <div className="mt-2 flex items-center justify-between text-[11px]" style={{ color: 'var(--ai-text-secondary, #6B7280)' }}>
+            <span>{completedFields.length}/{requiredFields.length} field</span>
+            <span>{completedGroups.length}/{groups.length} fase</span>
           </div>
         </div>
 
-        <section className="rounded-lg border border-border bg-muted/20 p-3">
-          <p className="text-[11px] font-semibold uppercase tracking-normal text-bodytext">
-            Fase saat ini
+        {/* Current phase card */}
+        <div
+          className="rounded-xl p-3.5"
+          style={{ background: 'var(--ai-accent-bg, #F5EBDD)', border: '1px solid var(--ai-border, #E8E2D8)' }}
+        >
+          <p className="text-[10px] font-semibold uppercase tracking-wider mb-2.5" style={{ color: 'var(--ai-gold, #B8863B)' }}>
+            Fase Saat Ini
           </p>
-          <div className="mt-2 flex items-start gap-2">
-            <StatusIcon done={false} current />
+          <div className="flex items-start gap-2.5">
+            <div
+              className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg"
+              style={{ background: 'var(--ai-gold, #B8863B)' }}
+            >
+              <Icon icon="solar:clock-circle-bold-duotone" height={16} className="text-white" />
+            </div>
             <div className="min-w-0">
-              <p className="text-sm font-semibold text-ld">
+              <p className="text-sm font-semibold" style={{ color: 'var(--ai-text-primary, #1F2937)' }}>
                 {activeGroup?.label || 'Brainstorming'}
               </p>
-              <p className="mt-1 text-xs leading-5 text-bodytext">
+              <p className="mt-1 text-xs leading-5" style={{ color: 'var(--ai-text-secondary, #6B7280)' }}>
                 {activeGroup?.description || 'Lengkapi informasi utama melalui chat.'}
               </p>
             </div>
           </div>
-        </section>
+        </div>
 
+        {/* Ready or next field */}
         {readiness?.ready ? (
-          <section className="rounded-lg border border-success/20 bg-lightsuccess p-3">
-            <p className="text-sm font-semibold text-success">Siap generate</p>
-            <p className="mt-1 text-xs leading-5 text-bodytext">
+          <div
+            className="rounded-xl p-3.5"
+            style={{ background: '#f0fdf4', border: '1px solid #bbf7d0' }}
+          >
+            <p className="text-sm font-semibold" style={{ color: '#16a34a' }}>Siap generate</p>
+            <p className="mt-1 text-xs leading-5" style={{ color: '#6B7280' }}>
               Field utama sudah lengkap untuk lanjut ke dokumen.
             </p>
-          </section>
+          </div>
         ) : nextField ? (
-          <section className="rounded-lg border border-border p-3">
-            <p className="text-[11px] font-semibold uppercase tracking-normal text-bodytext">
+          <div
+            className="rounded-xl p-3.5"
+            style={{ background: 'var(--ai-surface, #FFFFFF)', border: '1px solid var(--ai-border, #E8E2D8)' }}
+          >
+            <p className="text-[10px] font-semibold uppercase tracking-wider mb-2" style={{ color: 'var(--ai-text-secondary, #6B7280)' }}>
               Berikutnya
             </p>
-            <p className="mt-2 text-sm font-semibold text-ld">{nextField}</p>
+            <p className="text-sm font-semibold" style={{ color: 'var(--ai-text-primary, #1F2937)' }}>
+              {nextField}
+            </p>
             {missingFields.length > 1 ? (
-              <p className="mt-1 text-xs leading-5 text-bodytext">
+              <p className="mt-1 text-xs leading-5" style={{ color: 'var(--ai-text-secondary, #6B7280)' }}>
                 Lainnya: {missingFields.slice(1).join(', ')}
               </p>
             ) : null}
-          </section>
+          </div>
         ) : null}
 
-        <div className="space-y-1.5">
+        {/* Phase checklist */}
+        <div className="space-y-1">
           {groups.map((group) => {
             const requiredGroupFields = group.fields.filter((field) => !field.optional)
             const completedGroupFields = requiredGroupFields.filter((field) =>
@@ -842,16 +896,26 @@ function CheckpointPanel({
             return (
               <div
                 key={group.phaseKey}
-                className={cn(
-                  'flex items-center gap-2 rounded-md px-2 py-2 transition-colors',
-                  isCurrent ? 'bg-lightprimary text-primary' : 'text-bodytext',
-                )}
+                className="flex items-center gap-2.5 rounded-lg px-3 py-2.5 transition-colors"
+                style={{
+                  background: isCurrent ? 'var(--ai-accent-bg, #F5EBDD)' : 'transparent',
+                }}
               >
                 <StatusIcon done={groupDone} current={isCurrent} />
                 <div className="min-w-0 flex-1">
-                  <p className="truncate text-xs font-semibold">{group.label}</p>
+                  <p
+                    className="truncate text-xs font-medium"
+                    style={{ color: isCurrent ? 'var(--ai-gold, #B8863B)' : 'var(--ai-text-secondary, #6B7280)' }}
+                  >
+                    {group.label}
+                  </p>
                 </div>
-                <span className="text-[11px]">{groupProgress}%</span>
+                <span
+                  className="text-[11px] font-medium"
+                  style={{ color: groupDone ? '#16a34a' : isCurrent ? 'var(--ai-gold, #B8863B)' : 'var(--ai-text-secondary, #6B7280)' }}
+                >
+                  {groupProgress}%
+                </span>
               </div>
             )
           })}
@@ -863,10 +927,10 @@ function CheckpointPanel({
 
 function StatusIcon({ done, current }: { done: boolean; current: boolean }) {
   if (done) {
-    return <Icon icon="solar:check-circle-bold" height={20} className="text-success" />
+    return <Icon icon="solar:check-circle-bold" height={18} style={{ color: '#34A853', flexShrink: 0 }} />
   }
   if (current) {
-    return <Icon icon="solar:clock-circle-bold-duotone" height={20} className="text-primary" />
+    return <Icon icon="solar:clock-circle-bold-duotone" height={18} style={{ color: 'var(--ai-gold, #B8863B)', flexShrink: 0 }} />
   }
-  return <Icon icon="solar:record-circle-linear" height={20} className="text-bodytext" />
+  return <Icon icon="solar:record-circle-linear" height={18} style={{ color: 'var(--ai-border, #E8E2D8)', flexShrink: 0 }} />
 }
