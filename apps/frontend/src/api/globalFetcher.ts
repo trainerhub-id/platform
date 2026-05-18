@@ -1,12 +1,12 @@
 // SWR fetcher function
 
 const getFetcher = (url: any) =>
-  fetch(url).then((res) => {    
+  fetch(url).then((res) => {
     if (!res.ok) {
-      throw new Error('Failed to fetch the data');
+      throw new Error('Failed to fetch the data')
     }
-    return res.json();
-  });
+    return res.json()
+  })
 
 const postFetcher = (url: string, arg: any) =>
   fetch(url, {
@@ -15,10 +15,10 @@ const postFetcher = (url: string, arg: any) =>
     body: JSON.stringify(arg),
   }).then((res) => {
     if (!res.ok) {
-      throw new Error('Failed to post data');
+      throw new Error('Failed to post data')
     }
-    return res.json();
-  });
+    return res.json()
+  })
 
 const putFetcher = (url: string, arg: any) =>
   fetch(url, {
@@ -27,10 +27,10 @@ const putFetcher = (url: string, arg: any) =>
     body: JSON.stringify(arg),
   }).then((res) => {
     if (!res.ok) {
-      throw new Error('Failed to updated data');
+      throw new Error('Failed to updated data')
     }
-    return res.json();
-  });
+    return res.json()
+  })
 
 const patchFetcher = (url: string, arg: any) =>
   fetch(url, {
@@ -39,10 +39,10 @@ const patchFetcher = (url: string, arg: any) =>
     body: JSON.stringify(arg),
   }).then((res) => {
     if (!res.ok) {
-      throw new Error('Failed to updated data');
+      throw new Error('Failed to updated data')
     }
-    return res.json();
-  });
+    return res.json()
+  })
 
 const deleteFetcher = (url: string, arg: any) =>
   fetch(url, {
@@ -51,9 +51,9 @@ const deleteFetcher = (url: string, arg: any) =>
     body: JSON.stringify(arg),
   }).then((res) => {
     if (!res.ok) {
-      throw new Error('Failed to delete data');
+      throw new Error('Failed to delete data')
     }
-    return res.json();
-  });
+    return res.json()
+  })
 
-export { getFetcher, postFetcher, putFetcher, deleteFetcher, patchFetcher };
+export { deleteFetcher, getFetcher, patchFetcher, postFetcher, putFetcher }

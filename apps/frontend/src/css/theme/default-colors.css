@@ -1,65 +1,65 @@
 :root {
-    --color-primary: #635BFF;
-    --color-secondary: #16CDC7;
-    --color-primary-rgb: 99, 91, 255;
-    --color-secondary-rgb: 20, 233, 226;
-    --color-warning-rgb: 248, 194, 10;
-    --color-error-rgb: 255, 102, 146;
-    --color-success-rgb: 46, 169, 92;
+  --color-primary: #635bff;
+  --color-secondary: #16cdc7;
+  --color-primary-rgb: 99, 91, 255;
+  --color-secondary-rgb: 20, 233, 226;
+  --color-warning-rgb: 248, 194, 10;
+  --color-error-rgb: 255, 102, 146;
+  --color-success-rgb: 46, 169, 92;
 }
 
 [data-color-theme="BLUE_THEME"] {
-    --color-primary: #635BFF;
-    --color-secondary: #16CDC7;
-    --color-primary-rgb: 99, 91, 255;
-    --color-secondary-rgb: 20, 233, 226;
+  --color-primary: #635bff;
+  --color-secondary: #16cdc7;
+  --color-primary-rgb: 99, 91, 255;
+  --color-secondary-rgb: 20, 233, 226;
 }
 
 [data-color-theme="AQUA_THEME"] {
-    --color-primary: #0074BA;
-    --color-secondary: #47D7BC;
-    --color-primary-rgb: 0, 116, 186;
-    --color-secondary-rgb: 71, 215, 188;
+  --color-primary: #0074ba;
+  --color-secondary: #47d7bc;
+  --color-primary-rgb: 0, 116, 186;
+  --color-secondary-rgb: 71, 215, 188;
 }
 
 [data-color-theme="PURPLE_THEME"] {
-    --color-primary: #763EBD;
-    --color-secondary: #49BEFF;
-    --color-primary-rgb: 118, 62, 189;
-    --color-secondary-rgb: 149, 207, 213;
+  --color-primary: #763ebd;
+  --color-secondary: #49beff;
+  --color-primary-rgb: 118, 62, 189;
+  --color-secondary-rgb: 149, 207, 213;
 }
 
 [data-color-theme="GREEN_THEME"] {
-    --color-primary: #0a7ea4;
-    --color-secondary: #ccda4e;
-    --color-primary-rgb: 10, 126, 164;
-    --color-secondary-rgb: 204, 218, 78;
+  --color-primary: #0a7ea4;
+  --color-secondary: #ccda4e;
+  --color-primary-rgb: 10, 126, 164;
+  --color-secondary-rgb: 204, 218, 78;
 }
 
 [data-color-theme="CYAN_THEME"] {
-    --color-primary: #01C0C8;
-    --color-secondary: #FB9678;
-    --color-primary-rgb: 1, 192, 200;
-    --color-secondary-rgb: 251, 150, 120;
+  --color-primary: #01c0c8;
+  --color-secondary: #fb9678;
+  --color-primary-rgb: 1, 192, 200;
+  --color-secondary-rgb: 251, 150, 120;
 }
 
 [data-color-theme="ORANGE_THEME"] {
-    --color-primary: #FA896B;
-    --color-secondary: #0074BA;
-    --color-primary-rgb: 250, 137, 107;
-    --color-secondary-rgb: 0, 116, 186;
+  --color-primary: #fa896b;
+  --color-secondary: #0074ba;
+  --color-primary-rgb: 250, 137, 107;
+  --color-secondary-rgb: 0, 116, 186;
 }
 
 [data-color-theme="CUSTOM_THEME"] {
-    --color-primary: #635BFF;
-    --color-secondary: #16CDC7;
-    --color-primary-rgb: 99, 91, 255;
-    --color-secondary-rgb: 20, 233, 226;
+  --color-primary: #635bff;
+  --color-secondary: #16cdc7;
+  --color-primary-rgb: 99, 91, 255;
+  --color-secondary-rgb: 20, 233, 226;
 }
 
 [data-color-theme="BROWN_THEME"] {
-    --color-primary: #C39341;
-    --color-secondary: #A67C3D;
-    --color-primary-rgb: 195, 147, 65;
-    --color-secondary-rgb: 166, 124, 61;
+  --color-primary: #c39341;
+  --color-secondary: #a67c3d;
+  --color-primary-rgb: 195, 147, 65;
+  --color-secondary-rgb: 166, 124, 61;
 }

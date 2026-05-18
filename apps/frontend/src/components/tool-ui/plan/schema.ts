@@ -1,29 +1,24 @@
-import { z } from "zod";
+import { z } from 'zod'
 import {
+  parseWithSchema,
   SerializableActionSchema,
   SerializableActionsConfigSchema,
   ToolUIIdSchema,
   ToolUIReceiptSchema,
   ToolUIRoleSchema,
-  parseWithSchema,
-} from "../shared";
+} from '../shared'
 
-export const PlanTodoStatusSchema = z.enum([
-  "pending",
-  "in_progress",
-  "completed",
-  "cancelled",
-]);
+export const PlanTodoStatusSchema = z.enum(['pending', 'in_progress', 'completed', 'cancelled'])
 
 export const PlanTodoSchema = z.object({
   id: z.string().min(1),
   label: z.string().min(1),
   status: PlanTodoStatusSchema,
   description: z.string().optional(),
-});
+})
 
-export type PlanTodoStatus = z.infer<typeof PlanTodoStatusSchema>;
-export type PlanTodo = z.infer<typeof PlanTodoSchema>;
+export type PlanTodoStatus = z.infer<typeof PlanTodoStatusSchema>
+export type PlanTodo = z.infer<typeof PlanTodoSchema>
 
 export const PlanPropsSchema = z.object({
   id: ToolUIIdSchema,
@@ -37,18 +32,18 @@ export const PlanPropsSchema = z.object({
   responseActions: z
     .union([z.array(SerializableActionSchema), SerializableActionsConfigSchema])
     .optional(),
-});
+})
 
 export type PlanProps = z.infer<typeof PlanPropsSchema> & {
-  className?: string;
-  onResponseAction?: (actionId: string) => void | Promise<void>;
-  onBeforeResponseAction?: (actionId: string) => boolean | Promise<boolean>;
-};
+  className?: string
+  onResponseAction?: (actionId: string) => void | Promise<void>
+  onBeforeResponseAction?: (actionId: string) => boolean | Promise<boolean>
+}
 
-export const SerializablePlanSchema = PlanPropsSchema;
+export const SerializablePlanSchema = PlanPropsSchema
 
-export type SerializablePlan = z.infer<typeof SerializablePlanSchema>;
+export type SerializablePlan = z.infer<typeof SerializablePlanSchema>
 
 export function parseSerializablePlan(input: unknown): SerializablePlan {
-  return parseWithSchema(SerializablePlanSchema, input, "Plan");
+  return parseWithSchema(SerializablePlanSchema, input, 'Plan')
 }

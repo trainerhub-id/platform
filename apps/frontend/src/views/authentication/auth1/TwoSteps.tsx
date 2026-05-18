@@ -1,8 +1,7 @@
-import { Link } from "react-router"
-import AuthTwoSteps from "../authforms/AuthTwoSteps"
-import LeftSidebarPart from "../LeftSidebarPart"
-import LogoIcon from "/src/assets/images/logos/logo.svg"
-
+import { Link } from 'react-router'
+import LogoIcon from '/src/assets/images/logos/logo.svg'
+import AuthTwoSteps from '../authforms/AuthTwoSteps'
+import LeftSidebarPart from '../LeftSidebarPart'
 
 const TwoSteps = () => {
   return (
@@ -13,18 +12,16 @@ const TwoSteps = () => {
             <div className="flex h-screen items-center px-3 max-w-md mx-auto ">
               <div className="w-full">
                 <img src={LogoIcon} alt="Logo" className="h-12 mb-4" />
-                <h3 className="text-2xl font-bold my-3 mt-5">
-                  Two Steps Verification
-                </h3>
+                <h3 className="text-2xl font-bold my-3 mt-5">Two Steps Verification</h3>
                 <p className="text-ld opacity-80 text-sm font-medium">
-                  We sent a verification code to your mobile. Enter the code
-                  from the mobile in the field below.
+                  We sent a verification code to your mobile. Enter the code from the mobile in the
+                  field below.
                 </p>
                 <h6 className="text-sm font-bold my-4">******1234</h6>
                 <AuthTwoSteps />
                 <div className="flex gap-2 text-base text-dark dark:text-white font-medium mt-6 items-center justify-center">
                   <p>Didn't get the code?</p>
-                  <Link to={"/"} className="text-[#CFA15A] text-sm font-medium hover:underline">
+                  <Link to={'/'} className="text-[#CFA15A] text-sm font-medium hover:underline">
                     Resend
                   </Link>
                 </div>

@@ -1,12 +1,12 @@
-import { useState, useContext } from 'react';
-import { Icon } from '@iconify/react';
-import { CustomizerContext } from 'src/context/CustomizerContext';
-import { Sheet, SheetContent, SheetDescription, SheetTitle } from 'src/components/ui/sheet';
-import { VisuallyHidden } from '@radix-ui/react-visually-hidden';
+import { Icon } from '@iconify/react'
+import { VisuallyHidden } from '@radix-ui/react-visually-hidden'
+import { useContext, useState } from 'react'
+import { Sheet, SheetContent, SheetDescription, SheetTitle } from 'src/components/ui/sheet'
+import { CustomizerContext } from 'src/context/CustomizerContext'
 
 export const Cart = () => {
-  const [isOpen, setIsOpen] = useState(false);
-  const { activeDir } = useContext(CustomizerContext);
+  const [isOpen, setIsOpen] = useState(false)
+  const { activeDir } = useContext(CustomizerContext)
   return (
     <div>
       <div className="flex items-center justify-center">
@@ -50,5 +50,5 @@ export const Cart = () => {
         </SheetContent>
       </Sheet>
     </div>
-  );
-};
+  )
+}

@@ -15,4 +15,4 @@ Use these canonical field keys:
 - Master flow generated fields: program_name, organization_city.
 
 Do not extract WSP / SKKNI unit detail, competency elements, KUK, assessment guide, or competency map from chat. Those must come from WSP endpoints after the user selects a unit code.
-Return structured output matching the provided schema.`;
+Return structured output matching the provided schema.`

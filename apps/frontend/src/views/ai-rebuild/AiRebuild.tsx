@@ -1,6 +1,6 @@
-import { Icon } from '@iconify/react';
-import { Link } from 'react-router';
-import { Button } from 'src/components/ui/button';
+import { Icon } from '@iconify/react'
+import { Link } from 'react-router'
+import { Button } from 'src/components/ui/button'
 
 const AiRebuild = () => {
   return (
@@ -10,7 +10,8 @@ const AiRebuild = () => {
       </div>
       <h1 className="mb-3 text-2xl font-semibold text-ld">AI sedang dibangun ulang</h1>
       <p className="mb-7 max-w-xl text-sm leading-6 text-bodytext">
-        Modul AI lama sudah dinonaktifkan. AI for Trainer dan AI for Master akan kembali sebagai alur baru berbasis AI SDK.
+        Modul AI lama sudah dinonaktifkan. AI for Trainer dan AI for Master akan kembali sebagai
+        alur baru berbasis AI SDK.
       </p>
       <div className="flex flex-wrap justify-center gap-3">
         <Button asChild>
@@ -21,7 +22,7 @@ const AiRebuild = () => {
         </Button>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default AiRebuild;
+export default AiRebuild

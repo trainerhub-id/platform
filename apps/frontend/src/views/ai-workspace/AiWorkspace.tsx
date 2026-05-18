@@ -6,11 +6,7 @@ import {
   ConversationEmptyState,
   ConversationScrollButton,
 } from 'src/components/ai-elements/conversation'
-import {
-  Message,
-  MessageContent,
-  MessageResponse,
-} from 'src/components/ai-elements/message'
+import { Message, MessageContent, MessageResponse } from 'src/components/ai-elements/message'
 import { Badge } from 'src/components/ui/badge'
 import { Button } from 'src/components/ui/button'
 import {
@@ -27,23 +23,19 @@ import { ScrollArea } from 'src/components/ui/scroll-area'
 import { Textarea } from 'src/components/ui/textarea'
 import { cn } from 'src/lib/utils'
 import {
-  createDocument,
-  deleteDocument,
-  getReadiness,
-  listDocuments,
-  listMessages,
-  sendInterviewMessage,
   type AiDocument,
   type AiFlow,
   type ConversationMessage,
+  createDocument,
+  deleteDocument,
+  getReadiness,
   type InterviewReadiness,
+  listDocuments,
+  listMessages,
+  sendInterviewMessage,
   updateDocument,
 } from './ai-workspace.api'
-import {
-  checkpointConfig,
-  getEffectiveStatus,
-  getProgress,
-} from './checkpoints'
+import { checkpointConfig, getEffectiveStatus, getProgress } from './checkpoints'
 
 type UiMessage =
   | ConversationMessage
@@ -227,31 +219,34 @@ export default function AiWorkspace({ flow }: AiWorkspaceProps) {
     }
   }, [activeDocumentId])
 
-  const handleCreateDocument = useCallback(async (title?: string) => {
-    setIsCreating(true)
-    setError(null)
-    try {
-      const document = await createDocument({ flow, title: title?.trim() || createDocumentTitle(flow) })
-      setDocuments((current) => [document, ...current])
-      setActiveDocumentId(document.id)
-      setMessages([])
-      setReadiness(null)
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Gagal membuat percakapan baru')
-    } finally {
-      setIsCreating(false)
-    }
-  }, [flow])
-
-  const handleRenameDocument = useCallback(
-    async (documentId: string, title: string) => {
-      const updated = await updateDocument(documentId, { title })
-      setDocuments((current) =>
-        current.map((document) => (document.id === updated.id ? updated : document)),
-      )
+  const handleCreateDocument = useCallback(
+    async (title?: string) => {
+      setIsCreating(true)
+      setError(null)
+      try {
+        const document = await createDocument({
+          flow,
+          title: title?.trim() || createDocumentTitle(flow),
+        })
+        setDocuments((current) => [document, ...current])
+        setActiveDocumentId(document.id)
+        setMessages([])
+        setReadiness(null)
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'Gagal membuat percakapan baru')
+      } finally {
+        setIsCreating(false)
+      }
     },
-    [],
+    [flow],
   )
+
+  const handleRenameDocument = useCallback(async (documentId: string, title: string) => {
+    const updated = await updateDocument(documentId, { title })
+    setDocuments((current) =>
+      current.map((document) => (document.id === updated.id ? updated : document)),
+    )
+  }, [])
 
   const handleDeleteDocument = useCallback(
     async (documentId: string) => {
@@ -333,7 +328,10 @@ export default function AiWorkspace({ flow }: AiWorkspaceProps) {
   const progress = getProgress(flow, readiness)
 
   return (
-    <div className="flex -mx-5 -my-8 min-h-0 overflow-hidden lg:-mx-8" style={{ height: 'calc(100dvh - 79px)' }}>
+    <div
+      className="flex -mx-5 -my-8 min-h-0 overflow-hidden lg:-mx-8"
+      style={{ height: 'calc(100dvh - 79px)' }}
+    >
       <div className="relative flex min-w-0 flex-1 flex-col overflow-hidden border-r border-ld bg-white dark:bg-dark">
         <div className="z-10 border-b border-border bg-white/95 px-4 py-2 backdrop-blur dark:bg-dark/95 md:px-6">
           <div className="flex min-w-0 items-center justify-between gap-3">
@@ -466,7 +464,8 @@ function DocumentManager({
   const [editingTitle, setEditingTitle] = useState('')
   const [workingId, setWorkingId] = useState<string | null>(null)
 
-  const fallbackTitle = flow === 'master' ? `Master ${documents.length + 1}` : `Trainer ${documents.length + 1}`
+  const fallbackTitle =
+    flow === 'master' ? `Master ${documents.length + 1}` : `Trainer ${documents.length + 1}`
 
   const handleCreate = async () => {
     setWorkingId('create')
@@ -508,7 +507,9 @@ function DocumentManager({
   }
 
   const handleDelete = async (document: AiDocument) => {
-    const confirmed = window.confirm(`Hapus dokumen "${document.title}"? Percakapan di dokumen ini ikut berpindah dari daftar.`)
+    const confirmed = window.confirm(
+      `Hapus dokumen "${document.title}"? Percakapan di dokumen ini ikut berpindah dari daftar.`,
+    )
     if (!confirmed) return
 
     setWorkingId(document.id)
@@ -580,7 +581,11 @@ function DocumentManager({
 
         {documents.length === 0 ? (
           <div className="rounded-md border border-border p-5 text-center">
-            <Icon icon="solar:document-add-bold-duotone" height={34} className="mx-auto text-bodytext" />
+            <Icon
+              icon="solar:document-add-bold-duotone"
+              height={34}
+              className="mx-auto text-bodytext"
+            />
             <p className="mt-2 text-sm font-semibold text-ld">Belum ada dokumen</p>
             <p className="mt-1 text-xs text-bodytext">{copy.emptyPrompt}</p>
           </div>
@@ -622,7 +627,12 @@ function DocumentManager({
                             <Icon icon="solar:check-circle-bold" height={14} />
                           )}
                         </Button>
-                        <Button variant="ghost" size="xs" onClick={cancelRename} disabled={isWorking}>
+                        <Button
+                          variant="ghost"
+                          size="xs"
+                          onClick={cancelRename}
+                          disabled={isWorking}
+                        >
                           <Icon icon="solar:close-circle-bold" height={14} />
                         </Button>
                       </div>
@@ -642,11 +652,19 @@ function DocumentManager({
                             <Icon
                               icon="solar:document-bold"
                               height={15}
-                              className={cn('shrink-0', isActive ? 'text-primary' : 'text-bodytext')}
+                              className={cn(
+                                'shrink-0',
+                                isActive ? 'text-primary' : 'text-bodytext',
+                              )}
                             />
-                            <span className="truncate text-sm font-semibold text-ld">{document.title}</span>
+                            <span className="truncate text-sm font-semibold text-ld">
+                              {document.title}
+                            </span>
                             {isActive ? (
-                              <Badge variant="primary" className="shrink-0 px-1.5 py-0.5 text-[10px]">
+                              <Badge
+                                variant="primary"
+                                className="shrink-0 px-1.5 py-0.5 text-[10px]"
+                              >
                                 Aktif
                               </Badge>
                             ) : null}
@@ -762,8 +780,12 @@ function CheckpointPanel({
             variant={readiness?.ready ? 'success' : 'primary'}
           />
           <div className="mt-2 flex items-center justify-between text-[11px] text-bodytext">
-            <span>{completedFields.length}/{requiredFields.length} field</span>
-            <span>{completedGroups.length}/{groups.length} fase</span>
+            <span>
+              {completedFields.length}/{requiredFields.length} field
+            </span>
+            <span>
+              {completedGroups.length}/{groups.length} fase
+            </span>
           </div>
         </div>
 
@@ -774,7 +796,9 @@ function CheckpointPanel({
           <div className="mt-2 flex items-start gap-2">
             <StatusIcon done={false} current />
             <div className="min-w-0">
-              <p className="text-sm font-semibold text-ld">{activeGroup?.label || 'Brainstorming'}</p>
+              <p className="text-sm font-semibold text-ld">
+                {activeGroup?.label || 'Brainstorming'}
+              </p>
               <p className="mt-1 text-xs leading-5 text-bodytext">
                 {activeGroup?.description || 'Lengkapi informasi utama melalui chat.'}
               </p>

@@ -1,31 +1,21 @@
-
-
-import { Icon } from '@iconify/react';
-import SimpleBar from 'simplebar-react';
-
-import { useState } from 'react';
-
-import { useContext } from 'react';
-import { CustomizerContext } from 'src/context/CustomizerContext';
-import {
-  Tooltip,
-  TooltipTrigger,
-  TooltipContent,
-  TooltipProvider,
-} from 'src/components/ui/tooltip';
+import { Icon } from '@iconify/react'
+import { useContext, useState } from 'react'
+import SimpleBar from 'simplebar-react'
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from 'src/components/ui/tooltip'
+import { CustomizerContext } from 'src/context/CustomizerContext'
 
 const CodeDialog = ({ children }: any) => {
-  const { isBorderRadius } = useContext(CustomizerContext);
+  const { isBorderRadius } = useContext(CustomizerContext)
 
-  const [isOpen, setIsOpen] = useState(false);
-  const [copied, setCopied] = useState(false);
+  const [isOpen, setIsOpen] = useState(false)
+  const [copied, setCopied] = useState(false)
 
   const handleCopy = () => {
     navigator.clipboard.writeText(children).then(() => {
-      setCopied(true);
-      setTimeout(() => setCopied(false), 5000);
-    });
-  };
+      setCopied(true)
+      setTimeout(() => setCopied(false), 5000)
+    })
+  }
 
   return (
     <div
@@ -37,8 +27,9 @@ const CodeDialog = ({ children }: any) => {
     >
       <div className={`flex items-center ${isOpen ? 'justify-between' : 'justify-end'}`}>
         <h5
-          className={`text-base text-dark font-semibold dark:text-white ${isOpen ? 'block' : 'hidden'
-            }`}
+          className={`text-base text-dark font-semibold dark:text-white ${
+            isOpen ? 'block' : 'hidden'
+          }`}
         >
           Sample Code
         </h5>
@@ -84,8 +75,9 @@ const CodeDialog = ({ children }: any) => {
       </div>
 
       <div
-        className={`code-modal rounded-md rounded-t-none p-0 my-3 bg-gray-100 dark:bg-transparent overflow-hidden ${isOpen ? 'block' : 'hidden'
-          }`}
+        className={`code-modal rounded-md rounded-t-none p-0 my-3 bg-gray-100 dark:bg-transparent overflow-hidden ${
+          isOpen ? 'block' : 'hidden'
+        }`}
       >
         <SimpleBar className="max-h-[400px]">
           <pre className="m-0 p-4 bg-[#1e1e1e] text-gray-100 text-xs leading-5 overflow-x-auto">
@@ -94,7 +86,7 @@ const CodeDialog = ({ children }: any) => {
         </SimpleBar>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default CodeDialog;
+export default CodeDialog

@@ -1,74 +1,74 @@
 export interface ChildItem {
-  id?: number | string;
-  name?: string;
-  icon?: any;
-  children?: ChildItem[];
-  item?: any;
-  url?: any;
-  color?: string;
-  disabled?: boolean;
-  subtitle?: string;
-  badge?: boolean;
-  badgeType?: string;
-  badgeContent?: string;
+  id?: number | string
+  name?: string
+  icon?: any
+  children?: ChildItem[]
+  item?: any
+  url?: any
+  color?: string
+  disabled?: boolean
+  subtitle?: string
+  badge?: boolean
+  badgeType?: string
+  badgeContent?: string
 }
 
 export interface MenuItem {
-  heading?: string;
-  name?: string;
-  icon?: any;
-  id?: number;
-  to?: string;
-  items?: MenuItem[];
-  children?: ChildItem[];
-  url?: any;
-  disabled?: boolean;
-  subtitle?: string;
-  badge?: boolean;
-  badgeType?: string;
+  heading?: string
+  name?: string
+  icon?: any
+  id?: number
+  to?: string
+  items?: MenuItem[]
+  children?: ChildItem[]
+  url?: any
+  disabled?: boolean
+  subtitle?: string
+  badge?: boolean
+  badgeType?: string
 }
 
-let menuIdCounter = 0;
-const nextMenuId = () => "menu-" + ++menuIdCounter;
+let menuIdCounter = 0
+const nextMenuId = () => 'menu-' + ++menuIdCounter
 
 // Menu untuk Peserta
 export const PesertaMenuItems: MenuItem[] = [
   {
     id: 1,
-    name: "Menu Peserta",
+    name: 'Menu Peserta',
     items: [
       {
-        heading: "",
+        heading: '',
         children: [
           {
-            name: "Home",
-            icon: "solar:home-smile-line-duotone",
+            name: 'Home',
+            icon: 'solar:home-smile-line-duotone',
             id: nextMenuId(),
-            url: "/user/home",
+            url: '/user/home',
           },
           {
-            name: "Info Training",
-            icon: "solar:book-bookmark-line-duotone",
+            name: 'Info Training',
+            icon: 'solar:book-bookmark-line-duotone',
             id: nextMenuId(),
-            url: "/user/training/info",
+            url: '/user/training/info',
           },
           {
-            name: "Profil",
-            icon: "solar:user-id-line-duotone",
+            name: 'Profil',
+            icon: 'solar:user-id-line-duotone',
             id: nextMenuId(),
-            url: "/user/profile",
+            url: '/user/profile',
           },
           {
-            name: "Kelas",
-            icon: "solar:bookmark-square-minimalistic-line-duotone",
+            name: 'Kelas',
+            icon: 'solar:bookmark-square-minimalistic-line-duotone',
             id: nextMenuId(),
-            url: "/user/kelas",
+            url: '/user/kelas',
           },
           {
-            name: "Dokumen",
-            icon: "solar:folder-with-files-line-duotone",
+            name: 'Dokumen',
+            icon: 'solar:folder-with-files-line-duotone',
             id: nextMenuId(),
-            url: "/user/dokumen",
+            url: '/user/dokumen',
           },
           // {
           //   name: "Generator Dokumen",
@@ -77,114 +77,114 @@ export const PesertaMenuItems: MenuItem[] = [
           //   url: "/user/documents",
           // },
           {
-            name: "AI Hub",
-            icon: "solar:magic-stick-3-line-duotone",
+            name: 'AI Hub',
+            icon: 'solar:magic-stick-3-line-duotone',
             id: nextMenuId(),
-            url: "/user/ai-hub",
+            url: '/user/ai-hub',
           },
           {
-            name: "Sertifikat",
-            icon: "solar:diploma-line-duotone",
+            name: 'Sertifikat',
+            icon: 'solar:diploma-line-duotone',
             id: nextMenuId(),
-            url: "/user/sertifikat",
-          },
-        ],
-      },
-    ]
-  },
-];
-
-// Menu untuk Admin
-export const AdminMenuItems: MenuItem[] = [
-  {
-    id: 1,
-    name: "Menu Admin",
-    items: [
-      {
-        heading: "",
-        children: [
-          {
-            name: "Home",
-            icon: "solar:home-2-line-duotone",
-            id: nextMenuId(),
-            url: "/admin/home",
-          },
-          {
-            name: "Kelola Batch",
-            icon: "solar:settings-minimalistic-line-duotone",
-            id: nextMenuId(),
-            url: "/admin/batches",
-          },
-          {
-            name: "Paket & Akses",
-            icon: "solar:widget-4-line-duotone",
-            id: nextMenuId(),
-            url: "/admin/tier-management",
-          },
-          {
-            name: "Kelas / Bonus",
-            icon: "solar:book-bookmark-line-duotone",
-            id: nextMenuId(),
-            url: "/admin/manage-kelas",
-          },
-          {
-            name: "Mentor",
-            icon: "solar:user-speak-rounded-line-duotone",
-            id: nextMenuId(),
-            url: "/admin/daftar-trainer",
-          },
-          {
-            name: "Settings",
-            icon: "solar:settings-line-duotone",
-            id: nextMenuId(),
-            url: "/admin/settings",
+            url: '/user/sertifikat',
           },
         ],
       },
     ],
   },
-];
+]
+
+// Menu untuk Admin
+export const AdminMenuItems: MenuItem[] = [
+  {
+    id: 1,
+    name: 'Menu Admin',
+    items: [
+      {
+        heading: '',
+        children: [
+          {
+            name: 'Home',
+            icon: 'solar:home-2-line-duotone',
+            id: nextMenuId(),
+            url: '/admin/home',
+          },
+          {
+            name: 'Kelola Batch',
+            icon: 'solar:settings-minimalistic-line-duotone',
+            id: nextMenuId(),
+            url: '/admin/batches',
+          },
+          {
+            name: 'Paket & Akses',
+            icon: 'solar:widget-4-line-duotone',
+            id: nextMenuId(),
+            url: '/admin/tier-management',
+          },
+          {
+            name: 'Kelas / Bonus',
+            icon: 'solar:book-bookmark-line-duotone',
+            id: nextMenuId(),
+            url: '/admin/manage-kelas',
+          },
+          {
+            name: 'Mentor',
+            icon: 'solar:user-speak-rounded-line-duotone',
+            id: nextMenuId(),
+            url: '/admin/daftar-trainer',
+          },
+          {
+            name: 'Settings',
+            icon: 'solar:settings-line-duotone',
+            id: nextMenuId(),
+            url: '/admin/settings',
+          },
+        ],
+      },
+    ],
+  },
+]
 
 // Menu untuk Trainer
 export const TrainerMenuItems: MenuItem[] = [
   {
     id: 1,
-    name: "Menu Trainer",
+    name: 'Menu Trainer',
     items: [
       {
-        heading: "",
+        heading: '',
         children: [
           {
-            name: "Home",
-            icon: "solar:home-smile-line-duotone",
+            name: 'Home',
+            icon: 'solar:home-smile-line-duotone',
             id: nextMenuId(),
-            url: "/user/home",
+            url: '/user/home',
           },
           {
-            name: "Dokumen",
-            icon: "solar:document-text-line-duotone",
+            name: 'Dokumen',
+            icon: 'solar:document-text-line-duotone',
             id: nextMenuId(),
-            url: "/trainer/documents",
+            url: '/trainer/documents',
           },
           {
-            name: "AI Hub",
-            icon: "solar:magic-stick-3-line-duotone",
+            name: 'AI Hub',
+            icon: 'solar:magic-stick-3-line-duotone',
             id: nextMenuId(),
-            url: "/user/ai-hub",
+            url: '/user/ai-hub',
           },
           {
-            name: "Profil",
-            icon: "solar:user-id-line-duotone",
+            name: 'Profil',
+            icon: 'solar:user-id-line-duotone',
             id: nextMenuId(),
-            url: "/user/profile",
+            url: '/user/profile',
           },
         ],
       },
-    ]
+    ],
   },
-];
+]
 
 // Default export untuk backward compatibility
-const SidebarContent: MenuItem[] = PesertaMenuItems;
+const SidebarContent: MenuItem[] = PesertaMenuItems
 
-export default SidebarContent;
+export default SidebarContent

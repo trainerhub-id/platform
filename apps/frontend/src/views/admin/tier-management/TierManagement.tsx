@@ -1,66 +1,70 @@
-import { useState } from 'react';
-import { Icon } from '@iconify/react';
-import CardBox from 'src/components/shared/CardBox';
-import { Button } from 'src/components/ui/button';
-import { Badge } from 'src/components/ui/badge';
-import { useTierTemplates, type TierTemplate } from './useTierTemplates';
-import { TierTemplateModal } from './TierTemplateModal';
-import { Loading } from 'src/components/ui/loading';
-import { AI_FEATURES } from 'src/constants/aiFeatures';
+import { Icon } from '@iconify/react'
+import { useState } from 'react'
+import CardBox from 'src/components/shared/CardBox'
+import { Badge } from 'src/components/ui/badge'
+import { Button } from 'src/components/ui/button'
+import { Loading } from 'src/components/ui/loading'
+import { AI_FEATURES } from 'src/constants/aiFeatures'
+import { TierTemplateModal } from './TierTemplateModal'
+import { type TierTemplate, useTierTemplates } from './useTierTemplates'
 
 const TierManagement = () => {
-  const { templates, loading, refetch, deleteTemplate, getUsageStats } = useTierTemplates();
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedTemplate, setSelectedTemplate] = useState<TierTemplate | null>(null);
-  const [usageStats, setUsageStats] = useState<Record<string, number>>({});
+  const { templates, loading, refetch, deleteTemplate, getUsageStats } = useTierTemplates()
+  const [isModalOpen, setIsModalOpen] = useState(false)
+  const [selectedTemplate, setSelectedTemplate] = useState<TierTemplate | null>(null)
+  const [usageStats, setUsageStats] = useState<Record<string, number>>({})
 
   const handleCreate = () => {
-    setSelectedTemplate(null);
-    setIsModalOpen(true);
-  };
+    setSelectedTemplate(null)
+    setIsModalOpen(true)
+  }
 
   const handleEdit = (template: TierTemplate) => {
-    setSelectedTemplate(template);
-    setIsModalOpen(true);
-  };
+    setSelectedTemplate(template)
+    setIsModalOpen(true)
+  }
 
   const handleDelete = async (template: TierTemplate) => {
-    const stats = usageStats[template.id] ?? (await loadUsageStats(template.id));
-    
+    const stats = usageStats[template.id] ?? (await loadUsageStats(template.id))
+
     if (stats > 0) {
-      if (!confirm(`Paket "${template.name}" digunakan di ${stats} batch. Akan dinonaktifkan. Lanjutkan?`)) {
-        return;
+      if (
+        !confirm(
+          `Paket "${template.name}" digunakan di ${stats} batch. Akan dinonaktifkan. Lanjutkan?`,
+        )
+      ) {
+        return
       }
     } else {
       if (!confirm(`Yakin ingin menghapus paket "${template.name}"?`)) {
-        return;
+        return
       }
     }
 
     try {
-      await deleteTemplate(template.id);
+      await deleteTemplate(template.id)
     } catch (error) {
-      alert('Gagal menghapus paket');
+      alert('Gagal menghapus paket')
     }
-  };
+  }
 
   const loadUsageStats = async (id: string): Promise<number> => {
     try {
-      const stats = await getUsageStats(id);
-      setUsageStats(prev => ({ ...prev, [id]: stats.batchCount }));
-      return stats.batchCount;
+      const stats = await getUsageStats(id)
+      setUsageStats((prev) => ({ ...prev, [id]: stats.batchCount }))
+      return stats.batchCount
     } catch {
-      return 0;
+      return 0
     }
-  };
+  }
 
   if (loading) {
-    return <Loading fullPage />;
+    return <Loading fullPage />
   }
 
   const getAiFeatureName = (id: string) => {
-    return AI_FEATURES.find(f => f.id === id)?.name || id;
-  };
+    return AI_FEATURES.find((f) => f.id === id)?.name || id
+  }
 
   return (
     <div className="space-y-6">
@@ -69,7 +73,8 @@ const TierManagement = () => {
           <div>
             <h3 className="font-bold text-dark">Kelola Paket & Akses</h3>
             <p className="mt-1 text-sm text-bodytext">
-              Atur paket global seperti Master dan Trainer, termasuk default kelas bonus, akses AI, dan benefit. Harga final tetap diatur per batch.
+              Atur paket global seperti Master dan Trainer, termasuk default kelas bonus, akses AI,
+              dan benefit. Harga final tetap diatur per batch.
             </p>
           </div>
           <Button
@@ -93,7 +98,7 @@ const TierManagement = () => {
             </div>
           ) : (
             <div className="space-y-4">
-              {templates.map(template => (
+              {templates.map((template) => (
                 <div
                   key={template.id}
                   className="border border-gray-200 rounded-xl p-6 hover:shadow-md transition-shadow"
@@ -146,12 +151,19 @@ const TierManagement = () => {
                           ) : (
                             <div className="flex flex-wrap gap-1">
                               {template.defaultAiFeatures.slice(0, 2).map((featureId, idx) => (
-                                <Badge key={idx} variant="outline" className="text-xs bg-blue-50 text-blue-700 border-blue-200">
+                                <Badge
+                                  key={idx}
+                                  variant="outline"
+                                  className="text-xs bg-blue-50 text-blue-700 border-blue-200"
+                                >
                                   {getAiFeatureName(featureId)}
                                 </Badge>
                               ))}
                               {template.defaultAiFeatures.length > 2 && (
-                                <Badge variant="outline" className="text-xs bg-blue-50 text-blue-700 border-blue-200">
+                                <Badge
+                                  variant="outline"
+                                  className="text-xs bg-blue-50 text-blue-700 border-blue-200"
+                                >
                                   +{template.defaultAiFeatures.length - 2} lagi
                                 </Badge>
                               )}
@@ -163,11 +175,17 @@ const TierManagement = () => {
                       {/* Benefits */}
                       {template.defaultBenefits && template.defaultBenefits.length > 0 && (
                         <div className="mt-4 pt-4 border-t border-gray-100">
-                          <h5 className="text-xs font-semibold text-bodytext uppercase mb-2">Benefit Paket</h5>
+                          <h5 className="text-xs font-semibold text-bodytext uppercase mb-2">
+                            Benefit Paket
+                          </h5>
                           <ul className="text-sm text-bodytext space-y-1">
                             {template.defaultBenefits.slice(0, 3).map((benefit, idx) => (
                               <li key={idx} className="flex items-start gap-2">
-                                <Icon icon="solar:check-circle-bold" className="text-primary mt-0.5 shrink-0" height={16} />
+                                <Icon
+                                  icon="solar:check-circle-bold"
+                                  className="text-primary mt-0.5 shrink-0"
+                                  height={16}
+                                />
                                 <span>{benefit}</span>
                               </li>
                             ))}
@@ -184,7 +202,8 @@ const TierManagement = () => {
                       {usageStats[template.id] !== undefined && (
                         <div className="mt-4 pt-4 border-t border-gray-100">
                           <p className="text-xs text-bodytext">
-                            Digunakan di <span className="font-semibold">{usageStats[template.id]} batch</span>
+                            Digunakan di{' '}
+                            <span className="font-semibold">{usageStats[template.id]} batch</span>
                           </p>
                         </div>
                       )}
@@ -226,7 +245,7 @@ const TierManagement = () => {
         templateToEdit={selectedTemplate}
       />
     </div>
-  );
-};
+  )
+}
 
-export default TierManagement;
+export default TierManagement

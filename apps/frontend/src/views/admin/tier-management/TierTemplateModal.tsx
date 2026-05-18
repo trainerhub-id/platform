@@ -1,32 +1,32 @@
-import { useState, useEffect } from 'react';
-import { Icon } from '@iconify/react';
+import { Icon } from '@iconify/react'
+import { useEffect, useState } from 'react'
+import api from 'src/api/axios'
+import { Button } from 'src/components/ui/button'
+import { Checkbox } from 'src/components/ui/checkbox'
 import {
   Dialog,
   DialogContent,
+  DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogFooter,
-} from 'src/components/ui/dialog';
-import { Input } from 'src/components/ui/input';
-import { Label } from 'src/components/ui/label';
-import { Textarea } from 'src/components/ui/textarea';
-import { Button } from 'src/components/ui/button';
-import { Checkbox } from 'src/components/ui/checkbox';
-import { useTierTemplates, type TierTemplate } from './useTierTemplates';
-import { ButtonLoading } from 'src/components/ui/loading';
-import { AI_FEATURES } from 'src/constants/aiFeatures';
-import api from 'src/api/axios';
+} from 'src/components/ui/dialog'
+import { Input } from 'src/components/ui/input'
+import { Label } from 'src/components/ui/label'
+import { ButtonLoading } from 'src/components/ui/loading'
+import { Textarea } from 'src/components/ui/textarea'
+import { AI_FEATURES } from 'src/constants/aiFeatures'
+import { type TierTemplate, useTierTemplates } from './useTierTemplates'
 
 interface Course {
-  id: string;
-  title: string;
+  id: string
+  title: string
 }
 
 interface TierTemplateModalProps {
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
-  onSuccess: () => void;
-  templateToEdit?: TierTemplate | null;
+  open: boolean
+  onOpenChange: (open: boolean) => void
+  onSuccess: () => void
+  templateToEdit?: TierTemplate | null
 }
 
 export const TierTemplateModal = ({
@@ -35,9 +35,9 @@ export const TierTemplateModal = ({
   onSuccess,
   templateToEdit,
 }: TierTemplateModalProps) => {
-  const { createTemplate, updateTemplate } = useTierTemplates();
-  const [loading, setLoading] = useState(false);
-  const [courses, setCourses] = useState<Course[]>([]);
+  const { createTemplate, updateTemplate } = useTierTemplates()
+  const [loading, setLoading] = useState(false)
+  const [courses, setCourses] = useState<Course[]>([])
 
   const [formData, setFormData] = useState({
     name: '',
@@ -45,11 +45,11 @@ export const TierTemplateModal = ({
     defaultCourseIds: [] as string[],
     defaultAiFeatures: [] as string[],
     defaultBenefits: '',
-  });
+  })
 
   useEffect(() => {
     if (open) {
-      fetchCourses();
+      fetchCourses()
       if (templateToEdit) {
         setFormData({
           name: templateToEdit.name,
@@ -57,7 +57,7 @@ export const TierTemplateModal = ({
           defaultCourseIds: templateToEdit.defaultCourseIds || [],
           defaultAiFeatures: templateToEdit.defaultAiFeatures || [],
           defaultBenefits: (templateToEdit.defaultBenefits || []).join('\n'),
-        });
+        })
       } else {
         setFormData({
           name: '',
@@ -65,41 +65,41 @@ export const TierTemplateModal = ({
           defaultCourseIds: [],
           defaultAiFeatures: [],
           defaultBenefits: '',
-        });
+        })
       }
     }
-  }, [open, templateToEdit]);
+  }, [open, templateToEdit])
 
   const fetchCourses = async () => {
     try {
-      const res = await api.get('/kelas');
-      setCourses(res.data);
+      const res = await api.get('/kelas')
+      setCourses(res.data)
     } catch (error) {
-      console.error('Error fetching courses:', error);
+      console.error('Error fetching courses:', error)
     }
-  };
+  }
 
   const handleCourseToggle = (courseId: string) => {
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
       defaultCourseIds: prev.defaultCourseIds.includes(courseId)
-        ? prev.defaultCourseIds.filter(id => id !== courseId)
+        ? prev.defaultCourseIds.filter((id) => id !== courseId)
         : [...prev.defaultCourseIds, courseId],
-    }));
-  };
+    }))
+  }
 
   const handleAiFeatureToggle = (featureId: string) => {
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
       defaultAiFeatures: prev.defaultAiFeatures.includes(featureId)
-        ? prev.defaultAiFeatures.filter(id => id !== featureId)
+        ? prev.defaultAiFeatures.filter((id) => id !== featureId)
         : [...prev.defaultAiFeatures, featureId],
-    }));
-  };
+    }))
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
+    e.preventDefault()
+    setLoading(true)
 
     try {
       const payload = {
@@ -110,23 +110,23 @@ export const TierTemplateModal = ({
         defaultBenefits: formData.defaultBenefits
           ? formData.defaultBenefits.split('\n').filter(Boolean)
           : [],
-      };
-
-      if (templateToEdit) {
-        await updateTemplate(templateToEdit.id, payload);
-      } else {
-        await createTemplate(payload);
       }
 
-      onSuccess();
-      onOpenChange(false);
+      if (templateToEdit) {
+        await updateTemplate(templateToEdit.id, payload)
+      } else {
+        await createTemplate(payload)
+      }
+
+      onSuccess()
+      onOpenChange(false)
     } catch (error) {
-      console.error('Error saving template:', error);
-      alert('Gagal menyimpan paket');
+      console.error('Error saving template:', error)
+      alert('Gagal menyimpan paket')
     } finally {
-      setLoading(false);
+      setLoading(false)
     }
-  };
+  }
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -146,7 +146,7 @@ export const TierTemplateModal = ({
             <Input
               id="name"
               value={formData.name}
-              onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
+              onChange={(e) => setFormData((prev) => ({ ...prev, name: e.target.value }))}
               placeholder="e.g., Master, Trainer"
               required
             />
@@ -157,7 +157,7 @@ export const TierTemplateModal = ({
             <Textarea
               id="description"
               value={formData.description}
-              onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
+              onChange={(e) => setFormData((prev) => ({ ...prev, description: e.target.value }))}
               placeholder="Deskripsi singkat paket"
               rows={2}
             />
@@ -172,7 +172,7 @@ export const TierTemplateModal = ({
               {courses.length === 0 ? (
                 <p className="text-sm text-gray-400 italic">Tidak ada kelas tersedia</p>
               ) : (
-                courses.map(course => (
+                courses.map((course) => (
                   <div key={course.id} className="flex items-center gap-2">
                     <Checkbox
                       id={`course-${course.id}`}
@@ -194,7 +194,7 @@ export const TierTemplateModal = ({
               Default Akses AI
             </Label>
             <div className="max-h-48 overflow-y-auto space-y-2">
-              {AI_FEATURES.map(feature => (
+              {AI_FEATURES.map((feature) => (
                 <div key={feature.id} className="flex items-start gap-2">
                   <Checkbox
                     id={`ai-${feature.id}`}
@@ -202,7 +202,10 @@ export const TierTemplateModal = ({
                     onCheckedChange={() => handleAiFeatureToggle(feature.id)}
                   />
                   <div className="flex-1">
-                    <label htmlFor={`ai-${feature.id}`} className="text-sm font-medium cursor-pointer">
+                    <label
+                      htmlFor={`ai-${feature.id}`}
+                      className="text-sm font-medium cursor-pointer"
+                    >
                       {feature.name}
                     </label>
                     <p className="text-xs text-bodytext">{feature.description}</p>
@@ -217,8 +220,10 @@ export const TierTemplateModal = ({
             <Textarea
               id="benefits"
               value={formData.defaultBenefits}
-              onChange={(e) => setFormData(prev => ({ ...prev, defaultBenefits: e.target.value }))}
-              placeholder={"Training 2 hari\nKelas bonus online\nSertifikat digital"}
+              onChange={(e) =>
+                setFormData((prev) => ({ ...prev, defaultBenefits: e.target.value }))
+              }
+              placeholder={'Training 2 hari\nKelas bonus online\nSertifikat digital'}
               rows={4}
             />
           </div>
@@ -253,5 +258,5 @@ export const TierTemplateModal = ({
         </form>
       </DialogContent>
     </Dialog>
-  );
-};
+  )
+}

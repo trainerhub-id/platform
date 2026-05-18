@@ -1,26 +1,26 @@
-import { createAvatar } from '@dicebear/core';
-import { thumbs } from '@dicebear/collection';
-import type { AvatarConfig } from '../types/avatar';
+import { thumbs } from '@dicebear/collection'
+import { createAvatar } from '@dicebear/core'
+import type { AvatarConfig } from '../types/avatar'
 
 // Brown color palette
 export const BROWN_PALETTE: AvatarConfig = {
   shapeColors: [
-    'D2B48C',  // Tan (light brown)
-    'DEB887',  // Burlywood  
-    'CD853F',  // Peru (medium brown)
-    'A0522D',  // Sienna
-    '8B4513',  // Saddle brown
-    '6B4423',  // Dark wood
-    '654321',  // Dark brown
-    '4E342E',  // Coffee brown
+    'D2B48C', // Tan (light brown)
+    'DEB887', // Burlywood
+    'CD853F', // Peru (medium brown)
+    'A0522D', // Sienna
+    '8B4513', // Saddle brown
+    '6B4423', // Dark wood
+    '654321', // Dark brown
+    '4E342E', // Coffee brown
   ],
   backgroundColors: [
-    'F5F5DC',  // Beige (neutral light)
-    'FAEBD7',  // Antique white
-    'FFE4C4',  // Bisque
-    'FFDEAD',  // Navajo white
-  ]
-};
+    'F5F5DC', // Beige (neutral light)
+    'FAEBD7', // Antique white
+    'FFE4C4', // Bisque
+    'FFDEAD', // Navajo white
+  ],
+}
 
 /**
  * Generate DiceBear avatar SVG string from user ID
@@ -34,7 +34,7 @@ export function generateAvatarSvg(userId: string): string {
       seed: 'default-user',
       shapeColor: ['D2B48C'],
       backgroundColor: ['F5F5DC'],
-    }).toString();
+    }).toString()
   }
 
   const avatar = createAvatar(thumbs, {
@@ -43,9 +43,9 @@ export function generateAvatarSvg(userId: string): string {
     backgroundColor: BROWN_PALETTE.backgroundColors,
     randomizeIds: true,
     scale: 100,
-  });
+  })
 
-  return avatar.toString();
+  return avatar.toString()
 }
 
 /**
@@ -54,8 +54,8 @@ export function generateAvatarSvg(userId: string): string {
  * @returns data URI string
  */
 export function svgToDataUri(svgString: string): string {
-  const base64 = btoa(unescape(encodeURIComponent(svgString)));
-  return `data:image/svg+xml;base64,${base64}`;
+  const base64 = btoa(unescape(encodeURIComponent(svgString)))
+  return `data:image/svg+xml;base64,${base64}`
 }
 
 /**
@@ -64,6 +64,6 @@ export function svgToDataUri(svgString: string): string {
  * @returns Complete data URI ready for img src
  */
 export function generateAvatarDataUri(userId: string): string {
-  const svg = generateAvatarSvg(userId);
-  return svgToDataUri(svg);
+  const svg = generateAvatarSvg(userId)
+  return svgToDataUri(svg)
 }

@@ -1,15 +1,14 @@
-import { useContext, useEffect } from 'react';
-import { useTranslation } from 'react-i18next';
+import { useContext, useEffect } from 'react'
+import { useTranslation } from 'react-i18next'
+import englishFlag from 'src/assets/images/flag/icon-flag-en.svg'
+import indonesiaFlag from 'src/assets/images/flag/icon-flag-id.svg'
 import {
   DropdownMenu,
-  DropdownMenuTrigger,
   DropdownMenuContent,
   DropdownMenuItem,
-} from 'src/components/ui/dropdown-menu';
-import { CustomizerContext } from 'src/context/CustomizerContext';
-
-import englishFlag from 'src/assets/images/flag/icon-flag-en.svg';
-import indonesiaFlag from 'src/assets/images/flag/icon-flag-id.svg';
+  DropdownMenuTrigger,
+} from 'src/components/ui/dropdown-menu'
+import { CustomizerContext } from 'src/context/CustomizerContext'
 
 const Languages = [
   {
@@ -22,24 +21,24 @@ const Languages = [
     icon: englishFlag,
     value: 'en',
   },
-];
+]
 
 export const Language = () => {
-  const { i18n } = useTranslation();
+  const { i18n } = useTranslation()
 
-  const { isLanguage, setIsLanguage } = useContext(CustomizerContext);
-  const currentLang = Languages.find((_lang) => _lang.value === isLanguage) || Languages[0];
+  const { isLanguage, setIsLanguage } = useContext(CustomizerContext)
+  const currentLang = Languages.find((_lang) => _lang.value === isLanguage) || Languages[0]
 
   useEffect(() => {
     // If current language is not in our supported list, default to ID
     if (isLanguage !== 'id' && isLanguage !== 'en') {
-      setIsLanguage('id');
+      setIsLanguage('id')
     }
-  }, []);
+  }, [])
 
   useEffect(() => {
-    i18n.changeLanguage(isLanguage);
-  }, [isLanguage]);
+    i18n.changeLanguage(isLanguage)
+  }, [isLanguage])
   return (
     <>
       <div className="relative group/menu px-4">
@@ -75,5 +74,5 @@ export const Language = () => {
         </DropdownMenu>
       </div>
     </>
-  );
-};
+  )
+}

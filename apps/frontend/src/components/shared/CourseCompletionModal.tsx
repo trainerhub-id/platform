@@ -1,13 +1,13 @@
-import React from 'react';
-import { Icon } from '@iconify/react';
-import { Button } from '../ui/button';
-import { Dialog, DialogContent, DialogHeader } from '../ui/dialog';
-import { useNavigate } from 'react-router';
+import { Icon } from '@iconify/react'
+import React from 'react'
+import { useNavigate } from 'react-router'
+import { Button } from '../ui/button'
+import { Dialog, DialogContent, DialogHeader } from '../ui/dialog'
 
 interface CourseCompletionModalProps {
-  isOpen: boolean;
-  onClose: () => void;
-  courseName: string;
+  isOpen: boolean
+  onClose: () => void
+  courseName: string
 }
 
 export const CourseCompletionModal: React.FC<CourseCompletionModalProps> = ({
@@ -15,12 +15,12 @@ export const CourseCompletionModal: React.FC<CourseCompletionModalProps> = ({
   onClose,
   courseName,
 }) => {
-  const navigate = useNavigate();
+  const navigate = useNavigate()
 
   const handleViewCertificate = () => {
-    navigate('/user/sertifikat');
-    onClose();
-  };
+    navigate('/user/sertifikat')
+    onClose()
+  }
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
@@ -33,12 +33,8 @@ export const CourseCompletionModal: React.FC<CourseCompletionModalProps> = ({
 
           {/* Title */}
           <div className="space-y-2">
-            <h2 className="text-2xl font-bold text-dark">
-              🎉 Selamat! 🎉
-            </h2>
-            <p className="text-lg font-semibold text-primary">
-              Kamu Berhasil Menyelesaikan Kelas!
-            </p>
+            <h2 className="text-2xl font-bold text-dark">🎉 Selamat! 🎉</h2>
+            <p className="text-lg font-semibold text-primary">Kamu Berhasil Menyelesaikan Kelas!</p>
           </div>
 
           {/* Course Name */}
@@ -54,8 +50,8 @@ export const CourseCompletionModal: React.FC<CourseCompletionModalProps> = ({
               <p className="text-sm font-medium">Sertifikat telah dibuat otomatis</p>
             </div>
             <p className="text-sm text-bodytext">
-              Sertifikat kamu sudah siap dan bisa diunduh kapan saja. 
-              Tunjukkan pencapaian ini pada dunia!
+              Sertifikat kamu sudah siap dan bisa diunduh kapan saja. Tunjukkan pencapaian ini pada
+              dunia!
             </p>
           </div>
         </DialogHeader>
@@ -69,15 +65,11 @@ export const CourseCompletionModal: React.FC<CourseCompletionModalProps> = ({
             <Icon icon="solar:diploma-verified-bold" className="mr-2" height={20} />
             Lihat Sertifikat
           </Button>
-          <Button
-            onClick={onClose}
-            variant="outline"
-            className="w-full h-11"
-          >
+          <Button onClick={onClose} variant="outline" className="w-full h-11">
             Tutup
           </Button>
         </div>
       </DialogContent>
     </Dialog>
-  );
-};
+  )
+}

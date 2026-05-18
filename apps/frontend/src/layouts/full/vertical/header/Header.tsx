@@ -1,190 +1,206 @@
-"use client";
+'use client'
 
-import { useState, useEffect, useContext, useMemo } from "react";
-import { useUser } from "src/lib/better-auth";
-import { useQuery } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query'
+import { useContext, useEffect, useMemo, useState } from 'react'
+import { useUser } from 'src/lib/better-auth'
 
-{/* removed Search import */ }
-import { Icon } from "@iconify/react";
-{/* removed AppLinks import */ }
-import Profile from "./Profile";
+{
+  /* removed Search import */
+}
 
-import { Language } from "./Language";
-import FullLogo from "../../shared/logo/FullLogo";
-import MobileHeaderItems from "./MobileHeaderItems";
-import HorizontalMenu from "../../horizontal/header/HorizontalMenu";
+import { Icon } from '@iconify/react'
 
-import { Sheet, SheetContent } from "src/components/ui/sheet";
+{
+  /* removed AppLinks import */
+}
 
-import { useSidebar } from "src/components/ui/sidebar";
-import { CustomizerContext } from "src/context/CustomizerContext";
-import { useLocation } from "react-router";
-import NotificationButton from "./NotificationButton";
-import SidebarLayout from "../sidebar/Sidebar";
-import api from "src/api/axios";
-import { AdminGlobalSearch } from "src/views/admin/components/AdminGlobalSearch";
+import { useLocation } from 'react-router'
+import api from 'src/api/axios'
+import { Sheet, SheetContent } from 'src/components/ui/sheet'
+import { useSidebar } from 'src/components/ui/sidebar'
+import { CustomizerContext } from 'src/context/CustomizerContext'
+import { AdminGlobalSearch } from 'src/views/admin/components/AdminGlobalSearch'
+import HorizontalMenu from '../../horizontal/header/HorizontalMenu'
+import FullLogo from '../../shared/logo/FullLogo'
+import SidebarLayout from '../sidebar/Sidebar'
+import { Language } from './Language'
+import MobileHeaderItems from './MobileHeaderItems'
+import NotificationButton from './NotificationButton'
+import Profile from './Profile'
 
 interface HeaderPropsType {
-  layoutType: string;
+  layoutType: string
 }
 
 const Header = ({ layoutType }: HeaderPropsType) => {
-  const [isSticky, setIsSticky] = useState(false);
+  const [isSticky, setIsSticky] = useState(false)
 
-  const { setOpenMobile, openMobile } = useSidebar();
+  const { setOpenMobile, openMobile } = useSidebar()
 
-  const { isLayout, setActiveMode, activeMode } =
-    useContext(CustomizerContext);
+  const { isLayout, setActiveMode, activeMode } = useContext(CustomizerContext)
 
-  const [mobileMenu, setMobileMenu] = useState("");
-  const [adminSearch, setAdminSearch] = useState("");
+  const [mobileMenu, setMobileMenu] = useState('')
+  const [adminSearch, setAdminSearch] = useState('')
 
-  const [mounted, setMounted] = useState(false);
-  useEffect(() => setMounted(true), []);
+  const [mounted, setMounted] = useState(false)
+  useEffect(() => setMounted(true), [])
 
-
-  const { user } = useUser();
-  const location = useLocation();
-  const pathname = location.pathname;
+  const { user } = useUser()
+  const location = useLocation()
+  const pathname = location.pathname
 
   /* Check if current path is an Admin path - MOVED UP */
-  const isAdmin = pathname.startsWith("/admin");
+  const isAdmin = pathname.startsWith('/admin')
 
   const profileQuery = useQuery({
     queryKey: ['peserta', 'me', 'header'],
     queryFn: async () => {
-      const { data } = await api.get('/peserta/me');
-      return data;
+      const { data } = await api.get('/peserta/me')
+      return data
     },
     enabled: Boolean(user),
     staleTime: 5 * 60 * 1000,
     retry: 1,
-  });
+  })
 
   const adminBatchesQuery = useQuery({
     queryKey: ['batch', 'list', 'header'],
     queryFn: async () => {
-      const { data } = await api.get('/batch/list');
-      return Array.isArray(data) ? data : [];
+      const { data } = await api.get('/batch/list')
+      return Array.isArray(data) ? data : []
     },
     enabled: isAdmin,
     staleTime: 60 * 1000,
     retry: 1,
-  });
+  })
 
   const nearestBatch = useMemo(() => {
     if (!isAdmin || !adminBatchesQuery.data || adminBatchesQuery.data.length === 0) {
-      return null;
+      return null
     }
 
-    const now = new Date();
-    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    const now = new Date()
+    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate())
 
     return adminBatchesQuery.data
       .map((batch: any) => {
-        const startDate = new Date(batch.tanggal);
-        const endDate = batch.tanggalSelesai ? new Date(batch.tanggalSelesai) : startDate;
-        const start = new Date(startDate.getFullYear(), startDate.getMonth(), startDate.getDate());
-        const end = new Date(endDate.getFullYear(), endDate.getMonth(), endDate.getDate());
+        const startDate = new Date(batch.tanggal)
+        const endDate = batch.tanggalSelesai ? new Date(batch.tanggalSelesai) : startDate
+        const start = new Date(startDate.getFullYear(), startDate.getMonth(), startDate.getDate())
+        const end = new Date(endDate.getFullYear(), endDate.getMonth(), endDate.getDate())
 
-        let status = 'draft';
-        let priority = 3;
+        let status = 'draft'
+        let priority = 3
 
         if (today < start) {
-          status = 'upcoming';
-          priority = 1;
+          status = 'upcoming'
+          priority = 1
         } else if (today >= start && today <= end) {
-          status = 'running';
-          priority = 0;
+          status = 'running'
+          priority = 0
         } else if (today > end) {
-          status = 'completed';
-          priority = 4;
+          status = 'completed'
+          priority = 4
         }
 
-        return { ...batch, calculatedStatus: status, priority, startDate: start };
+        return { ...batch, calculatedStatus: status, priority, startDate: start }
       })
       .sort((a: any, b: any) => {
-        if (a.priority !== b.priority) return a.priority - b.priority;
-        return a.startDate.getTime() - b.startDate.getTime();
-      })[0];
-  }, [adminBatchesQuery.data, isAdmin]);
+        if (a.priority !== b.priority) return a.priority - b.priority
+        return a.startDate.getTime() - b.startDate.getTime()
+      })[0]
+  }, [adminBatchesQuery.data, isAdmin])
 
-  const userName = profileQuery.data?.nama || user?.firstName || "Peserta";
+  const userName = profileQuery.data?.nama || user?.firstName || 'Peserta'
 
   useEffect(() => {
     if (openMobile) {
-      setOpenMobile(false);
+      setOpenMobile(false)
     }
-  }, [pathname]);
+  }, [pathname])
 
   useEffect(() => {
     const handleScroll = () => {
       if (window.scrollY > 50) {
-        setIsSticky(true);
+        setIsSticky(true)
       } else {
-        setIsSticky(false);
+        setIsSticky(false)
       }
-    };
+    }
 
-    window.addEventListener("scroll", handleScroll, { passive: true });
+    window.addEventListener('scroll', handleScroll, { passive: true })
 
     return () => {
-      window.removeEventListener("scroll", handleScroll);
-    };
-  }, []);
+      window.removeEventListener('scroll', handleScroll)
+    }
+  }, [])
 
   const handleMobileMenu = () => {
-    if (mobileMenu === "active") {
-      setMobileMenu("");
+    if (mobileMenu === 'active') {
+      setMobileMenu('')
     } else {
-      setMobileMenu("active");
+      setMobileMenu('active')
     }
-  };
-  if (!mounted) return null;
+  }
+  if (!mounted) return null
 
   const toggleMode = () => {
-    setActiveMode(activeMode === "light" ? "dark" : "light");
-  };
+    setActiveMode(activeMode === 'light' ? 'dark' : 'light')
+  }
 
   // Format date helper
   const formatDate = (dateString?: string) => {
-    if (!dateString) return '-';
-    const date = new Date(dateString);
-    return new Intl.DateTimeFormat('id-ID', { day: 'numeric', month: 'long', year: 'numeric' }).format(date);
-  };
+    if (!dateString) return '-'
+    const date = new Date(dateString)
+    return new Intl.DateTimeFormat('id-ID', {
+      day: 'numeric',
+      month: 'long',
+      year: 'numeric',
+    }).format(date)
+  }
 
   // Get status label
   const getStatusLabel = (status?: string) => {
     switch (status) {
-      case 'running': return 'Sedang Berlangsung';
-      case 'upcoming': return 'Akan Datang';
-      case 'completed': return 'Selesai';
-      default: return 'Draft';
+      case 'running':
+        return 'Sedang Berlangsung'
+      case 'upcoming':
+        return 'Akan Datang'
+      case 'completed':
+        return 'Selesai'
+      default:
+        return 'Draft'
     }
-  };
+  }
 
   return (
     <>
       <header
         className={`sticky top-0 text-ld z-[90] ${
           isAdmin
-            ? "bg-[#1f2937] text-white shadow-md"
+            ? 'bg-[#1f2937] text-white shadow-md'
             : isSticky
-            ? "bg-white dark:bg-dark shadow-md"
-            : "bg-white dark:bg-dark"
-          }`}
+              ? 'bg-white dark:bg-dark shadow-md'
+              : 'bg-white dark:bg-dark'
+        }`}
       >
         <nav
-          className={`rounded-none pt-1 xl:pt-4 sm:px-7.5 px-4 ${layoutType == "horizontal" ? "container mx-auto" : ""
-            }  ${isLayout == "full" ? "!max-w-full" : ""}`}
+          className={`rounded-none pt-1 xl:pt-4 sm:px-7.5 px-4 ${
+            layoutType == 'horizontal' ? 'container mx-auto' : ''
+          }  ${isLayout == 'full' ? '!max-w-full' : ''}`}
         >
-          <div className={`mx-auto flex flex-wrap items-center justify-between border-b pb-1 xl:pb-4 ${
-            isAdmin ? "border-white/20" : "border-ld"
-          }`}>
+          <div
+            className={`mx-auto flex flex-wrap items-center justify-between border-b pb-1 xl:pb-4 ${
+              isAdmin ? 'border-white/20' : 'border-ld'
+            }`}
+          >
             <span
               onClick={() => setOpenMobile(!openMobile)}
-              className={`h-10 w-10 flex ${isAdmin ? "text-white hover:text-white" : "text-black/60 dark:text-white hover:text-primary"
-                } xl:hidden hover:bg-lightprimary rounded-full justify-center items-center cursor-pointer`}
+              className={`h-10 w-10 flex ${
+                isAdmin
+                  ? 'text-white hover:text-white'
+                  : 'text-black/60 dark:text-white hover:text-primary'
+              } xl:hidden hover:bg-lightprimary rounded-full justify-center items-center cursor-pointer`}
             >
               <Icon icon="solar:hamburger-menu-line-duotone" height={21} />
             </span>
@@ -195,11 +211,13 @@ const Header = ({ layoutType }: HeaderPropsType) => {
                 {/* Admin Header Content */}
                 {isAdmin ? (
                   <div>
-                    {pathname === "/admin/home" && nearestBatch && (
+                    {pathname === '/admin/home' && nearestBatch && (
                       <div className="flex items-center gap-4">
                         <div className="flex items-center gap-3 bg-[#AA8D55] text-white px-4 py-2 rounded-md shadow-sm">
                           <Icon icon="solar:box-minimalistic-line-duotone" height={18} />
-                          <span className="font-semibold text-sm">{nearestBatch.namaBatch || 'Training'}</span>
+                          <span className="font-semibold text-sm">
+                            {nearestBatch.namaBatch || 'Training'}
+                          </span>
                         </div>
                         <div className="flex items-center gap-2 text-white/80 text-sm">
                           <Icon icon="solar:buildings-2-line-duotone" height={18} />
@@ -208,118 +226,100 @@ const Header = ({ layoutType }: HeaderPropsType) => {
                             {nearestBatch.alamat && `, ${nearestBatch.alamat.split(',')[0]}`}
                             {' | '}
                             {formatDate(nearestBatch.tanggal)}
-                            {nearestBatch.tanggalSelesai && ` - ${formatDate(nearestBatch.tanggalSelesai)}`}
+                            {nearestBatch.tanggalSelesai &&
+                              ` - ${formatDate(nearestBatch.tanggalSelesai)}`}
                             {' | '}
-                            <span className="text-white font-bold">{getStatusLabel(nearestBatch.calculatedStatus)}</span>
+                            <span className="text-white font-bold">
+                              {getStatusLabel(nearestBatch.calculatedStatus)}
+                            </span>
                           </span>
                         </div>
                       </div>
                     )}
-                    {pathname === "/admin/home" && !nearestBatch && (
+                    {pathname === '/admin/home' && !nearestBatch && (
                       <>
-                        <h2 className="text-xl font-semibold text-white mb-0.5">
-                          Dashboard Admin
-                        </h2>
+                        <h2 className="text-xl font-semibold text-white mb-0.5">Dashboard Admin</h2>
                         <p className="text-white/70 text-xs">
                           Kelola semua aspek platform training
                         </p>
                       </>
                     )}
-                    {pathname === "/admin/manage-training" && (
+                    {pathname === '/admin/manage-training' && (
                       <>
-                        <h2 className="text-xl font-semibold text-white mb-0.5">
-                          Kelola Training
-                        </h2>
+                        <h2 className="text-xl font-semibold text-white mb-0.5">Kelola Training</h2>
                         <p className="text-white/70 text-xs">
                           Manajemen batch dan jadwal pelatihan
                         </p>
                       </>
                     )}
-                    {pathname === "/admin/batches" && (
+                    {pathname === '/admin/batches' && (
                       <>
-                        <h2 className="text-xl font-semibold text-white mb-0.5">
-                          Kelola Batch
-                        </h2>
+                        <h2 className="text-xl font-semibold text-white mb-0.5">Kelola Batch</h2>
                         <p className="text-white/70 text-xs">
                           Pantau batch, peserta, paket, dokumen, dan aktivitas
                         </p>
                       </>
                     )}
-                    {pathname.startsWith("/admin/batches/") && (
+                    {pathname.startsWith('/admin/batches/') && (
                       <>
-                        <h2 className="text-xl font-semibold text-white mb-0.5">
-                          Workspace Batch
-                        </h2>
+                        <h2 className="text-xl font-semibold text-white mb-0.5">Workspace Batch</h2>
                         <p className="text-white/70 text-xs">
                           Member, dokumen, sertifikat, paket, dan activity log
                         </p>
                       </>
                     )}
-                    {pathname === "/admin/daftar-peserta" && (
+                    {pathname === '/admin/daftar-peserta' && (
                       <>
-                        <h2 className="text-xl font-semibold text-white mb-0.5">
-                          Daftar Peserta
-                        </h2>
+                        <h2 className="text-xl font-semibold text-white mb-0.5">Daftar Peserta</h2>
                         <p className="text-white/70 text-xs">
                           Kelola data dan status peserta training
                         </p>
                       </>
                     )}
-                    {pathname === "/admin/daftar-trainer" && (
+                    {pathname === '/admin/daftar-trainer' && (
                       <>
-                        <h2 className="text-xl font-semibold text-white mb-0.5">
-                          Daftar Trainer
-                        </h2>
-                        <p className="text-white/70 text-xs">
-                          Kelola data dan informasi trainer
-                        </p>
+                        <h2 className="text-xl font-semibold text-white mb-0.5">Daftar Trainer</h2>
+                        <p className="text-white/70 text-xs">Kelola data dan informasi trainer</p>
                       </>
                     )}
-                    {pathname === "/admin/manage-kelas" && (
+                    {pathname === '/admin/manage-kelas' && (
                       <>
-                        <h2 className="text-xl font-semibold text-white mb-0.5">
-                          Kelola Kelas
-                        </h2>
+                        <h2 className="text-xl font-semibold text-white mb-0.5">Kelola Kelas</h2>
                         <p className="text-white/70 text-xs">
                           Manajemen kelas dan materi pembelajaran
                         </p>
                       </>
                     )}
-                    {(pathname === "/admin/manage-kelas/create" || pathname.startsWith("/admin/manage-kelas/edit/")) && (
+                    {(pathname === '/admin/manage-kelas/create' ||
+                      pathname.startsWith('/admin/manage-kelas/edit/')) && (
                       <>
                         <h2 className="text-xl font-semibold text-white mb-0.5">
-                          {pathname === "/admin/manage-kelas/create" ? "Buat Kelas Baru" : "Edit Kelas"}
+                          {pathname === '/admin/manage-kelas/create'
+                            ? 'Buat Kelas Baru'
+                            : 'Edit Kelas'}
                         </h2>
                         <p className="text-white/70 text-xs">
-                          {pathname === "/admin/manage-kelas/create" ? "Tambahkan kelas dan materi baru" : "Ubah informasi dan materi kelas"}
+                          {pathname === '/admin/manage-kelas/create'
+                            ? 'Tambahkan kelas dan materi baru'
+                            : 'Ubah informasi dan materi kelas'}
                         </p>
                       </>
                     )}
-                    {pathname === "/admin/settings" && (
+                    {pathname === '/admin/settings' && (
                       <>
-                        <h2 className="text-xl font-semibold text-white mb-0.5">
-                          Pengaturan
-                        </h2>
-                        <p className="text-white/70 text-xs">
-                          Konfigurasi sistem dan preferensi
-                        </p>
+                        <h2 className="text-xl font-semibold text-white mb-0.5">Pengaturan</h2>
+                        <p className="text-white/70 text-xs">Konfigurasi sistem dan preferensi</p>
                       </>
                     )}
-                    {pathname === "/admin/mux-videos" && (
+                    {pathname === '/admin/mux-videos' && (
                       <>
-                        <h2 className="text-xl font-semibold text-white mb-0.5">
-                          Manajemen Video
-                        </h2>
-                        <p className="text-white/70 text-xs">
-                          Kelola video pembelajaran Mux
-                        </p>
+                        <h2 className="text-xl font-semibold text-white mb-0.5">Manajemen Video</h2>
+                        <p className="text-white/70 text-xs">Kelola video pembelajaran Mux</p>
                       </>
                     )}
-                    {pathname === "/admin/tier-management" && (
+                    {pathname === '/admin/tier-management' && (
                       <>
-                        <h2 className="text-xl font-semibold text-white mb-0.5">
-                          Paket & Akses
-                        </h2>
+                        <h2 className="text-xl font-semibold text-white mb-0.5">Paket & Akses</h2>
                         <p className="text-white/70 text-xs">
                           Kelola paket, benefit, kelas bonus, dan akses AI
                         </p>
@@ -329,13 +329,13 @@ const Header = ({ layoutType }: HeaderPropsType) => {
                 ) : (
                   // Default Header Content
                   <>
-                    {layoutType == "horizontal" ? (
+                    {layoutType == 'horizontal' ? (
                       <div className="me-3">
                         <FullLogo />
                       </div>
                     ) : null}
 
-                    {pathname === "/user/home" && (
+                    {pathname === '/user/home' && (
                       <div>
                         <h2 className="text-xl font-semibold text-ld mb-0.5">
                           Halo, <span className="text-[#AA8D55]">{userName}</span>
@@ -345,125 +345,99 @@ const Header = ({ layoutType }: HeaderPropsType) => {
                         </p>
                       </div>
                     )}
-                    {pathname === "/user/training/info" && (
+                    {pathname === '/user/training/info' && (
                       <div>
-                        <h2 className="text-xl font-semibold text-ld mb-0.5">
-                          Info Training
-                        </h2>
+                        <h2 className="text-xl font-semibold text-ld mb-0.5">Info Training</h2>
                         <p className="text-bodytext text-xs">
                           Informasi detail mengenai training yang kamu ikuti
                         </p>
                       </div>
                     )}
-                    {pathname === "/user/kelas" && (
+                    {pathname === '/user/kelas' && (
                       <div>
-                        <h2 className="text-xl font-semibold text-ld mb-0.5">
-                          Kelas Saya
-                        </h2>
+                        <h2 className="text-xl font-semibold text-ld mb-0.5">Kelas Saya</h2>
                         <p className="text-bodytext text-xs">
                           Daftar semua kelas yang tersedia untuk Anda
                         </p>
                       </div>
                     )}
-                    {pathname.startsWith("/user/kelas/") && (
+                    {pathname.startsWith('/user/kelas/') && (
                       <div>
-                        <h2 className="text-xl font-semibold text-ld mb-0.5">
-                          Kelas
-                        </h2>
-                        <p className="text-bodytext text-xs">
-                          Materi pembelajaran dan tugas
-                        </p>
+                        <h2 className="text-xl font-semibold text-ld mb-0.5">Kelas</h2>
+                        <p className="text-bodytext text-xs">Materi pembelajaran dan tugas</p>
                       </div>
                     )}
-                    {pathname === "/user/ai-generator" && (
+                    {pathname === '/user/ai-generator' && (
                       <div>
-                        <h2 className="text-xl font-semibold text-ld mb-0.5">
-                          AI Rebuild
-                        </h2>
-                        <p className="text-bodytext text-xs">
-                          Modul AI sedang dibangun ulang
-                        </p>
+                        <h2 className="text-xl font-semibold text-ld mb-0.5">AI Rebuild</h2>
+                        <p className="text-bodytext text-xs">Modul AI sedang dibangun ulang</p>
                       </div>
                     )}
-                    {pathname === "/user/sertifikat" && (
+                    {pathname === '/user/sertifikat' && (
                       <div>
-                        <h2 className="text-xl font-semibold text-ld mb-0.5">
-                          Sertifikat
-                        </h2>
-                        <p className="text-bodytext text-xs">
-                          Sertifikat kelulusan kamu
-                        </p>
+                        <h2 className="text-xl font-semibold text-ld mb-0.5">Sertifikat</h2>
+                        <p className="text-bodytext text-xs">Sertifikat kelulusan kamu</p>
                       </div>
                     )}
-                    {pathname === "/user/dokumen" && (
+                    {pathname === '/user/dokumen' && (
                       <div>
-                        <h2 className="text-xl font-semibold text-ld mb-0.5">
-                          Dokumen
-                        </h2>
+                        <h2 className="text-xl font-semibold text-ld mb-0.5">Dokumen</h2>
                         <p className="text-bodytext text-xs">
                           Kelengkapan administrasi dan pemberkasan
                         </p>
                       </div>
                     )}
-                    {pathname === "/user/ai-hub" && (
+                    {pathname === '/user/ai-hub' && (
                       <div>
-                        <h2 className="text-xl font-semibold text-ld mb-0.5">
-                          Pilih Asisten AI
-                        </h2>
+                        <h2 className="text-xl font-semibold text-ld mb-0.5">Pilih Asisten AI</h2>
                         <p className="text-bodytext text-xs">
                           Pilih AI for Master, AI for Trainer, atau AI for Branding.
                         </p>
                       </div>
                     )}
-                    {pathname === "/user/ai-hub/master-workspace" && (() => {
-                      return (
-                        <div>
-                          <h2 className="text-xl font-semibold text-ld mb-0.5">
-                            AI for Master
-                          </h2>
-                          <p className="text-bodytext text-xs">
-                            Percakapan terarah untuk melengkapi master JSON dan checkpoint dokumen.
-                          </p>
-                        </div>
-                      );
-                    })()}
-                    {pathname === "/user/ai-hub/trainer-workspace" && (
+                    {pathname === '/user/ai-hub/master-workspace' &&
+                      (() => {
+                        return (
+                          <div>
+                            <h2 className="text-xl font-semibold text-ld mb-0.5">AI for Master</h2>
+                            <p className="text-bodytext text-xs">
+                              Percakapan terarah untuk melengkapi master JSON dan checkpoint
+                              dokumen.
+                            </p>
+                          </div>
+                        )
+                      })()}
+                    {pathname === '/user/ai-hub/trainer-workspace' && (
                       <div>
-                        <h2 className="text-xl font-semibold text-ld mb-0.5">
-                          AI for Trainer
-                        </h2>
+                        <h2 className="text-xl font-semibold text-ld mb-0.5">AI for Trainer</h2>
                         <p className="text-bodytext text-xs">
-                          Percakapan terarah untuk melengkapi field utama dan checkpoint dokumen trainer.
+                          Percakapan terarah untuk melengkapi field utama dan checkpoint dokumen
+                          trainer.
                         </p>
                       </div>
                     )}
-                    {pathname === "/user/ai-hub/branding" && (
+                    {pathname === '/user/ai-hub/branding' && (
                       <div>
-                        <h2 className="text-xl font-semibold text-ld mb-0.5">
-                          AI for Branding
-                        </h2>
+                        <h2 className="text-xl font-semibold text-ld mb-0.5">AI for Branding</h2>
                         <p className="text-bodytext text-xs">
                           Personal branding, konten promosi, dan komunikasi training.
                         </p>
                       </div>
                     )}
-                    {pathname === "/user/profile" && (
+                    {pathname === '/user/profile' && (
                       <div>
-                        <h2 className="text-xl font-semibold text-ld mb-0.5">
-                          Profil Peserta
-                        </h2>
+                        <h2 className="text-xl font-semibold text-ld mb-0.5">Profil Peserta</h2>
                         <p className="text-bodytext text-xs">
                           Lengkapi data pribadi dan data BNSP Anda
                         </p>
                       </div>
                     )}
-                    {(pathname === "/trainer/documents" || pathname === "/user/documents") && (
+                    {(pathname === '/trainer/documents' || pathname === '/user/documents') && (
                       <div>
-                        <h2 className="text-xl font-semibold text-ld mb-0.5">
-                          Dokumen Pelatihan
-                        </h2>
+                        <h2 className="text-xl font-semibold text-ld mb-0.5">Dokumen Pelatihan</h2>
                         <p className="text-bodytext text-xs">
-                          Generate dan kelola dokumen pelatihan berbasis kompetensi BNSP. Pilih dokumen yang ingin di-generate.
+                          Generate dan kelola dokumen pelatihan berbasis kompetensi BNSP. Pilih
+                          dokumen yang ingin di-generate.
                         </p>
                       </div>
                     )}
@@ -530,7 +504,7 @@ const Header = ({ layoutType }: HeaderPropsType) => {
             </div>
             {/* Mobile Toggle Icon */}
             <span
-              className={`h-10 w-10 flex xl:hidden ${isAdmin ? "text-white" : "hover:text-primary"} hover:bg-lightprimary rounded-full justify-center items-center cursor-pointer`}
+              className={`h-10 w-10 flex xl:hidden ${isAdmin ? 'text-white' : 'hover:text-primary'} hover:bg-lightprimary rounded-full justify-center items-center cursor-pointer`}
               onClick={handleMobileMenu}
             >
               <Icon icon="tabler:dots" height={21} />
@@ -538,18 +512,14 @@ const Header = ({ layoutType }: HeaderPropsType) => {
           </div>
         </nav>
 
-        <div
-          className={`w-full  xl:hidden block mobile-header-menu ${mobileMenu}`}
-        >
+        <div className={`w-full  xl:hidden block mobile-header-menu ${mobileMenu}`}>
           <MobileHeaderItems />
         </div>
 
         {/* Horizontal Menu  */}
-        {layoutType == "horizontal" ? (
+        {layoutType == 'horizontal' ? (
           <div className="xl:border-y xl:border-ld xl:block hidden">
-            <div
-              className={`${isLayout == "full" ? "w-full px-6" : "container"}`}
-            >
+            <div className={`${isLayout == 'full' ? 'w-full px-6' : 'container'}`}>
               <HorizontalMenu />
             </div>
           </div>
@@ -563,14 +533,14 @@ const Header = ({ layoutType }: HeaderPropsType) => {
           <SheetContent
             side="left"
             className="w-[260px] sm:w-[260px] p-0 max-w-[100vw]"
-          // className="max-w-[100vw]"
+            // className="max-w-[100vw]"
           >
             <SidebarLayout />
           </SheetContent>
         </Sheet>
       </div>
     </>
-  );
-};
+  )
+}
 
-export default Header;
+export default Header

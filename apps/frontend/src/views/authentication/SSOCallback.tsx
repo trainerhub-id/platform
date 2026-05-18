@@ -1,7 +1,7 @@
-import { AuthenticateWithRedirectCallback } from 'src/lib/better-auth';
+import { AuthenticateWithRedirectCallback } from 'src/lib/better-auth'
 
 const SSOCallback = () => {
-  return <AuthenticateWithRedirectCallback />;
-};
+  return <AuthenticateWithRedirectCallback />
+}
 
-export default SSOCallback;
+export default SSOCallback

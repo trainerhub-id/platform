@@ -7,29 +7,29 @@
  */
 export function extractYouTubeId(url: string): string | null {
   try {
-    const urlObj = new URL(url);
-    
+    const urlObj = new URL(url)
+
     // Format: youtube.com/watch?v=VIDEO_ID
     if (urlObj.hostname.includes('youtube.com')) {
-      const videoId = urlObj.searchParams.get('v');
-      if (videoId) return videoId;
+      const videoId = urlObj.searchParams.get('v')
+      if (videoId) return videoId
     }
-    
+
     // Format: youtu.be/VIDEO_ID
     if (urlObj.hostname === 'youtu.be') {
-      const videoId = urlObj.pathname.slice(1);
-      if (videoId) return videoId;
+      const videoId = urlObj.pathname.slice(1)
+      if (videoId) return videoId
     }
-    
+
     // Format: youtube.com/embed/VIDEO_ID
     if (urlObj.pathname.includes('/embed/')) {
-      const videoId = urlObj.pathname.split('/embed/')[1];
-      if (videoId) return videoId;
+      const videoId = urlObj.pathname.split('/embed/')[1]
+      if (videoId) return videoId
     }
-    
-    return null;
+
+    return null
   } catch {
-    return null;
+    return null
   }
 }
 
@@ -42,25 +42,25 @@ export function extractYouTubeId(url: string): string | null {
  */
 export function extractGoogleDriveId(url: string): string | null {
   try {
-    const urlObj = new URL(url);
-    
+    const urlObj = new URL(url)
+
     if (!urlObj.hostname.includes('drive.google.com')) {
-      return null;
+      return null
     }
-    
+
     // Format: drive.google.com/file/d/FILE_ID/view
     if (urlObj.pathname.includes('/file/d/')) {
-      const matches = urlObj.pathname.match(/\/file\/d\/([^\/]+)/);
-      if (matches && matches[1]) return matches[1];
+      const matches = urlObj.pathname.match(/\/file\/d\/([^\/]+)/)
+      if (matches && matches[1]) return matches[1]
     }
-    
+
     // Format: drive.google.com/open?id=FILE_ID or drive.google.com/uc?id=FILE_ID
-    const fileId = urlObj.searchParams.get('id');
-    if (fileId) return fileId;
-    
-    return null;
+    const fileId = urlObj.searchParams.get('id')
+    if (fileId) return fileId
+
+    return null
   } catch {
-    return null;
+    return null
   }
 }
 
@@ -71,7 +71,7 @@ export function extractGoogleDriveId(url: string): string | null {
 export function getGoogleDriveEmbedUrl(fileId: string): string {
   // Using 'preview' endpoint which shows minimal controls
   // Unfortunately, Google Drive doesn't allow completely hiding controls
-  return `https://drive.google.com/file/d/${fileId}/preview`;
+  return `https://drive.google.com/file/d/${fileId}/preview`
 }
 
 /**
@@ -79,10 +79,10 @@ export function getGoogleDriveEmbedUrl(fileId: string): string {
  */
 export function isYouTubeUrl(url: string): boolean {
   try {
-    const urlObj = new URL(url);
-    return urlObj.hostname.includes('youtube.com') || urlObj.hostname === 'youtu.be';
+    const urlObj = new URL(url)
+    return urlObj.hostname.includes('youtube.com') || urlObj.hostname === 'youtu.be'
   } catch {
-    return false;
+    return false
   }
 }
 
@@ -91,9 +91,9 @@ export function isYouTubeUrl(url: string): boolean {
  */
 export function isGoogleDriveUrl(url: string): boolean {
   try {
-    const urlObj = new URL(url);
-    return urlObj.hostname.includes('drive.google.com');
+    const urlObj = new URL(url)
+    return urlObj.hostname.includes('drive.google.com')
   } catch {
-    return false;
+    return false
   }
 }

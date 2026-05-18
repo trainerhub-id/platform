@@ -1,138 +1,191 @@
-import { AlignmentType, BorderStyle, Document, HeadingLevel, Packer, Paragraph, Table, TableCell, TableRow, TextRun, WidthType } from "docx";
-import type { DocumentRenderer, RenderContext, RenderInput, RenderResult } from "./renderer.types";
+import {
+  AlignmentType,
+  BorderStyle,
+  Document,
+  HeadingLevel,
+  Packer,
+  Paragraph,
+  Table,
+  TableCell,
+  TableRow,
+  TextRun,
+  WidthType,
+} from 'docx'
+import type { DocumentRenderer, RenderContext, RenderInput, RenderResult } from './renderer.types'
 
 const documentTitles: Record<string, string> = {
-	"bukti-1": "BUKTI-1 IDENTIFIKASI KEBUTUHAN PELATIHAN",
-	"bukti-2": "BUKTI-2 ANALISIS KEBUTUHAN PELATIHAN",
-	"bukti-3": "BUKTI-3 PETA KOMPETENSI",
-	"bukti-4": "BUKTI-4 UNIT KOMPETENSI",
-	"bukti-5": "BUKTI-5 RENCANA PROGRAM PELATIHAN",
-	"bukti-6": "BUKTI-6 RENCANA PEMASARAN PROGRAM",
-	"bukti-7": "BUKTI-7 DOKUMEN KERJA SAMA",
-	"bukti-8": "BUKTI-8 LAPORAN EVALUASI PROGRAM",
-};
-
-function read(value: unknown, fallback = "-") {
-	const text = String(value ?? "").trim();
-	return text || fallback;
+  'bukti-1': 'BUKTI-1 IDENTIFIKASI KEBUTUHAN PELATIHAN',
+  'bukti-2': 'BUKTI-2 ANALISIS KEBUTUHAN PELATIHAN',
+  'bukti-3': 'BUKTI-3 PETA KOMPETENSI',
+  'bukti-4': 'BUKTI-4 UNIT KOMPETENSI',
+  'bukti-5': 'BUKTI-5 RENCANA PROGRAM PELATIHAN',
+  'bukti-6': 'BUKTI-6 RENCANA PEMASARAN PROGRAM',
+  'bukti-7': 'BUKTI-7 DOKUMEN KERJA SAMA',
+  'bukti-8': 'BUKTI-8 LAPORAN EVALUASI PROGRAM',
 }
 
-function getPath(input: unknown, path: string, fallback = "-") {
-	let current = input as Record<string, unknown> | undefined;
-	for (const part of path.split(".")) {
-		if (!current || typeof current !== "object") return fallback;
-		current = current[part] as Record<string, unknown> | undefined;
-	}
-	return read(current, fallback);
+function read(value: unknown, fallback = '-') {
+  const text = String(value ?? '').trim()
+  return text || fallback
+}
+
+function getPath(input: unknown, path: string, fallback = '-') {
+  let current = input as Record<string, unknown> | undefined
+  for (const part of path.split('.')) {
+    if (!current || typeof current !== 'object') return fallback
+    current = current[part] as Record<string, unknown> | undefined
+  }
+  return read(current, fallback)
 }
 
 function text(value: string, options: { bold?: boolean; size?: number } = {}) {
-	return new TextRun({ text: value, ...(options.bold === undefined ? {} : { bold: options.bold }), size: options.size ?? 22, font: "Arial" });
+  return new TextRun({
+    text: value,
+    ...(options.bold === undefined ? {} : { bold: options.bold }),
+    size: options.size ?? 22,
+    font: 'Arial',
+  })
 }
 
-function paragraph(value: string, options: { bold?: boolean; size?: number; heading?: (typeof HeadingLevel)[keyof typeof HeadingLevel]; center?: boolean } = {}) {
-	return new Paragraph({
-		...(options.heading ? { heading: options.heading } : {}),
-		...(options.center ? { alignment: AlignmentType.CENTER } : {}),
-		spacing: { after: 140, line: 276 },
-		children: [text(value, options)],
-	});
+function paragraph(
+  value: string,
+  options: {
+    bold?: boolean
+    size?: number
+    heading?: (typeof HeadingLevel)[keyof typeof HeadingLevel]
+    center?: boolean
+  } = {},
+) {
+  return new Paragraph({
+    ...(options.heading ? { heading: options.heading } : {}),
+    ...(options.center ? { alignment: AlignmentType.CENTER } : {}),
+    spacing: { after: 140, line: 276 },
+    children: [text(value, options)],
+  })
 }
 
 const borders = {
-	top: { style: BorderStyle.SINGLE, size: 4, color: "111827" },
-	bottom: { style: BorderStyle.SINGLE, size: 4, color: "111827" },
-	left: { style: BorderStyle.SINGLE, size: 4, color: "111827" },
-	right: { style: BorderStyle.SINGLE, size: 4, color: "111827" },
-};
+  top: { style: BorderStyle.SINGLE, size: 4, color: '111827' },
+  bottom: { style: BorderStyle.SINGLE, size: 4, color: '111827' },
+  left: { style: BorderStyle.SINGLE, size: 4, color: '111827' },
+  right: { style: BorderStyle.SINGLE, size: 4, color: '111827' },
+}
 
 function cell(value: string, bold = false) {
-	return new TableCell({
-		borders,
-		margins: { top: 80, bottom: 80, left: 100, right: 100 },
-		children: [paragraph(value, { bold })],
-	});
+  return new TableCell({
+    borders,
+    margins: { top: 80, bottom: 80, left: 100, right: 100 },
+    children: [paragraph(value, { bold })],
+  })
 }
 
 function table(rows: string[][]) {
-	return new Table({
-		width: { size: 100, type: WidthType.PERCENTAGE },
-		rows: rows.map((row, rowIndex) => new TableRow({ children: row.map((value) => cell(value, rowIndex === 0)) })),
-	});
+  return new Table({
+    width: { size: 100, type: WidthType.PERCENTAGE },
+    rows: rows.map(
+      (row, rowIndex) =>
+        new TableRow({ children: row.map((value) => cell(value, rowIndex === 0)) }),
+    ),
+  })
 }
 
 function asRows(value: unknown, columns: string[]) {
-	if (!Array.isArray(value) || value.length === 0) return [["1", "Data belum diisi", "-", "-"]];
-	return value.map((item, index) => {
-		const row = item as Record<string, unknown>;
-		return [String(index + 1), ...columns.map((column) => read(row[column]))];
-	});
+  if (!Array.isArray(value) || value.length === 0) return [['1', 'Data belum diisi', '-', '-']]
+  return value.map((item, index) => {
+    const row = item as Record<string, unknown>
+    return [String(index + 1), ...columns.map((column) => read(row[column]))]
+  })
 }
 
 function buildDocument(input: RenderInput) {
-	const payload = input.payload as Record<string, unknown>;
-	const documentType = input.context.documentType;
-	const title = documentTitles[documentType] ?? documentType.toUpperCase();
-	const programName = getPath(payload, "program.nama_pelatihan", getPath(payload, "training.name", "Program Pelatihan"));
-	const unitCode = getPath(payload, "kompetensi.kode_unit", getPath(payload, "unit.code"));
-	const unitTitle = getPath(payload, "kompetensi.nama_unit", getPath(payload, "unit.title"));
-	const trainer = getPath(payload, "sdm.trainer", getPath(payload, "trainer.name"));
-	const institution = getPath(payload, "sdm.lembaga", getPath(payload, "organizer.name"));
+  const payload = input.payload as Record<string, unknown>
+  const documentType = input.context.documentType
+  const title = documentTitles[documentType] ?? documentType.toUpperCase()
+  const programName = getPath(
+    payload,
+    'program.nama_pelatihan',
+    getPath(payload, 'training.name', 'Program Pelatihan'),
+  )
+  const unitCode = getPath(payload, 'kompetensi.kode_unit', getPath(payload, 'unit.code'))
+  const unitTitle = getPath(payload, 'kompetensi.nama_unit', getPath(payload, 'unit.title'))
+  const trainer = getPath(payload, 'sdm.trainer', getPath(payload, 'trainer.name'))
+  const institution = getPath(payload, 'sdm.lembaga', getPath(payload, 'organizer.name'))
 
-	const detailRows: string[][] = [
-		["Komponen", "Nilai"],
-		["Nama Program", programName],
-		["Kode Unit", unitCode],
-		["Judul Unit", unitTitle],
-		["Trainer", trainer],
-		["Lembaga", institution],
-		["Tujuan", getPath(payload, "program.tujuan_pelatihan", getPath(payload, "training.objective"))],
-	];
+  const detailRows: string[][] = [
+    ['Komponen', 'Nilai'],
+    ['Nama Program', programName],
+    ['Kode Unit', unitCode],
+    ['Judul Unit', unitTitle],
+    ['Trainer', trainer],
+    ['Lembaga', institution],
+    [
+      'Tujuan',
+      getPath(payload, 'program.tujuan_pelatihan', getPath(payload, 'training.objective')),
+    ],
+  ]
 
-	const sectionRows: string[][] =
-		documentType === "bukti-5"
-			? [["No", "Materi", "Kode", "Waktu"], ...asRows(payload.materi_pelatihan, ["judul", "elemen_id", "waktu_jp"])]
-			: documentType === "bukti-8"
-				? [["No", "Aspek", "Indikator", "Catatan"], ...asRows((payload as any).asesmen?.observasi, ["aspek", "indikator_keberhasilan", "penilaian_lanjut"])]
-				: [["No", "Uraian", "Sumber", "Keterangan"], ["1", `Dokumen ${documentType} untuk ${programName}`, unitCode, "Generated by TrainerHub Hono"]];
+  const sectionRows: string[][] =
+    documentType === 'bukti-5'
+      ? [
+          ['No', 'Materi', 'Kode', 'Waktu'],
+          ...asRows(payload.materi_pelatihan, ['judul', 'elemen_id', 'waktu_jp']),
+        ]
+      : documentType === 'bukti-8'
+        ? [
+            ['No', 'Aspek', 'Indikator', 'Catatan'],
+            ...asRows((payload as any).asesmen?.observasi, [
+              'aspek',
+              'indikator_keberhasilan',
+              'penilaian_lanjut',
+            ]),
+          ]
+        : [
+            ['No', 'Uraian', 'Sumber', 'Keterangan'],
+            [
+              '1',
+              `Dokumen ${documentType} untuk ${programName}`,
+              unitCode,
+              'Generated by TrainerHub Hono',
+            ],
+          ]
 
-	return new Document({
-		creator: "TrainerHub",
-		title,
-		styles: { default: { document: { run: { font: "Arial", size: 22 } } } },
-		sections: [
-			{
-				properties: { page: { margin: { top: 720, right: 720, bottom: 720, left: 720 } } },
-				children: [
-					paragraph(title, { bold: true, size: 28, heading: HeadingLevel.HEADING_1, center: true }),
-					paragraph(programName, { bold: true, size: 24, center: true }),
-					paragraph("Identitas Dokumen", { bold: true, heading: HeadingLevel.HEADING_2 }),
-					table(detailRows),
-					paragraph("Rincian Bukti", { bold: true, heading: HeadingLevel.HEADING_2 }),
-					table(sectionRows),
-					paragraph("Pengesahan", { bold: true, heading: HeadingLevel.HEADING_2 }),
-					table([
-						["Disiapkan Oleh", "Diperiksa Oleh"],
-						[trainer, institution],
-					]),
-				],
-			},
-		],
-	});
+  return new Document({
+    creator: 'TrainerHub',
+    title,
+    styles: { default: { document: { run: { font: 'Arial', size: 22 } } } },
+    sections: [
+      {
+        properties: { page: { margin: { top: 720, right: 720, bottom: 720, left: 720 } } },
+        children: [
+          paragraph(title, { bold: true, size: 28, heading: HeadingLevel.HEADING_1, center: true }),
+          paragraph(programName, { bold: true, size: 24, center: true }),
+          paragraph('Identitas Dokumen', { bold: true, heading: HeadingLevel.HEADING_2 }),
+          table(detailRows),
+          paragraph('Rincian Bukti', { bold: true, heading: HeadingLevel.HEADING_2 }),
+          table(sectionRows),
+          paragraph('Pengesahan', { bold: true, heading: HeadingLevel.HEADING_2 }),
+          table([
+            ['Disiapkan Oleh', 'Diperiksa Oleh'],
+            [trainer, institution],
+          ]),
+        ],
+      },
+    ],
+  })
 }
 
 export class ProgrammaticDocxRenderer implements DocumentRenderer {
-	supports(context: RenderContext): boolean {
-		return context.renderer === "programmatic-docx";
-	}
+  supports(context: RenderContext): boolean {
+    return context.renderer === 'programmatic-docx'
+  }
 
-	async render(input: RenderInput): Promise<RenderResult> {
-		const doc = buildDocument(input);
-		const buffer = await Packer.toBuffer(doc);
-		return {
-			bytes: new Uint8Array(buffer),
-			mimeType: "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-			outputFormat: "docx",
-		};
-	}
+  async render(input: RenderInput): Promise<RenderResult> {
+    const doc = buildDocument(input)
+    const buffer = await Packer.toBuffer(doc)
+    return {
+      bytes: new Uint8Array(buffer),
+      mimeType: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+      outputFormat: 'docx',
+    }
+  }
 }

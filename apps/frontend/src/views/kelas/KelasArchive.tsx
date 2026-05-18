@@ -1,55 +1,55 @@
-import { useEffect, useState } from "react";
-import { useNavigate } from "react-router";
-import CardBox from "src/components/shared/CardBox";
-import { Icon } from "@iconify/react";
-import { Button } from "src/components/ui/button";
-import { Badge } from "src/components/ui/badge";
-import api from "src/api/axios";
-import { Loading } from 'src/components/ui/loading';
+import { Icon } from '@iconify/react'
+import { useEffect, useState } from 'react'
+import { useNavigate } from 'react-router'
+import api from 'src/api/axios'
+import CardBox from 'src/components/shared/CardBox'
+import { Badge } from 'src/components/ui/badge'
+import { Button } from 'src/components/ui/button'
+import { Loading } from 'src/components/ui/loading'
 
 interface Course {
-  id: string;
-  title: string;
-  description: string | null;
-  imageUrl: string | null;
-  totalChapters: number;
-  totalLessons: number;
-  progress?: number;
-  completedLessons?: number;
-  hasAccess?: boolean;
+  id: string
+  title: string
+  description: string | null
+  imageUrl: string | null
+  totalChapters: number
+  totalLessons: number
+  progress?: number
+  completedLessons?: number
+  hasAccess?: boolean
 }
 
 const KelasArchive = () => {
-  const [courses, setCourses] = useState<Course[]>([]);
-  const [loading, setLoading] = useState(true);
-  const navigate = useNavigate();
+  const [courses, setCourses] = useState<Course[]>([])
+  const [loading, setLoading] = useState(true)
+  const navigate = useNavigate()
 
   useEffect(() => {
-    fetchCourses();
-  }, []);
+    fetchCourses()
+  }, [])
 
   const fetchCourses = async () => {
     try {
-      setLoading(true);
-      const response = await api.get("/kelas");
-      setCourses(response.data);
+      setLoading(true)
+      const response = await api.get('/kelas')
+      setCourses(response.data)
     } catch (err) {
-      console.error("Error fetching courses:", err);
-      setCourses([]);
+      console.error('Error fetching courses:', err)
+      setCourses([])
     } finally {
-      setLoading(false);
+      setLoading(false)
     }
-  };
+  }
 
   const handleCourseClick = (courseId: string, hasAccess: boolean) => {
     if (!hasAccess) {
-      return; // Do nothing if no access
+      return // Do nothing if no access
     }
-    navigate(`/user/kelas/${courseId}`);
-  };
+    navigate(`/user/kelas/${courseId}`)
+  }
 
   if (loading) {
-    return <Loading fullPage />;
+    return <Loading fullPage />
   }
 
   return (
@@ -59,15 +59,9 @@ const KelasArchive = () => {
         <CardBox className="p-12 text-center">
           <div className="flex flex-col items-center justify-center">
             <div className="h-20 w-20 rounded-full bg-gray-100 flex items-center justify-center mb-4">
-              <Icon
-                icon="solar:book-minimalistic-linear"
-                className="text-gray-400"
-                height={40}
-              />
+              <Icon icon="solar:book-minimalistic-linear" className="text-gray-400" height={40} />
             </div>
-            <h3 className="text-lg font-semibold text-dark mb-2">
-              Belum Ada Kelas
-            </h3>
+            <h3 className="text-lg font-semibold text-dark mb-2">Belum Ada Kelas</h3>
             <p className="text-sm text-bodytext">
               Saat ini belum ada kelas yang tersedia untuk Anda.
             </p>
@@ -77,10 +71,10 @@ const KelasArchive = () => {
         <div className="grid grid-cols-12 gap-5">
           {courses.map((course) => (
             <div key={course.id} className="lg:col-span-4 md:col-span-6 col-span-12">
-              <CardBox 
+              <CardBox
                 className={`p-0 overflow-hidden border rounded-2xl border-gray-200 bg-white transition-all ${
-                  course.hasAccess === false 
-                    ? 'opacity-60 cursor-not-allowed' 
+                  course.hasAccess === false
+                    ? 'opacity-60 cursor-not-allowed'
                     : 'cursor-pointer hover:border-[#B58E36] hover:ring-1 hover:ring-[#B58E36]/20'
                 }`}
                 onClick={() => handleCourseClick(course.id, course.hasAccess !== false)}
@@ -89,18 +83,18 @@ const KelasArchive = () => {
                   {/* Header */}
                   <div className="px-4 py-3 border-b border-ld flex items-center justify-between">
                     <div className="flex items-center gap-2 flex-1">
-                      <h5 className="font-bold text-[#AA8D55] text-base">
-                        {course.title}
-                      </h5>
+                      <h5 className="font-bold text-[#AA8D55] text-base">{course.title}</h5>
                       {course.hasAccess === false && (
                         <Icon icon="solar:lock-bold" className="text-gray-400" height={16} />
                       )}
                     </div>
-                    {course.progress !== undefined && course.progress > 0 && course.hasAccess !== false && (
-                      <Badge className="bg-[#E6D6BC] text-[#8D6E33] hover:bg-[#E6D6BC] font-medium text-xs px-2 py-0.5">
-                        {course.progress}%
-                      </Badge>
-                    )}
+                    {course.progress !== undefined &&
+                      course.progress > 0 &&
+                      course.hasAccess !== false && (
+                        <Badge className="bg-[#E6D6BC] text-[#8D6E33] hover:bg-[#E6D6BC] font-medium text-xs px-2 py-0.5">
+                          {course.progress}%
+                        </Badge>
+                      )}
                   </div>
 
                   {/* Course Image */}
@@ -111,12 +105,14 @@ const KelasArchive = () => {
                         alt={course.title}
                         className="w-full h-32 object-cover"
                         onError={(e) => {
-                          e.currentTarget.style.display = 'none';
-                          e.currentTarget.nextElementSibling?.classList.remove('hidden');
+                          e.currentTarget.style.display = 'none'
+                          e.currentTarget.nextElementSibling?.classList.remove('hidden')
                         }}
                       />
                     ) : null}
-                    <div className={`w-full h-32 bg-gradient-to-br from-[#F8F4ED] to-[#EDE5D8] flex items-center justify-center ${course.imageUrl ? 'hidden' : ''}`}>
+                    <div
+                      className={`w-full h-32 bg-gradient-to-br from-[#F8F4ED] to-[#EDE5D8] flex items-center justify-center ${course.imageUrl ? 'hidden' : ''}`}
+                    >
                       <Icon
                         icon="solar:book-minimalistic-bold"
                         className="text-[#C4B596]"
@@ -148,12 +144,15 @@ const KelasArchive = () => {
                         <span>{course.totalLessons}</span>
                       </div>
                       {course.hasAccess === false ? (
-                        <Badge variant="outline" className="text-gray-500 border-gray-300 px-3 py-1 text-[10px] font-bold uppercase tracking-wider">
+                        <Badge
+                          variant="outline"
+                          className="text-gray-500 border-gray-300 px-3 py-1 text-[10px] font-bold uppercase tracking-wider"
+                        >
                           Terkunci
                         </Badge>
                       ) : (
                         <Button className="bg-[#AA8D55] hover:bg-[#AA8D55]/90 text-white rounded-xl px-4 py-1.5 h-auto text-[10px] font-bold shadow-none transition-colors border-none outline-none uppercase tracking-wider">
-                          {course.progress && course.progress > 0 ? "Lanjutkan" : "Mulai"}
+                          {course.progress && course.progress > 0 ? 'Lanjutkan' : 'Mulai'}
                         </Button>
                       )}
                     </div>
@@ -165,7 +164,7 @@ const KelasArchive = () => {
         </div>
       )}
     </>
-  );
-};
+  )
+}
 
-export default KelasArchive;
+export default KelasArchive

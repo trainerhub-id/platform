@@ -1,78 +1,78 @@
-import { AnimatePresence, motion } from 'motion/react';
-import { forwardRef, useCallback, useEffect, useImperativeHandle, useRef, useState } from 'react';
-import { cn } from 'src/lib/utils';
-import { Input } from 'src/components/ui/input';
+import { AnimatePresence, motion } from 'motion/react'
+import { forwardRef, useCallback, useEffect, useImperativeHandle, useRef, useState } from 'react'
+import { Input } from 'src/components/ui/input'
+import { cn } from 'src/lib/utils'
 
 export interface PlaceholdersInputHandle {
-  triggerSubmit: () => void;
+  triggerSubmit: () => void
 }
 
 interface PlaceholdersInputProps {
-  value: string;
-  onChange: (val: string) => void;
-  onSubmit?: (val: string) => void;
-  onBlur?: (val: string) => void;
-  placeholders: string[];
-  className?: string;
-  disabled?: boolean;
+  value: string
+  onChange: (val: string) => void
+  onSubmit?: (val: string) => void
+  onBlur?: (val: string) => void
+  placeholders: string[]
+  className?: string
+  disabled?: boolean
 }
 
 const PlaceholdersInput = forwardRef<PlaceholdersInputHandle, PlaceholdersInputProps>(
   ({ value, onChange, onSubmit, placeholders, onBlur, className, disabled }, ref) => {
-    const [currentPlaceholder, setCurrentPlaceholder] = useState(0);
-    const [animating, setAnimating] = useState(false);
+    const [currentPlaceholder, setCurrentPlaceholder] = useState(0)
+    const [animating, setAnimating] = useState(false)
 
-    const inputRef = useRef<HTMLInputElement>(null);
-    const canvasRef = useRef<HTMLCanvasElement>(null);
-    const newDataRef = useRef<any[]>([]);
-    const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+    const inputRef = useRef<HTMLInputElement>(null)
+    const canvasRef = useRef<HTMLCanvasElement>(null)
+    const newDataRef = useRef<any[]>([])
+    const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null)
 
     // Cycle through placeholders every 3s
     useEffect(() => {
       const startAnimation = () => {
         intervalRef.current = setInterval(() => {
-          setCurrentPlaceholder((p) => (p + 1) % placeholders.length);
-        }, 3000);
-      };
+          setCurrentPlaceholder((p) => (p + 1) % placeholders.length)
+        }, 3000)
+      }
 
       const handleVisibility = () => {
         if (document.visibilityState === 'hidden' && intervalRef.current) {
-          clearInterval(intervalRef.current);
-          intervalRef.current = null;
+          clearInterval(intervalRef.current)
+          intervalRef.current = null
         } else if (!intervalRef.current) {
-          startAnimation();
+          startAnimation()
         }
-      };
+      }
 
-      startAnimation();
-      document.addEventListener('visibilitychange', handleVisibility);
+      startAnimation()
+      document.addEventListener('visibilitychange', handleVisibility)
 
       return () => {
-        if (intervalRef.current) clearInterval(intervalRef.current);
-        document.removeEventListener('visibilitychange', handleVisibility);
-      };
-    }, [placeholders]);
+        if (intervalRef.current) clearInterval(intervalRef.current)
+        document.removeEventListener('visibilitychange', handleVisibility)
+      }
+    }, [placeholders])
 
     const draw = useCallback(() => {
-      if (!inputRef.current || !canvasRef.current) return;
-      const ctx = canvasRef.current.getContext('2d');
-      if (!ctx) return;
+      if (!inputRef.current || !canvasRef.current) return
+      const ctx = canvasRef.current.getContext('2d')
+      if (!ctx) return
 
-      canvasRef.current.width = 800;
-      canvasRef.current.height = 800;
-      ctx.clearRect(0, 0, 800, 800);
+      canvasRef.current.width = 800
+      canvasRef.current.height = 800
+      ctx.clearRect(0, 0, 800, 800)
 
-      const style = getComputedStyle(inputRef.current);
-      const fontSize = parseFloat(style.fontSize);
-      ctx.font = `${fontSize * 2}px ${style.fontFamily}`;
-      ctx.fillStyle = '#fff';
-      ctx.fillText(value, 16, 40);
+      const style = getComputedStyle(inputRef.current)
+      const fontSize = parseFloat(style.fontSize)
+      ctx.font = `${fontSize * 2}px ${style.fontFamily}`
+      ctx.fillStyle = '#fff'
+      ctx.fillText(value, 16, 40)
 
-      const imageData = ctx.getImageData(0, 0, 800, 800).data;
-      newDataRef.current = [];
+      const imageData = ctx.getImageData(0, 0, 800, 800).data
+      newDataRef.current = []
       for (let y = 0; y < 800; y += 2) {
         for (let x = 0; x < 800; x += 2) {
-          const idx = (y * 800 + x) * 4;
+          const idx = (y * 800 + x) * 4
           if (imageData[idx] || imageData[idx + 1] || imageData[idx + 2]) {
             newDataRef.current.push({
               x,
@@ -81,11 +81,11 @@ const PlaceholdersInput = forwardRef<PlaceholdersInputHandle, PlaceholdersInputP
               color: `rgba(${imageData[idx]},${imageData[idx + 1]},${imageData[idx + 2]},${
                 imageData[idx + 3]
               })`,
-            });
+            })
           }
         }
       }
-    }, [value]);
+    }, [value])
 
     const animateVanish = (maxX: number, callback: () => void) => {
       const frame = (pos = maxX) => {
@@ -97,55 +97,52 @@ const PlaceholdersInput = forwardRef<PlaceholdersInputHandle, PlaceholdersInputP
               y: p.y + (Math.random() > 0.5 ? 1 : -1),
               r: Math.max(0, p.r - 0.05 * Math.random()),
             }))
-            .filter((p) => p.r > 0);
+            .filter((p) => p.r > 0)
 
-          const ctx = canvasRef.current?.getContext('2d');
+          const ctx = canvasRef.current?.getContext('2d')
           if (ctx) {
-            ctx.clearRect(pos, 0, 800, 800);
+            ctx.clearRect(pos, 0, 800, 800)
             newDataRef.current.forEach(({ x, y, r, color }) => {
               if (x > pos) {
-                ctx.fillStyle = color;
-                ctx.fillRect(x, y, r, r);
+                ctx.fillStyle = color
+                ctx.fillRect(x, y, r, r)
               }
-            });
+            })
           }
 
           if (newDataRef.current.length > 0) {
-            frame(pos - 8);
+            frame(pos - 8)
           } else {
-            callback();
+            callback()
           }
-        });
-      };
-      frame(maxX);
-    };
+        })
+      }
+      frame(maxX)
+    }
 
     const vanishAndSubmit = () => {
-      if (!value) return;
-      setAnimating(true);
-      draw();
-      const maxX = newDataRef.current.reduce((m, p) => Math.max(m, p.x), 0);
+      if (!value) return
+      setAnimating(true)
+      draw()
+      const maxX = newDataRef.current.reduce((m, p) => Math.max(m, p.x), 0)
       animateVanish(maxX, () => {
-        setAnimating(false);
-        onChange('');
-        onSubmit?.(value);
-      });
-    };
+        setAnimating(false)
+        onChange('')
+        onSubmit?.(value)
+      })
+    }
 
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-      e.preventDefault();
-      vanishAndSubmit();
-    };
+      e.preventDefault()
+      vanishAndSubmit()
+    }
 
     useImperativeHandle(ref, () => ({
       triggerSubmit: () => vanishAndSubmit(),
-    }));
+    }))
 
     return (
-      <form
-        onSubmit={handleSubmit}
-        className={cn('relative flex w-full items-center transition')}
-      >
+      <form onSubmit={handleSubmit} className={cn('relative flex w-full items-center transition')}>
         <canvas
           ref={canvasRef}
           className={cn(
@@ -158,7 +155,7 @@ const PlaceholdersInput = forwardRef<PlaceholdersInputHandle, PlaceholdersInputP
           ref={inputRef}
           value={value}
           onChange={(e) => {
-            if (!animating) onChange(e.target.value);
+            if (!animating) onChange(e.target.value)
           }}
           onKeyDown={(e) => e.key === 'Enter' && !animating && vanishAndSubmit()}
           onBlur={() => onBlur?.(value)}
@@ -180,7 +177,10 @@ const PlaceholdersInput = forwardRef<PlaceholdersInputHandle, PlaceholdersInputP
                 animate={{ y: 0, opacity: 1 }}
                 exit={{ y: -15, opacity: 0 }}
                 transition={{ duration: 0.3, ease: 'linear' }}
-                className={cn(`w-[calc(100%-2rem)] truncate text-sm text-neutral-500 pl-10 sm:text-sm dark:text-zinc-500`,className)}
+                className={cn(
+                  `w-[calc(100%-2rem)] truncate text-sm text-neutral-500 pl-10 sm:text-sm dark:text-zinc-500`,
+                  className,
+                )}
               >
                 {placeholders[currentPlaceholder]}
               </motion.p>
@@ -188,10 +188,10 @@ const PlaceholdersInput = forwardRef<PlaceholdersInputHandle, PlaceholdersInputP
           </AnimatePresence>
         </div>
       </form>
-    );
+    )
   },
-);
+)
 
-PlaceholdersInput.displayName = 'PlaceholdersInput';
+PlaceholdersInput.displayName = 'PlaceholdersInput'
 
-export default PlaceholdersInput;
+export default PlaceholdersInput

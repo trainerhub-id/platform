@@ -1,87 +1,87 @@
-import { describe, expect, it } from "vitest";
-import { normalizeExtractionObject } from "./extraction.service";
-import { extractorPrompt } from "./prompts/extractor.prompt";
+import { describe, expect, it } from 'vitest'
+import { normalizeExtractionObject } from './extraction.service'
+import { extractorPrompt } from './prompts/extractor.prompt'
 
-describe("normalizeExtractionObject", () => {
-	it("accepts schema-native extraction output", () => {
-		const result = normalizeExtractionObject({
-			patches: [
-				{
-					flow: "master",
-					phaseKey: "profile",
-					fieldKey: "organization_name",
-					value: "PT Maju Jaya",
-					source: "user_explicit",
-				},
-			],
-			pendingSuggestions: [],
-			confirmedPendingFields: [],
-			generateConfirmed: false,
-		});
+describe('normalizeExtractionObject', () => {
+  it('accepts schema-native extraction output', () => {
+    const result = normalizeExtractionObject({
+      patches: [
+        {
+          flow: 'master',
+          phaseKey: 'profile',
+          fieldKey: 'organization_name',
+          value: 'PT Maju Jaya',
+          source: 'user_explicit',
+        },
+      ],
+      pendingSuggestions: [],
+      confirmedPendingFields: [],
+      generateConfirmed: false,
+    })
 
-		expect(result.patches[0]?.fieldKey).toBe("organization_name");
-	});
+    expect(result.patches[0]?.fieldKey).toBe('organization_name')
+  })
 
-	it("normalizes DeepSeek JSON-patch style institutionName and trainerName for Master", () => {
-		const result = normalizeExtractionObject({
-			patches: [
-				{ op: "replace", path: "/institutionName", value: "PT Maju Jaya" },
-				{ op: "replace", path: "/trainerName", value: "Budi Santoso" },
-			],
-		});
+  it('normalizes DeepSeek JSON-patch style institutionName and trainerName for Master', () => {
+    const result = normalizeExtractionObject({
+      patches: [
+        { op: 'replace', path: '/institutionName', value: 'PT Maju Jaya' },
+        { op: 'replace', path: '/trainerName', value: 'Budi Santoso' },
+      ],
+    })
 
-		expect(result.patches).toEqual([
-			{
-				flow: "master",
-				phaseKey: "profile",
-				fieldKey: "organization_name",
-				value: "PT Maju Jaya",
-				source: "user_explicit",
-				confidence: 0.8,
-			},
-			{
-				flow: "master",
-				phaseKey: "profile",
-				fieldKey: "trainer_name",
-				value: "Budi Santoso",
-				source: "user_explicit",
-				confidence: 0.8,
-			},
-		]);
-	});
+    expect(result.patches).toEqual([
+      {
+        flow: 'master',
+        phaseKey: 'profile',
+        fieldKey: 'organization_name',
+        value: 'PT Maju Jaya',
+        source: 'user_explicit',
+        confidence: 0.8,
+      },
+      {
+        flow: 'master',
+        phaseKey: 'profile',
+        fieldKey: 'trainer_name',
+        value: 'Budi Santoso',
+        source: 'user_explicit',
+        confidence: 0.8,
+      },
+    ])
+  })
 
-	it("normalizes common trainer fields for Trainer flow", () => {
-		const result = normalizeExtractionObject(
-			{
-				patches: [
-					{ op: "replace", path: "/trainerName", value: "Budi Santoso" },
-					{ op: "replace", path: "/expertise", value: "Digital Marketing" },
-					{ op: "replace", path: "/audience", value: "Owner UMKM" },
-					{ op: "replace", path: "/durationJp", value: 16 },
-				],
-			},
-			"trainer",
-		);
+  it('normalizes common trainer fields for Trainer flow', () => {
+    const result = normalizeExtractionObject(
+      {
+        patches: [
+          { op: 'replace', path: '/trainerName', value: 'Budi Santoso' },
+          { op: 'replace', path: '/expertise', value: 'Digital Marketing' },
+          { op: 'replace', path: '/audience', value: 'Owner UMKM' },
+          { op: 'replace', path: '/durationJp', value: 16 },
+        ],
+      },
+      'trainer',
+    )
 
-		expect(result.patches.map((patch) => `${patch.phaseKey}.${patch.fieldKey}`)).toEqual([
-			"brainstorming.trainer_name",
-			"brainstorming.expertise",
-			"brainstorming.audience",
-			"training_details.duration_jp",
-		]);
-		expect(result.patches.every((patch) => patch.flow === "trainer")).toBe(true);
-	});
+    expect(result.patches.map((patch) => `${patch.phaseKey}.${patch.fieldKey}`)).toEqual([
+      'brainstorming.trainer_name',
+      'brainstorming.expertise',
+      'brainstorming.audience',
+      'training_details.duration_jp',
+    ])
+    expect(result.patches.every((patch) => patch.flow === 'trainer')).toBe(true)
+  })
 
-	it("prompt names only core Master fields as explicit extraction targets", () => {
-		expect(extractorPrompt).toContain("Master flow profile core fields");
-		expect(extractorPrompt).toContain("trainer_name");
-		expect(extractorPrompt).toContain("organization_name");
-		expect(extractorPrompt).toContain("organization_focus");
-		expect(extractorPrompt).toContain("target_participants");
-		expect(extractorPrompt).toContain("industry_problem");
-		expect(extractorPrompt).toContain("program_goal");
-		expect(extractorPrompt).toContain("training_location");
-		expect(extractorPrompt).toContain("training_duration");
-		expect(extractorPrompt).toContain("Do not extract questions like aku belum mengerti");
-	});
-});
+  it('prompt names only core Master fields as explicit extraction targets', () => {
+    expect(extractorPrompt).toContain('Master flow profile core fields')
+    expect(extractorPrompt).toContain('trainer_name')
+    expect(extractorPrompt).toContain('organization_name')
+    expect(extractorPrompt).toContain('organization_focus')
+    expect(extractorPrompt).toContain('target_participants')
+    expect(extractorPrompt).toContain('industry_problem')
+    expect(extractorPrompt).toContain('program_goal')
+    expect(extractorPrompt).toContain('training_location')
+    expect(extractorPrompt).toContain('training_duration')
+    expect(extractorPrompt).toContain('Do not extract questions like aku belum mengerti')
+  })
+})

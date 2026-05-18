@@ -1,22 +1,16 @@
-import { Link } from "react-router";
-import { Button } from "src/components/ui/button";
-import { Checkbox } from "src/components/ui/checkbox";
-import { Input } from "src/components/ui/input";
-import { Label } from "src/components/ui/label";
+import { Link } from 'react-router'
+import { Button } from 'src/components/ui/button'
+import { Checkbox } from 'src/components/ui/checkbox'
+import { Input } from 'src/components/ui/input'
+import { Label } from 'src/components/ui/label'
 
 const BoxedAuthLogin = () => {
   return (
     <form className="mt-6 space-y-5">
-
       {/* Email */}
       <div className="space-y-2">
         <Label htmlFor="email">Email Address</Label>
-        <Input
-          id="email"
-          type="text"
-          placeholder="Enter your email"
-          className="form-control"
-        />
+        <Input id="email" type="text" placeholder="Enter your email" className="form-control" />
       </div>
 
       {/* Password */}
@@ -52,7 +46,7 @@ const BoxedAuthLogin = () => {
         <Link to="/">Sign in</Link>
       </Button>
     </form>
-  );
-};
+  )
+}
 
-export default BoxedAuthLogin;
+export default BoxedAuthLogin

@@ -1,12 +1,12 @@
-import { motion, useMotionValue, useTransform, animate } from 'framer-motion';
-import { useEffect, useState } from 'react';
+import { animate, motion, useMotionValue, useTransform } from 'framer-motion'
+import { useEffect, useState } from 'react'
 
 interface CountUpProps {
-  from?: number;
-  to: number;
-  duration?: number;
-  className?: string;
-  formatWithCommas?: boolean; // new prop, defaults to true
+  from?: number
+  to: number
+  duration?: number
+  className?: string
+  formatWithCommas?: boolean // new prop, defaults to true
 }
 
 export default function CountUp({
@@ -16,24 +16,22 @@ export default function CountUp({
   className,
   formatWithCommas = true, // default to true
 }: CountUpProps) {
-  const count = useMotionValue(from);
-  const rounded = useTransform(count, (latest) => Math.floor(latest));
-  const [display, setDisplay] = useState(
-    formatWithCommas ? from.toLocaleString() : from.toString(),
-  );
+  const count = useMotionValue(from)
+  const rounded = useTransform(count, (latest) => Math.floor(latest))
+  const [display, setDisplay] = useState(formatWithCommas ? from.toLocaleString() : from.toString())
 
   useEffect(() => {
-    const controls = animate(count, to, { duration });
+    const controls = animate(count, to, { duration })
 
     const unsubscribe = rounded.on('change', (v: number) => {
-      setDisplay(formatWithCommas ? v.toLocaleString() : v.toString());
-    });
+      setDisplay(formatWithCommas ? v.toLocaleString() : v.toString())
+    })
 
     return () => {
-      controls.stop();
-      unsubscribe();
-    };
-  }, [count, to, duration, rounded, formatWithCommas]);
+      controls.stop()
+      unsubscribe()
+    }
+  }, [count, to, duration, rounded, formatWithCommas])
 
-  return <motion.span className={className}>{display}</motion.span>;
+  return <motion.span className={className}>{display}</motion.span>
 }

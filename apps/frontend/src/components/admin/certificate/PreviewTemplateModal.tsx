@@ -1,19 +1,14 @@
-import React, { useState, useEffect } from 'react';
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from 'src/components/ui/dialog';
-import { Button } from 'src/components/ui/button';
-import { certificateTemplateApi } from 'src/api/certificate-template.api';
-import { Loader2, Download } from 'lucide-react';
-import { Alert, AlertDescription } from 'src/components/ui/alert';
+import { Download, Loader2 } from 'lucide-react'
+import React, { useEffect, useState } from 'react'
+import { certificateTemplateApi } from 'src/api/certificate-template.api'
+import { Alert, AlertDescription } from 'src/components/ui/alert'
+import { Button } from 'src/components/ui/button'
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from 'src/components/ui/dialog'
 
 interface PreviewTemplateModalProps {
-  isOpen: boolean;
-  onClose: () => void;
-  htmlContent: string;
+  isOpen: boolean
+  onClose: () => void
+  htmlContent: string
 }
 
 export const PreviewTemplateModal: React.FC<PreviewTemplateModalProps> = ({
@@ -21,44 +16,44 @@ export const PreviewTemplateModal: React.FC<PreviewTemplateModalProps> = ({
   onClose,
   htmlContent,
 }) => {
-  const [isLoading, setIsLoading] = useState(false);
-  const [pdfUrl, setPdfUrl] = useState<string | null>(null);
-  const [error, setError] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(false)
+  const [pdfUrl, setPdfUrl] = useState<string | null>(null)
+  const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
     if (isOpen && htmlContent) {
-      generatePreview();
+      generatePreview()
     }
     return () => {
       if (pdfUrl) {
-        URL.revokeObjectURL(pdfUrl);
+        URL.revokeObjectURL(pdfUrl)
       }
-    };
-  }, [isOpen, htmlContent]);
+    }
+  }, [isOpen, htmlContent])
 
   const generatePreview = async () => {
-    setIsLoading(true);
-    setError(null);
+    setIsLoading(true)
+    setError(null)
 
     try {
-      const pdfBlob = await certificateTemplateApi.previewTemplate(htmlContent);
-      const url = URL.createObjectURL(pdfBlob);
-      setPdfUrl(url);
+      const pdfBlob = await certificateTemplateApi.previewTemplate(htmlContent)
+      const url = URL.createObjectURL(pdfBlob)
+      setPdfUrl(url)
     } catch (err: any) {
-      setError(err?.response?.data?.message || 'Gagal generate preview');
+      setError(err?.response?.data?.message || 'Gagal generate preview')
     } finally {
-      setIsLoading(false);
+      setIsLoading(false)
     }
-  };
+  }
 
   const handleDownload = () => {
     if (pdfUrl) {
-      const link = document.createElement('a');
-      link.href = pdfUrl;
-      link.download = 'preview-certificate.pdf';
-      link.click();
+      const link = document.createElement('a')
+      link.href = pdfUrl
+      link.download = 'preview-certificate.pdf'
+      link.click()
     }
-  };
+  }
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
@@ -99,5 +94,5 @@ export const PreviewTemplateModal: React.FC<PreviewTemplateModalProps> = ({
         </div>
       </DialogContent>
     </Dialog>
-  );
-};
+  )
+}

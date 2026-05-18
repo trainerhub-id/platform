@@ -1,13 +1,13 @@
-import { useMemo, useState } from 'react';
-import { Link } from 'react-router';
-import { Icon } from '@iconify/react';
-import CardBox from 'src/components/shared/CardBox';
-import { Badge } from 'src/components/ui/badge';
-import { Button } from 'src/components/ui/button';
-import { Loading } from 'src/components/ui/loading';
-import { useManageTraining } from '../hooks/useManageTraining';
+import { Icon } from '@iconify/react'
+import { useMemo, useState } from 'react'
+import { Link } from 'react-router'
+import CardBox from 'src/components/shared/CardBox'
+import { Badge } from 'src/components/ui/badge'
+import { Button } from 'src/components/ui/button'
+import { Loading } from 'src/components/ui/loading'
+import { useManageTraining } from '../hooks/useManageTraining'
 
-type BatchStatusFilter = 'all' | 'draft' | 'open' | 'running' | 'completed';
+type BatchStatusFilter = 'all' | 'draft' | 'open' | 'running' | 'completed'
 
 const statusLabels: Record<string, string> = {
   all: 'Semua',
@@ -15,69 +15,64 @@ const statusLabels: Record<string, string> = {
   open: 'Open',
   running: 'Running',
   completed: 'Completed',
-};
+}
 
 const formatDate = (value?: string | null) => {
-  if (!value) return 'Tanggal belum diatur';
-  const date = new Date(value);
-  if (Number.isNaN(date.getTime())) return 'Tanggal belum diatur';
+  if (!value) return 'Tanggal belum diatur'
+  const date = new Date(value)
+  if (Number.isNaN(date.getTime())) return 'Tanggal belum diatur'
   return date.toLocaleDateString('id-ID', {
     day: '2-digit',
     month: 'short',
     year: 'numeric',
-  });
-};
+  })
+}
 
-const getBatchName = (batch: any) => batch.name || batch.namaBatch || 'Batch tanpa nama';
+const getBatchName = (batch: any) => batch.name || batch.namaBatch || 'Batch tanpa nama'
 
 const getStatusClassName = (status?: string | null) => {
-  if (status === 'open' || status === 'running') return 'bg-primary/10 text-primary border-none';
-  if (status === 'completed') return 'bg-green-100 text-green-700 border-none';
-  if (status === 'draft') return 'bg-gray-100 text-gray-700 border-none';
-  return 'bg-orange-100 text-orange-700 border-none';
-};
+  if (status === 'open' || status === 'running') return 'bg-primary/10 text-primary border-none'
+  if (status === 'completed') return 'bg-green-100 text-green-700 border-none'
+  if (status === 'draft') return 'bg-gray-100 text-gray-700 border-none'
+  return 'bg-orange-100 text-orange-700 border-none'
+}
 
 const AdminBatchList = () => {
-  const { trainings, loading } = useManageTraining();
-  const [statusFilter, setStatusFilter] = useState<BatchStatusFilter>('all');
-  const [search, setSearch] = useState('');
+  const { trainings, loading } = useManageTraining()
+  const [statusFilter, setStatusFilter] = useState<BatchStatusFilter>('all')
+  const [search, setSearch] = useState('')
 
   const filteredBatches = useMemo(() => {
-    const keyword = search.trim().toLowerCase();
+    const keyword = search.trim().toLowerCase()
 
     return trainings.filter((batch) => {
-      const statusMatches = statusFilter === 'all' || batch.status === statusFilter;
-      const searchable = [
-        getBatchName(batch),
-        batch.trainerName,
-        batch.courseName,
-        batch.location,
-      ]
+      const statusMatches = statusFilter === 'all' || batch.status === statusFilter
+      const searchable = [getBatchName(batch), batch.trainerName, batch.courseName, batch.location]
         .filter(Boolean)
         .join(' ')
-        .toLowerCase();
+        .toLowerCase()
 
-      return statusMatches && (!keyword || searchable.includes(keyword));
-    });
-  }, [search, statusFilter, trainings]);
+      return statusMatches && (!keyword || searchable.includes(keyword))
+    })
+  }, [search, statusFilter, trainings])
 
   const statusCounts = useMemo(() => {
     return trainings.reduce<Record<string, number>>(
       (acc, batch) => {
-        const status = batch.status || 'draft';
-        acc.all += 1;
-        acc[status] = (acc[status] || 0) + 1;
-        return acc;
+        const status = batch.status || 'draft'
+        acc.all += 1
+        acc[status] = (acc[status] || 0) + 1
+        return acc
       },
       { all: 0 },
-    );
-  }, [trainings]);
+    )
+  }, [trainings])
 
   if (loading) {
-    return <Loading fullPage />;
+    return <Loading fullPage />
   }
 
-  const filters: BatchStatusFilter[] = ['all', 'draft', 'open', 'running', 'completed'];
+  const filters: BatchStatusFilter[] = ['all', 'draft', 'open', 'running', 'completed']
 
   return (
     <div className="space-y-6">
@@ -88,7 +83,10 @@ const AdminBatchList = () => {
             Pantau batch, peserta, paket, dokumen, dan aktivitas dari satu workspace.
           </p>
         </div>
-        <Button asChild className="bg-primary hover:bg-primary/90 text-white rounded-xl shadow-md shrink-0">
+        <Button
+          asChild
+          className="bg-primary hover:bg-primary/90 text-white rounded-xl shadow-md shrink-0"
+        >
           <Link to="/admin/manage-training">
             <Icon icon="solar:add-circle-linear" className="mr-2" height={18} />
             Buat Batch Baru
@@ -172,13 +170,19 @@ const AdminBatchList = () => {
                         <p className="mt-1 text-xs font-medium text-[#B58E36]">
                           Mentor: {batch.trainerName || 'TBD'}
                         </p>
-                        <p className="mt-1 text-xs text-bodytext">{batch.courseName || 'Kelas belum dipilih'}</p>
+                        <p className="mt-1 text-xs text-bodytext">
+                          {batch.courseName || 'Kelas belum dipilih'}
+                        </p>
                       </div>
                     </td>
                     <td className="px-4 py-4">
                       <div className="space-y-1.5 text-sm text-bodytext">
                         <div className="flex items-center gap-1.5 font-medium">
-                          <Icon icon="solar:calendar-linear" className="text-[#B58E36]" height={16} />
+                          <Icon
+                            icon="solar:calendar-linear"
+                            className="text-[#B58E36]"
+                            height={16}
+                          />
                           <span>
                             {formatDate(batch.startDate || batch.tanggal)} -{' '}
                             {formatDate(batch.endDate || batch.tanggalSelesai)}
@@ -193,10 +197,14 @@ const AdminBatchList = () => {
                       </div>
                     </td>
                     <td className="px-4 py-4">
-                      <span className="text-sm text-bodytext">{batch.courseName || 'Unassigned'}</span>
+                      <span className="text-sm text-bodytext">
+                        {batch.courseName || 'Unassigned'}
+                      </span>
                     </td>
                     <td className="px-4 py-4 text-center">
-                      <span className="text-base font-bold text-dark">{batch.participants || 0}</span>
+                      <span className="text-base font-bold text-dark">
+                        {batch.participants || 0}
+                      </span>
                     </td>
                     <td className="px-4 py-4">
                       <Badge className={`capitalize ${getStatusClassName(batch.status)}`}>
@@ -204,7 +212,11 @@ const AdminBatchList = () => {
                       </Badge>
                     </td>
                     <td className="px-4 py-4 text-right">
-                      <Button asChild variant="ghost" className="h-9 rounded-xl text-primary hover:bg-primary/10">
+                      <Button
+                        asChild
+                        variant="ghost"
+                        className="h-9 rounded-xl text-primary hover:bg-primary/10"
+                      >
                         <Link to={`/admin/batches/${batch.id}`}>
                           Buka
                           <Icon icon="solar:arrow-right-linear" className="ml-2" height={16} />
@@ -228,7 +240,7 @@ const AdminBatchList = () => {
         </div>
       </CardBox>
     </div>
-  );
-};
+  )
+}
 
-export default AdminBatchList;
+export default AdminBatchList

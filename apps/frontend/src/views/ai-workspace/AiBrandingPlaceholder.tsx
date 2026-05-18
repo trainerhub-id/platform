@@ -1,7 +1,7 @@
-import { Icon } from '@iconify/react';
-import { Link } from 'react-router';
-import { Badge } from 'src/components/ui/badge';
-import { Button } from 'src/components/ui/button';
+import { Icon } from '@iconify/react'
+import { Link } from 'react-router'
+import { Badge } from 'src/components/ui/badge'
+import { Button } from 'src/components/ui/button'
 
 export default function AiBrandingPlaceholder() {
   return (
@@ -14,7 +14,8 @@ export default function AiBrandingPlaceholder() {
       </div>
       <h1 className="mb-3 text-2xl font-semibold text-ld">AI for Branding</h1>
       <p className="mb-7 max-w-xl text-sm leading-6 text-bodytext">
-        Modul branding akan dipakai untuk personal branding, konten promosi, dan komunikasi training. Backend flow-nya belum diaktifkan.
+        Modul branding akan dipakai untuk personal branding, konten promosi, dan komunikasi
+        training. Backend flow-nya belum diaktifkan.
       </p>
       <Button asChild variant="outline">
         <Link to="/user/ai-hub">
@@ -23,5 +24,5 @@ export default function AiBrandingPlaceholder() {
         </Link>
       </Button>
     </div>
-  );
+  )
 }

@@ -1,33 +1,33 @@
-import { useEffect, useMemo, useState } from 'react';
-import { useNavigate, useSearchParams } from 'react-router';
-import { AlertCircle, CheckCircle2, Clock3, Loader2, RefreshCw, XCircle } from 'lucide-react';
-import { Alert, AlertDescription } from 'src/components/ui/alert';
-import { Button } from 'src/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from 'src/components/ui/card';
+import { AlertCircle, CheckCircle2, Clock3, Loader2, RefreshCw, XCircle } from 'lucide-react'
+import { useEffect, useMemo, useState } from 'react'
+import { useNavigate, useSearchParams } from 'react-router'
+import { Alert, AlertDescription } from 'src/components/ui/alert'
+import { Button } from 'src/components/ui/button'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from 'src/components/ui/card'
 
-const API_URL = import.meta.env.VITE_API_URL || '/api';
+const API_URL = import.meta.env.VITE_API_URL || '/api'
 
 interface PaymentStatusResponse {
-  sessionId: string;
-  status: 'pending' | 'paid' | 'expired' | 'failed';
-  amount: number;
-  paymentMethod: string | null;
-  subPaymentMethod: string | null;
-  providerOrderCode: string | null;
-  expiresAt: string | null;
-  paidAt: string | null;
+  sessionId: string
+  status: 'pending' | 'paid' | 'expired' | 'failed'
+  amount: number
+  paymentMethod: string | null
+  subPaymentMethod: string | null
+  providerOrderCode: string | null
+  expiresAt: string | null
+  paidAt: string | null
 }
 
 export default function PaymentStatus() {
-  const navigate = useNavigate();
-  const [searchParams] = useSearchParams();
-  const sessionId = searchParams.get('session');
-  const claimToken = searchParams.get('token');
+  const navigate = useNavigate()
+  const [searchParams] = useSearchParams()
+  const sessionId = searchParams.get('session')
+  const claimToken = searchParams.get('token')
 
-  const [loading, setLoading] = useState(true);
-  const [checking, setChecking] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [statusData, setStatusData] = useState<PaymentStatusResponse | null>(null);
+  const [loading, setLoading] = useState(true)
+  const [checking, setChecking] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+  const [statusData, setStatusData] = useState<PaymentStatusResponse | null>(null)
 
   const statusMeta = useMemo(() => {
     switch (statusData?.status) {
@@ -36,88 +36,92 @@ export default function PaymentStatus() {
           icon: <CheckCircle2 className="h-12 w-12 text-green-600" />,
           title: 'Pembayaran Berhasil',
           description: 'Akun Anda sedang disiapkan. Lanjut untuk login otomatis.',
-        };
+        }
       case 'expired':
         return {
           icon: <XCircle className="h-12 w-12 text-amber-600" />,
           title: 'Pembayaran Kedaluwarsa',
-          description: 'Sesi pembayaran sudah lewat masa berlaku. Buat pembayaran baru dari halaman pendaftaran.',
-        };
+          description:
+            'Sesi pembayaran sudah lewat masa berlaku. Buat pembayaran baru dari halaman pendaftaran.',
+        }
       case 'failed':
         return {
           icon: <XCircle className="h-12 w-12 text-red-600" />,
           title: 'Pembayaran Gagal',
           description: 'Provider menandai pembayaran ini gagal. Ulangi dari halaman checkout.',
-        };
+        }
       default:
         return {
           icon: <Clock3 className="h-12 w-12 text-sky-600" />,
           title: 'Menunggu Pembayaran',
           description: 'TrainerHub masih menunggu konfirmasi pembayaran dari Scalev.',
-        };
+        }
     }
-  }, [statusData?.status]);
+  }, [statusData?.status])
 
   const checkStatus = async (showLoader = false) => {
     if (!sessionId || !claimToken) {
-      setError('Session pembayaran tidak valid');
-      setLoading(false);
-      return;
+      setError('Session pembayaran tidak valid')
+      setLoading(false)
+      return
     }
 
     if (showLoader) {
-      setChecking(true);
+      setChecking(true)
     }
 
     try {
-      const res = await fetch(`${API_URL}/public/payment/session/${sessionId}/check?token=${encodeURIComponent(claimToken)}`, {
-        method: 'POST',
-      });
-      const data = await res.json();
+      const res = await fetch(
+        `${API_URL}/public/payment/session/${sessionId}/check?token=${encodeURIComponent(claimToken)}`,
+        {
+          method: 'POST',
+        },
+      )
+      const data = await res.json()
 
       if (!res.ok) {
-        throw new Error(data.message || 'Gagal memeriksa status pembayaran');
+        throw new Error(data.message || 'Gagal memeriksa status pembayaran')
       }
 
-      setStatusData(data);
-      setError(null);
+      setStatusData(data)
+      setError(null)
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Terjadi kesalahan');
+      setError(err instanceof Error ? err.message : 'Terjadi kesalahan')
     } finally {
-      setLoading(false);
-      setChecking(false);
+      setLoading(false)
+      setChecking(false)
     }
-  };
+  }
 
   useEffect(() => {
-    checkStatus();
-  }, [sessionId, claimToken]);
+    checkStatus()
+  }, [sessionId, claimToken])
 
   useEffect(() => {
     if (statusData?.status !== 'pending') {
-      return;
+      return
     }
 
     const interval = window.setInterval(() => {
-      checkStatus();
-    }, 7000);
+      checkStatus()
+    }, 7000)
 
-    return () => window.clearInterval(interval);
-  }, [statusData?.status, sessionId, claimToken]);
+    return () => window.clearInterval(interval)
+  }, [statusData?.status, sessionId, claimToken])
 
   const formatCurrency = (value: number) =>
     new Intl.NumberFormat('id-ID', {
       style: 'currency',
       currency: 'IDR',
       minimumFractionDigits: 0,
-    }).format(value);
+    }).format(value)
 
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
         <Loader2 className="h-8 w-8 animate-spin text-primary" />
       </div>
-    );
+    )
   }
 
   return (
@@ -138,16 +142,22 @@ export default function PaymentStatus() {
                 <span className="font-medium">Nominal:</span> {formatCurrency(statusData.amount)}
               </div>
               <div>
-                <span className="font-medium">Metode:</span> {statusData.paymentMethod?.toUpperCase() || '-'}
+                <span className="font-medium">Metode:</span>{' '}
+                {statusData.paymentMethod?.toUpperCase() || '-'}
               </div>
               <div>
-                <span className="font-medium">Sub metode:</span> {statusData.subPaymentMethod || '-'}
+                <span className="font-medium">Sub metode:</span>{' '}
+                {statusData.subPaymentMethod || '-'}
               </div>
               <div>
-                <span className="font-medium">Expired:</span> {statusData.expiresAt ? new Date(statusData.expiresAt).toLocaleString('id-ID') : '-'}
+                <span className="font-medium">Expired:</span>{' '}
+                {statusData.expiresAt
+                  ? new Date(statusData.expiresAt).toLocaleString('id-ID')
+                  : '-'}
               </div>
               <div>
-                <span className="font-medium">Paid at:</span> {statusData.paidAt ? new Date(statusData.paidAt).toLocaleString('id-ID') : '-'}
+                <span className="font-medium">Paid at:</span>{' '}
+                {statusData.paidAt ? new Date(statusData.paidAt).toLocaleString('id-ID') : '-'}
               </div>
             </div>
           )}
@@ -163,13 +173,21 @@ export default function PaymentStatus() {
             {statusData?.status === 'paid' ? (
               <Button
                 className="sm:flex-1"
-                onClick={() => navigate(`/payment/callback?session=${encodeURIComponent(sessionId || '')}&token=${encodeURIComponent(claimToken || '')}`)}
+                onClick={() =>
+                  navigate(
+                    `/payment/callback?session=${encodeURIComponent(sessionId || '')}&token=${encodeURIComponent(claimToken || '')}`,
+                  )
+                }
               >
                 Lanjut Login
               </Button>
             ) : (
               <Button className="sm:flex-1" onClick={() => checkStatus(true)} disabled={checking}>
-                {checking ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <RefreshCw className="mr-2 h-4 w-4" />}
+                {checking ? (
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                ) : (
+                  <RefreshCw className="mr-2 h-4 w-4" />
+                )}
                 Cek Lagi
               </Button>
             )}
@@ -177,7 +195,11 @@ export default function PaymentStatus() {
             <Button
               variant="outline"
               className="sm:flex-1"
-              onClick={() => navigate(`/payment/checkout?session=${encodeURIComponent(sessionId || '')}&token=${encodeURIComponent(claimToken || '')}`)}
+              onClick={() =>
+                navigate(
+                  `/payment/checkout?session=${encodeURIComponent(sessionId || '')}&token=${encodeURIComponent(claimToken || '')}`,
+                )
+              }
             >
               Kembali ke Checkout
             </Button>
@@ -185,5 +207,5 @@ export default function PaymentStatus() {
         </CardContent>
       </Card>
     </div>
-  );
+  )
 }

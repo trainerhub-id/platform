@@ -1,49 +1,49 @@
-import { Link, useLocation } from 'react-router';
-import { useTranslation } from 'react-i18next';
-import { Icon } from '@iconify/react';
-import { IconChevronDown } from '@tabler/icons-react';
+import { Icon } from '@iconify/react'
+import { IconChevronDown } from '@tabler/icons-react'
+import { useMemo } from 'react'
+import { useTranslation } from 'react-i18next'
+import { Link, useLocation } from 'react-router'
 import {
   Menubar,
-  MenubarMenu,
-  MenubarTrigger,
   MenubarContent,
   MenubarItem,
+  MenubarMenu,
   MenubarSub,
-  MenubarSubTrigger,
   MenubarSubContent,
-} from 'src/components/ui/menubar';
-
-import { PesertaHorizontalMenu, AdminHorizontalMenu } from '../MenuData';
-import { useUserRole } from 'src/hooks/useUserRole';
-import { useMemo } from 'react';
+  MenubarSubTrigger,
+  MenubarTrigger,
+} from 'src/components/ui/menubar'
+import { useUserRole } from 'src/hooks/useUserRole'
+import { AdminHorizontalMenu, PesertaHorizontalMenu } from '../MenuData'
 
 const Navigation = () => {
-  const location = useLocation();
-  const pathname = location.pathname;
-  const { t } = useTranslation();
-  const { role } = useUserRole();
+  const location = useLocation()
+  const pathname = location.pathname
+  const { t } = useTranslation()
+  const { role } = useUserRole()
 
   const Menuitems = useMemo(() => {
-    return role === 'admin' ? AdminHorizontalMenu : PesertaHorizontalMenu;
-  }, [role]);
+    return role === 'admin' ? AdminHorizontalMenu : PesertaHorizontalMenu
+  }, [role])
 
-  const isActive = (href: string) => pathname === href;
-  const hasChildren = (item: any) => Array.isArray(item.children) && item.children.length > 0;
+  const isActive = (href: string) => pathname === href
+  const hasChildren = (item: any) => Array.isArray(item.children) && item.children.length > 0
 
   return (
     <div className="py-4 xl:px-0 container mx-auto">
       <Menubar className="horizontal-nav p-0 h-auto min-h-0 border-0 shadow-none flex flex-wrap md:flex-nowrap bg-transparent dark:bg-transparent gap-3 z-50 px-0 rtl:flex-row-reverse rtl:text-end">
         {Menuitems.map((item) => {
-          const menuItem = item as any;
+          const menuItem = item as any
           const itemActive =
             isActive(menuItem.href ?? '') ||
             (hasChildren(menuItem) &&
               menuItem.children.some(
                 (child: any) =>
                   isActive(child.href ?? '') ||
-                  (child.children && child.children.some((grand: any) => isActive(grand.href ?? ''))),
-              ));
-          const isExternal = /^https?:\/\//.test(menuItem.href ?? '');
+                  (child.children &&
+                    child.children.some((grand: any) => isActive(grand.href ?? ''))),
+              ))
+          const isExternal = /^https?:\/\//.test(menuItem.href ?? '')
 
           return (
             <MenubarMenu key={menuItem.id}>
@@ -68,8 +68,8 @@ const Navigation = () => {
                     {menuItem.children.map((child: any) => {
                       const childActive =
                         isActive(child.href) ||
-                        (child.children && child.children.some((sub: any) => isActive(sub.href)));
-                      const childExternal = /^https?:\/\//.test(child.href);
+                        (child.children && child.children.some((sub: any) => isActive(sub.href)))
+                      const childExternal = /^https?:\/\//.test(child.href)
 
                       // ==== CHILD HAS SUBCHILDREN ====
                       if (hasChildren(child)) {
@@ -78,11 +78,7 @@ const Navigation = () => {
                             <MenubarSubTrigger
                               className={` group flex items-center gap-2 px-3 py-2 rounded-md cursor-pointer transition-colors  group-hover:text-primary
                              
-                                ${
-                                  childActive
-                                    ? 'text-primary font-semibold'
-                                    : 'text-ld'
-                                }`}
+                                ${childActive ? 'text-primary font-semibold' : 'text-ld'}`}
                             >
                               {child.icon && (
                                 <Icon
@@ -98,19 +94,15 @@ const Navigation = () => {
                             {/* ==== GRANDCHILDREN ==== */}
                             <MenubarSubContent className="bg-card dark:bg-dark  min-w-[200px] p-2 rounded-md">
                               {child.children.map((sub: any) => {
-                                const subActive = isActive(sub.href);
-                                const subExternal = /^https?:\/\//.test(sub.href);
+                                const subActive = isActive(sub.href)
+                                const subExternal = /^https?:\/\//.test(sub.href)
 
                                 return (
                                   <MenubarItem
                                     key={sub.id}
                                     className={`group flex items-center gap-3  px-3 py-2  rounded-md cursor-pointer transition-colors
                                       focus:bg-transparent  dark:focus:bg-transparent
-                                      ${
-                                        subActive
-                                          ? 'text-primary font-semibold'
-                                          : 'text-ld '
-                                      }`}
+                                      ${subActive ? 'text-primary font-semibold' : 'text-ld '}`}
                                   >
                                     <Icon
                                       icon="icon-park-outline:dot"
@@ -126,11 +118,11 @@ const Navigation = () => {
                                       </span>
                                     </Link>
                                   </MenubarItem>
-                                );
+                                )
                               })}
                             </MenubarSubContent>
                           </MenubarSub>
-                        );
+                        )
                       }
 
                       // ==== NORMAL CHILD ====
@@ -140,11 +132,7 @@ const Navigation = () => {
                           className={`group  flex items-center gap-2 px-3 py-2 rounded-md cursor-pointer transition-colors
                             focus:bg-transparent  dark:focus:bg-transparent
                             
-                            ${
-                              childActive
-                                ? 'text-primary font-semibold'
-                                : 'text-ld'
-                            }`}
+                            ${childActive ? 'text-primary font-semibold' : 'text-ld'}`}
                         >
                           {child.icon && (
                             <Icon
@@ -162,7 +150,7 @@ const Navigation = () => {
                             </span>
                           </Link>
                         </MenubarItem>
-                      );
+                      )
                     })}
                   </MenubarContent>
                 </>
@@ -185,11 +173,11 @@ const Navigation = () => {
                 </MenubarTrigger>
               )}
             </MenubarMenu>
-          );
+          )
         })}
       </Menubar>
     </div>
-  );
-};
+  )
+}
 
-export default Navigation;
+export default Navigation

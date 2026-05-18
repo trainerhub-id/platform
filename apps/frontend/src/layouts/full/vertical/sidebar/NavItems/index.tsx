@@ -1,68 +1,60 @@
-import React, { useContext } from "react";
-import { ChildItem } from "../Sidebaritems";
-
-import { Icon } from "@iconify/react";
-import { useTranslation } from 'react-i18next';
-import {
-  SidebarMenuItem,
-  useSidebar,
-} from "src/components/ui/sidebar";
-import { Badge } from "src/components/ui/badge";
-import { Link, useLocation } from "react-router";
-import { CustomizerContext } from "src/context/CustomizerContext";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from "src/components/ui/tooltip";
+import { Icon } from '@iconify/react'
+import React, { useContext } from 'react'
+import { useTranslation } from 'react-i18next'
+import { Link, useLocation } from 'react-router'
+import { Badge } from 'src/components/ui/badge'
+import { SidebarMenuItem, useSidebar } from 'src/components/ui/sidebar'
+import { Tooltip, TooltipContent, TooltipTrigger } from 'src/components/ui/tooltip'
+import { CustomizerContext } from 'src/context/CustomizerContext'
+import { ChildItem } from '../Sidebaritems'
 
 interface NavItemsProps {
-  item: ChildItem;
-  isInsideCollapse?: boolean;
+  item: ChildItem
+  isInsideCollapse?: boolean
 }
 const NavItems: React.FC<NavItemsProps> = ({ item, isInsideCollapse }) => {
-  const { setOpen } = useSidebar();
-  const { isCollapse } = useContext(CustomizerContext);
-  const location = useLocation();
-  const pathname = location.pathname;
-  const { t } = useTranslation();
-  const [isTooltipOpen, setIsTooltipOpen] = React.useState(false);
-  const [canOpenTooltip, setCanOpenTooltip] = React.useState(false);
+  const { setOpen } = useSidebar()
+  const { isCollapse } = useContext(CustomizerContext)
+  const location = useLocation()
+  const pathname = location.pathname
+  const { t } = useTranslation()
+  const [isTooltipOpen, setIsTooltipOpen] = React.useState(false)
+  const [canOpenTooltip, setCanOpenTooltip] = React.useState(false)
 
-  const isExternal = /^https?:\/\//.test(item.url);
-  const isMiniSidebar = isCollapse === "mini-sidebar";
-  const tooltipLabel = t(`${item.name}`);
-  
+  const isExternal = /^https?:\/\//.test(item.url)
+  const isMiniSidebar = isCollapse === 'mini-sidebar'
+  const tooltipLabel = t(`${item.name}`)
+
   // Check if current path matches item URL or is a nested route
-  const isActive = pathname === item.url || pathname.startsWith(item.url + '/');
+  const isActive = pathname === item.url || pathname.startsWith(item.url + '/')
 
   React.useEffect(() => {
-    setIsTooltipOpen(false);
-    setCanOpenTooltip(false);
+    setIsTooltipOpen(false)
+    setCanOpenTooltip(false)
 
     if (!isMiniSidebar) {
-      return;
+      return
     }
 
     const timeoutId = window.setTimeout(() => {
-      setCanOpenTooltip(true);
-    }, 240);
+      setCanOpenTooltip(true)
+    }, 240)
 
-    return () => window.clearTimeout(timeoutId);
-  }, [isMiniSidebar, pathname]);
+    return () => window.clearTimeout(timeoutId)
+  }, [isMiniSidebar, pathname])
 
   const closeSidebar = () => {
-    setOpen(false);
-  };
+    setOpen(false)
+  }
 
   const handleClick = (e: React.MouseEvent) => {
     if (isExternal) {
-      e.preventDefault();
-      window.open(item.url, "_blank", "noopener,noreferrer");
+      e.preventDefault()
+      window.open(item.url, '_blank', 'noopener,noreferrer')
     }
-    setIsTooltipOpen(false);
-    closeSidebar();
-  };
+    setIsTooltipOpen(false)
+    closeSidebar()
+  }
 
   return (
     <Tooltip open={isMiniSidebar ? isTooltipOpen : false}>
@@ -71,7 +63,7 @@ const NavItems: React.FC<NavItemsProps> = ({ item, isInsideCollapse }) => {
           to={item.url}
           onClick={handleClick}
           onPointerEnter={() => {
-            if (isMiniSidebar && canOpenTooltip) setIsTooltipOpen(true);
+            if (isMiniSidebar && canOpenTooltip) setIsTooltipOpen(true)
           }}
           onPointerLeave={() => setIsTooltipOpen(false)}
           onPointerDown={() => setIsTooltipOpen(false)}
@@ -79,19 +71,24 @@ const NavItems: React.FC<NavItemsProps> = ({ item, isInsideCollapse }) => {
           <SidebarMenuItem
             className={`
             transition-colors duration-150 ease-out px-4 py-3 rounded-md mb-1
-            ${item.disabled
+            ${
+              item.disabled
                 ? 'opacity-50 cursor-default hover:bg-transparent hover:text-link'
                 : isActive
                   ? isInsideCollapse
                     ? '!text-primary bg-transparent font-medium'
-                    : `${item.icon ? '!text-white' : '!text-primary'
-                    } bg-primary hover:bg-primary dark:hover:bg-primary hover:text-white font-medium`
+                    : `${
+                        item.icon ? '!text-white' : '!text-primary'
+                      } bg-primary hover:bg-primary dark:hover:bg-primary hover:text-white font-medium`
                   : isInsideCollapse
                     ? 'text-link dark:text-darklink hover:text-primary dark:hover:text-primary bg-transparent group/icon'
                     : 'text-link dark:text-darklink hover:text-primary dark:hover:text-primary bg-transparent hover:bg-lightprimary dark:hover:bg-lightprimary group/icon'
-              }
-          `}>
-            <span className={`flex gap-3 align-center items-center truncate w-full rtl:text-right ${isCollapse === 'mini-sidebar' ? 'justify-center' : ''}`}>
+            }
+          `}
+          >
+            <span
+              className={`flex gap-3 align-center items-center truncate w-full rtl:text-right ${isCollapse === 'mini-sidebar' ? 'justify-center' : ''}`}
+            >
               {item.icon ? (
                 <Icon
                   icon={item.icon}
@@ -101,15 +98,14 @@ const NavItems: React.FC<NavItemsProps> = ({ item, isInsideCollapse }) => {
                 />
               ) : null}
               <div
-                className='max-w-36 overflow-hidden hide-menu flex-1 truncate !leading-normal
-                    '>
+                className="max-w-36 overflow-hidden hide-menu flex-1 truncate !leading-normal
+                    "
+              >
                 {tooltipLabel}
-                {item.subtitle ? (
-                  <p className='text-xs mt-1'>{t(`${item.subtitle}`)}</p>
-                ) : null}
+                {item.subtitle ? <p className="text-xs mt-1">{t(`${item.subtitle}`)}</p> : null}
               </div>{' '}
               {item.badge && item.badgeType === 'filled' && (
-                <Badge color='primary' className='hide-menu'>
+                <Badge color="primary" className="hide-menu">
                   {' '}
                   {item.badgeContent}
                 </Badge>
@@ -124,7 +120,7 @@ const NavItems: React.FC<NavItemsProps> = ({ item, isInsideCollapse }) => {
         </TooltipContent>
       )}
     </Tooltip>
-  );
-};
+  )
+}
 
-export default NavItems;
+export default NavItems

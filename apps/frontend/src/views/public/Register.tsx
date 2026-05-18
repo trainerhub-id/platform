@@ -1,54 +1,63 @@
-import { useEffect, useState } from 'react';
-import { useNavigate, useParams, useSearchParams } from 'react-router';
-import { useUser } from 'src/lib/better-auth';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from 'src/components/ui/card';
-import { Button } from 'src/components/ui/button';
-import { Input } from 'src/components/ui/input';
-import { Label } from 'src/components/ui/label';
-import { Alert, AlertDescription } from 'src/components/ui/alert';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from 'src/components/ui/select';
-import { Loader2, CheckCircle, Calendar, MapPin, Tag } from 'lucide-react';
+import { Calendar, CheckCircle, Loader2, MapPin, Tag } from 'lucide-react'
+import { useEffect, useState } from 'react'
+import { useNavigate, useParams, useSearchParams } from 'react-router'
+import { Alert, AlertDescription } from 'src/components/ui/alert'
+import { Button } from 'src/components/ui/button'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from 'src/components/ui/card'
+import { Input } from 'src/components/ui/input'
+import { Label } from 'src/components/ui/label'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from 'src/components/ui/select'
+import { useUser } from 'src/lib/better-auth'
 
-const API_URL = import.meta.env.VITE_API_URL || '/api';
+const API_URL = import.meta.env.VITE_API_URL || '/api'
 
 interface BatchTier {
-  id: string;
-  name: string;
-  price: number;
-  description: string | null;
-  benefits: string[] | null;
+  id: string
+  name: string
+  price: number
+  description: string | null
+  benefits: string[] | null
 }
 
 interface BatchInfo {
-  id: string;
-  namaBatch: string;
-  tanggal: string;
-  tanggalSelesai: string | null;
-  hotel: string | null;
-  alamat: string | null;
-  imageUrl: string | null;
+  id: string
+  namaBatch: string
+  tanggal: string
+  tanggalSelesai: string | null
+  hotel: string | null
+  alamat: string | null
+  imageUrl: string | null
 }
 
 export default function Register() {
-  const navigate = useNavigate();
-  const { batchSlug: pathBatchSlug, tierSlug: pathTierSlug } = useParams<{ batchSlug: string; tierSlug: string }>();
-  const [searchParams] = useSearchParams();
-  const { user } = useUser();
-  
+  const navigate = useNavigate()
+  const { batchSlug: pathBatchSlug, tierSlug: pathTierSlug } = useParams<{
+    batchSlug: string
+    tierSlug: string
+  }>()
+  const [searchParams] = useSearchParams()
+  const { user } = useUser()
+
   // Prioritize query params over path params
-  const batchSlug = searchParams.get('batch') || pathBatchSlug;
-  const tierSlug = searchParams.get('tier') || pathTierSlug;
+  const batchSlug = searchParams.get('batch') || pathBatchSlug
+  const tierSlug = searchParams.get('tier') || pathTierSlug
 
-  const [loading, setLoading] = useState(true);
-  const [submitting, setSubmitting] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [batch, setBatch] = useState<BatchInfo | null>(null);
-  const [tier, setTier] = useState<BatchTier | null>(null);
+  const [loading, setLoading] = useState(true)
+  const [submitting, setSubmitting] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+  const [batch, setBatch] = useState<BatchInfo | null>(null)
+  const [tier, setTier] = useState<BatchTier | null>(null)
 
-  const [email, setEmail] = useState('');
-  const [whatsapp, setWhatsapp] = useState('');
-  const [paymentMethod, setPaymentMethod] = useState('qris');
-  const [subPaymentMethod, setSubPaymentMethod] = useState('BNI');
+  const [email, setEmail] = useState('')
+  const [whatsapp, setWhatsapp] = useState('')
+  const [paymentMethod, setPaymentMethod] = useState('qris')
+  const [subPaymentMethod, setSubPaymentMethod] = useState('BNI')
 
   const paymentOptions = [
     { value: 'qris', label: 'QRIS' },
@@ -59,69 +68,69 @@ export default function Register() {
     { value: 'shopeepay', label: 'ShopeePay' },
     { value: 'linkaja', label: 'LinkAja' },
     { value: 'gopay', label: 'GoPay' },
-  ];
+  ]
 
-  const vaOptions = ['BNI', 'BRI', 'MANDIRI', 'PERMATA', 'BSI', 'BJB', 'CIMB', 'SAHABAT_SAMPOERNA'];
+  const vaOptions = ['BNI', 'BRI', 'MANDIRI', 'PERMATA', 'BSI', 'BJB', 'CIMB', 'SAHABAT_SAMPOERNA']
 
   // Auto-fill email if user is logged in
   useEffect(() => {
     if (user?.primaryEmailAddress?.emailAddress) {
-      setEmail(user.primaryEmailAddress.emailAddress);
+      setEmail(user.primaryEmailAddress.emailAddress)
     }
-    
+
     // Auto-fill WhatsApp from unsafeMetadata
     if (user?.unsafeMetadata?.whatsapp) {
-      setWhatsapp(user.unsafeMetadata.whatsapp as string);
+      setWhatsapp(user.unsafeMetadata.whatsapp as string)
     }
-  }, [user]);
+  }, [user])
 
   useEffect(() => {
     if (batchSlug && tierSlug) {
-      fetchTierInfo();
+      fetchTierInfo()
     }
-  }, [batchSlug, tierSlug]);
+  }, [batchSlug, tierSlug])
 
   const fetchTierInfo = async () => {
     try {
-      const res = await fetch(`${API_URL}/public/batches/${batchSlug}/tiers/${tierSlug}`);
+      const res = await fetch(`${API_URL}/public/batches/${batchSlug}/tiers/${tierSlug}`)
       if (!res.ok) {
-        throw new Error('Batch atau tier tidak ditemukan');
+        throw new Error('Batch atau tier tidak ditemukan')
       }
-      const data = await res.json();
-      setBatch(data.batch);
-      setTier(data.tier);
+      const data = await res.json()
+      setBatch(data.batch)
+      setTier(data.tier)
     } catch (err: unknown) {
-      const message = err instanceof Error ? err.message : 'Terjadi kesalahan';
-      setError(message);
+      const message = err instanceof Error ? err.message : 'Terjadi kesalahan'
+      setError(message)
     } finally {
-      setLoading(false);
+      setLoading(false)
     }
-  };
+  }
 
   const checkDuplicate = async (): Promise<boolean> => {
     const res = await fetch(`${API_URL}/public/register/check-duplicate`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ email, batchSlug }),
-    });
-    const data = await res.json();
+    })
+    const data = await res.json()
     if (data.isDuplicate) {
-      setError(data.message);
-      return true;
+      setError(data.message)
+      return true
     }
-    return false;
-  };
+    return false
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setError(null);
-    setSubmitting(true);
+    e.preventDefault()
+    setError(null)
+    setSubmitting(true)
 
     try {
-      const isDuplicate = await checkDuplicate();
+      const isDuplicate = await checkDuplicate()
       if (isDuplicate) {
-        setSubmitting(false);
-        return;
+        setSubmitting(false)
+        return
       }
 
       const res = await fetch(`${API_URL}/public/register`, {
@@ -135,29 +144,31 @@ export default function Register() {
           paymentMethod,
           subPaymentMethod: paymentMethod === 'va' ? subPaymentMethod : null,
         }),
-      });
+      })
 
       if (!res.ok) {
-        const errData = await res.json();
-        throw new Error(errData.message || 'Gagal membuat pendaftaran');
+        const errData = await res.json()
+        throw new Error(errData.message || 'Gagal membuat pendaftaran')
       }
 
-      const data = await res.json();
-      navigate(`/payment/checkout?session=${encodeURIComponent(data.sessionId)}&token=${encodeURIComponent(data.claimToken)}`);
+      const data = await res.json()
+      navigate(
+        `/payment/checkout?session=${encodeURIComponent(data.sessionId)}&token=${encodeURIComponent(data.claimToken)}`,
+      )
     } catch (err: unknown) {
-      const message = err instanceof Error ? err.message : 'Terjadi kesalahan';
-      setError(message);
-      setSubmitting(false);
+      const message = err instanceof Error ? err.message : 'Terjadi kesalahan'
+      setError(message)
+      setSubmitting(false)
     }
-  };
+  }
 
   const formatPrice = (price: number) => {
     return new Intl.NumberFormat('id-ID', {
       style: 'currency',
       currency: 'IDR',
       minimumFractionDigits: 0,
-    }).format(price);
-  };
+    }).format(price)
+  }
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('id-ID', {
@@ -165,15 +176,15 @@ export default function Register() {
       year: 'numeric',
       month: 'long',
       day: 'numeric',
-    });
-  };
+    })
+  }
 
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
         <Loader2 className="h-8 w-8 animate-spin text-primary" />
       </div>
-    );
+    )
   }
 
   if (error && !batch) {
@@ -187,7 +198,7 @@ export default function Register() {
           </CardContent>
         </Card>
       </div>
-    );
+    )
   }
 
   return (
@@ -226,9 +237,7 @@ export default function Register() {
                   <Tag className="h-5 w-5" />
                   {tier?.name}
                 </CardTitle>
-                {tier?.description && (
-                  <CardDescription>{tier.description}</CardDescription>
-                )}
+                {tier?.description && <CardDescription>{tier.description}</CardDescription>}
               </div>
               <div className="text-2xl font-bold text-primary">
                 {tier?.price && formatPrice(tier.price)}
@@ -253,9 +262,7 @@ export default function Register() {
         <Card>
           <CardHeader>
             <CardTitle>Form Pendaftaran</CardTitle>
-            <CardDescription>
-              Lengkapi data berikut untuk melanjutkan ke pembayaran
-            </CardDescription>
+            <CardDescription>Lengkapi data berikut untuk melanjutkan ke pembayaran</CardDescription>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-4">
@@ -290,8 +297,8 @@ export default function Register() {
                   placeholder="08123456789"
                   value={whatsapp}
                   onChange={(e) => {
-                    const value = e.target.value.replace(/\D/g, '');
-                    setWhatsapp(value);
+                    const value = e.target.value.replace(/\D/g, '')
+                    setWhatsapp(value)
                   }}
                   pattern="[0-9]*"
                   inputMode="numeric"
@@ -302,7 +309,11 @@ export default function Register() {
 
               <div className="space-y-2">
                 <Label>Metode Pembayaran</Label>
-                <Select value={paymentMethod} onValueChange={setPaymentMethod} disabled={submitting}>
+                <Select
+                  value={paymentMethod}
+                  onValueChange={setPaymentMethod}
+                  disabled={submitting}
+                >
                   <SelectTrigger>
                     <SelectValue placeholder="Pilih metode pembayaran" />
                   </SelectTrigger>
@@ -319,7 +330,11 @@ export default function Register() {
               {paymentMethod === 'va' && (
                 <div className="space-y-2">
                   <Label>Bank Virtual Account</Label>
-                  <Select value={subPaymentMethod} onValueChange={setSubPaymentMethod} disabled={submitting}>
+                  <Select
+                    value={subPaymentMethod}
+                    onValueChange={setSubPaymentMethod}
+                    disabled={submitting}
+                  >
                     <SelectTrigger>
                       <SelectValue placeholder="Pilih bank VA" />
                     </SelectTrigger>
@@ -346,12 +361,13 @@ export default function Register() {
               </Button>
 
               <p className="text-xs text-center text-muted-foreground">
-                Pembayaran Scalev akan dibuka di checkout TrainerHub. QRIS dan VA tampil langsung, e-wallet bisa lanjut ke halaman provider jika diperlukan.
+                Pembayaran Scalev akan dibuka di checkout TrainerHub. QRIS dan VA tampil langsung,
+                e-wallet bisa lanjut ke halaman provider jika diperlukan.
               </p>
             </form>
           </CardContent>
         </Card>
       </div>
     </div>
-  );
+  )
 }

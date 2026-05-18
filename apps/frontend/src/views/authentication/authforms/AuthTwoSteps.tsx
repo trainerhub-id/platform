@@ -1,6 +1,6 @@
-import { Label } from 'src/components/ui/label';
-import { Input } from 'src/components/ui/input';
-import { Button } from 'src/components/ui/button';
+import { Button } from 'src/components/ui/button'
+import { Input } from 'src/components/ui/input'
+import { Label } from 'src/components/ui/label'
 
 const AuthTwoSteps = () => {
   return (
@@ -22,7 +22,7 @@ const AuthTwoSteps = () => {
         <Button className="w-full">Verify My Account</Button>
       </form>
     </>
-  );
-};
+  )
+}
 
-export default AuthTwoSteps;
+export default AuthTwoSteps

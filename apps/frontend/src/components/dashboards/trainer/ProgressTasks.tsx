@@ -1,22 +1,21 @@
-import { useContext } from "react";
-import CardBox from "../../shared/CardBox";
-import { Button } from "../../ui/button";
-import { Checkbox } from "../../ui/checkbox";
-import { CustomizerContext } from "../../../context/CustomizerContext";
+import { useContext } from 'react'
+import { CustomizerContext } from '../../../context/CustomizerContext'
+import CardBox from '../../shared/CardBox'
+import { Button } from '../../ui/button'
+import { Checkbox } from '../../ui/checkbox'
 
 interface ProgressTasksProps {
-  tasks: any[];
-  submissions: any[];
+  tasks: any[]
+  submissions: any[]
 }
 
-
 const ProgressTasks = ({ tasks = [], submissions = [] }: ProgressTasksProps) => {
-  const { isBorderRadius } = useContext(CustomizerContext);
+  const { isBorderRadius } = useContext(CustomizerContext)
 
   const getTaskStatus = (tugasId: string) => {
-    const submission = submissions.find((s) => s.tugasId === tugasId);
-    return !!submission; // true if submitted
-  };
+    const submission = submissions.find((s) => s.tugasId === tugasId)
+    return !!submission // true if submitted
+  }
 
   return (
     <CardBox>
@@ -45,23 +44,22 @@ const ProgressTasks = ({ tasks = [], submissions = [] }: ProgressTasksProps) => 
                   {task.judul || task.title}
                 </label>
                 <p className="text-xs text-bodytext">
-                  {task.deskripsi || task.description || "Tidak ada deskripsi"}
+                  {task.deskripsi || task.description || 'Tidak ada deskripsi'}
                 </p>
               </div>
               <Button
                 variant="outline"
                 size="xs"
-                className={`shrink-0 border-info font-bold ${getTaskStatus(task.id) ? "bg-success text-white border-success" : "bg-info text-white hover:bg-transparent hover:text-info"}`}
+                className={`shrink-0 border-info font-bold ${getTaskStatus(task.id) ? 'bg-success text-white border-success' : 'bg-info text-white hover:bg-transparent hover:text-info'}`}
               >
-                {getTaskStatus(task.id) ? "Selesai" : "Mulai"}
+                {getTaskStatus(task.id) ? 'Selesai' : 'Mulai'}
               </Button>
             </div>
           ))
         )}
       </div>
     </CardBox>
-  );
-};
+  )
+}
 
-
-export default ProgressTasks;
+export default ProgressTasks

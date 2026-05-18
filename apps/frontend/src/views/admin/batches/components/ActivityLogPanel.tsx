@@ -1,58 +1,58 @@
-import { Icon } from '@iconify/react';
-import { useQuery } from '@tanstack/react-query';
-import api from 'src/api/axios';
-import { Button } from 'src/components/ui/button';
-import { Loading } from 'src/components/ui/loading';
+import { Icon } from '@iconify/react'
+import { useQuery } from '@tanstack/react-query'
+import api from 'src/api/axios'
+import { Button } from 'src/components/ui/button'
+import { Loading } from 'src/components/ui/loading'
 
 type ActivityLogPanelProps = {
-  batchId: string;
-};
+  batchId: string
+}
 
 type ActivityLog = {
-  id: string;
-  action: string;
-  actorName?: string | null;
-  actorEmail?: string | null;
-  createdAt: string;
-};
+  id: string
+  action: string
+  actorName?: string | null
+  actorEmail?: string | null
+  createdAt: string
+}
 
-const actorLabel = (log: ActivityLog) => log.actorName || log.actorEmail || 'Admin';
+const actorLabel = (log: ActivityLog) => log.actorName || log.actorEmail || 'Admin'
 
 const describeAction = (log: ActivityLog) => {
-  const actor = actorLabel(log);
-  if (log.action === 'batch.published') return `${actor} publish batch`;
-  if (log.action === 'batch_tier.price_updated') return `${actor} mengubah harga paket`;
-  if (log.action === 'batch_tier.scalev_synced') return `${actor} sync paket ke Scalev`;
-  if (log.action === 'document.approved') return `${actor} approve dokumen`;
-  if (log.action === 'certificate.uploaded') return `${actor} upload sertifikat`;
-  if (log.action === 'enrollment.payment_paid') return `${actor} menandai pembayaran paid`;
-  return `${actor} melakukan ${log.action}`;
-};
+  const actor = actorLabel(log)
+  if (log.action === 'batch.published') return `${actor} publish batch`
+  if (log.action === 'batch_tier.price_updated') return `${actor} mengubah harga paket`
+  if (log.action === 'batch_tier.scalev_synced') return `${actor} sync paket ke Scalev`
+  if (log.action === 'document.approved') return `${actor} approve dokumen`
+  if (log.action === 'certificate.uploaded') return `${actor} upload sertifikat`
+  if (log.action === 'enrollment.payment_paid') return `${actor} menandai pembayaran paid`
+  return `${actor} melakukan ${log.action}`
+}
 
 const formatDateTime = (value?: string | null) => {
-  if (!value) return '-';
-  const date = new Date(value);
-  if (Number.isNaN(date.getTime())) return '-';
+  if (!value) return '-'
+  const date = new Date(value)
+  if (Number.isNaN(date.getTime())) return '-'
   return date.toLocaleString('id-ID', {
     day: '2-digit',
     month: 'short',
     year: 'numeric',
     hour: '2-digit',
     minute: '2-digit',
-  });
-};
+  })
+}
 
 export const ActivityLogPanel = ({ batchId }: ActivityLogPanelProps) => {
   const { data, isLoading, error, refetch } = useQuery({
     queryKey: ['admin-audit-logs', batchId],
     queryFn: async () => {
-      const res = await api.get('/admin/audit-logs', { params: { batchId } });
-      return (res.data.logs ?? []) as ActivityLog[];
+      const res = await api.get('/admin/audit-logs', { params: { batchId } })
+      return (res.data.logs ?? []) as ActivityLog[]
     },
     enabled: Boolean(batchId),
-  });
+  })
 
-  if (isLoading) return <Loading />;
+  if (isLoading) return <Loading />
 
   if (error) {
     return (
@@ -64,10 +64,10 @@ export const ActivityLogPanel = ({ batchId }: ActivityLogPanelProps) => {
           Refresh
         </Button>
       </div>
-    );
+    )
   }
 
-  const logs = data ?? [];
+  const logs = data ?? []
 
   return (
     <div className="divide-y divide-gray-100 rounded-md border border-gray-200 bg-white">
@@ -87,9 +87,11 @@ export const ActivityLogPanel = ({ batchId }: ActivityLogPanelProps) => {
         <div className="px-4 py-10 text-center">
           <Icon icon="solar:history-linear" height={42} className="mx-auto text-bodytext/50" />
           <p className="mt-2 font-medium text-dark">Belum ada aktivitas</p>
-          <p className="mt-1 text-sm text-bodytext">Perubahan batch, paket, dokumen, dan sertifikat akan muncul di sini.</p>
+          <p className="mt-1 text-sm text-bodytext">
+            Perubahan batch, paket, dokumen, dan sertifikat akan muncul di sini.
+          </p>
         </div>
       )}
     </div>
-  );
-};
+  )
+}

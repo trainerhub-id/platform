@@ -14,6 +14,6 @@ const config = {
   sidebarWidth: 320,
   miniSidebarWidth: 87,
   topbarHeight: 70,
-};
+}
 
-export default config;
+export default config

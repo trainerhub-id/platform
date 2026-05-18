@@ -111,12 +111,8 @@
           "name": "account_user_id_user_id_fk",
           "tableFrom": "account",
           "tableTo": "user",
-          "columnsFrom": [
-            "user_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["user_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -204,12 +200,8 @@
           "name": "session_user_id_user_id_fk",
           "tableFrom": "session",
           "tableTo": "user",
-          "columnsFrom": [
-            "user_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["user_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -219,9 +211,7 @@
         "session_token_unique": {
           "name": "session_token_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "token"
-          ]
+          "columns": ["token"]
         }
       },
       "policies": {},
@@ -292,9 +282,7 @@
         "user_email_unique": {
           "name": "user_email_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "email"
-          ]
+          "columns": ["email"]
         }
       },
       "policies": {},
@@ -477,12 +465,8 @@
           "name": "batch_tiers_batch_id_batch_training_id_fk",
           "tableFrom": "batch_tiers",
           "tableTo": "batch_training",
-          "columnsFrom": [
-            "batch_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["batch_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -490,12 +474,8 @@
           "name": "batch_tiers_tier_template_id_tier_templates_id_fk",
           "tableFrom": "batch_tiers",
           "tableTo": "tier_templates",
-          "columnsFrom": [
-            "tier_template_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["tier_template_id"],
+          "columnsTo": ["id"],
           "onDelete": "restrict",
           "onUpdate": "no action"
         }
@@ -623,12 +603,8 @@
           "name": "batch_training_course_id_courses_id_fk",
           "tableFrom": "batch_training",
           "tableTo": "courses",
-          "columnsFrom": [
-            "course_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["course_id"],
+          "columnsTo": ["id"],
           "onDelete": "set null",
           "onUpdate": "no action"
         },
@@ -636,12 +612,8 @@
           "name": "batch_training_trainer_id_trainer_id_fk",
           "tableFrom": "batch_training",
           "tableTo": "trainer",
-          "columnsFrom": [
-            "trainer_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["trainer_id"],
+          "columnsTo": ["id"],
           "onDelete": "set null",
           "onUpdate": "no action"
         }
@@ -651,9 +623,7 @@
         "batch_training_slug_unique": {
           "name": "batch_training_slug_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "slug"
-          ]
+          "columns": ["slug"]
         }
       },
       "policies": {},
@@ -889,12 +859,8 @@
           "name": "payment_sessions_batch_id_batch_training_id_fk",
           "tableFrom": "payment_sessions",
           "tableTo": "batch_training",
-          "columnsFrom": [
-            "batch_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["batch_id"],
+          "columnsTo": ["id"],
           "onDelete": "set null",
           "onUpdate": "no action"
         },
@@ -902,12 +868,8 @@
           "name": "payment_sessions_tier_id_batch_tiers_id_fk",
           "tableFrom": "payment_sessions",
           "tableTo": "batch_tiers",
-          "columnsFrom": [
-            "tier_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["tier_id"],
+          "columnsTo": ["id"],
           "onDelete": "set null",
           "onUpdate": "no action"
         },
@@ -915,12 +877,8 @@
           "name": "payment_sessions_peserta_id_peserta_id_fk",
           "tableFrom": "payment_sessions",
           "tableTo": "peserta",
-          "columnsFrom": [
-            "peserta_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["peserta_id"],
+          "columnsTo": ["id"],
           "onDelete": "set null",
           "onUpdate": "no action"
         }
@@ -995,12 +953,8 @@
           "name": "peserta_batch_peserta_id_peserta_id_fk",
           "tableFrom": "peserta_batch",
           "tableTo": "peserta",
-          "columnsFrom": [
-            "peserta_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["peserta_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -1008,12 +962,8 @@
           "name": "peserta_batch_batch_id_batch_training_id_fk",
           "tableFrom": "peserta_batch",
           "tableTo": "batch_training",
-          "columnsFrom": [
-            "batch_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["batch_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -1021,12 +971,8 @@
           "name": "peserta_batch_tier_id_batch_tiers_id_fk",
           "tableFrom": "peserta_batch",
           "tableTo": "batch_tiers",
-          "columnsFrom": [
-            "tier_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["tier_id"],
+          "columnsTo": ["id"],
           "onDelete": "set null",
           "onUpdate": "no action"
         }
@@ -1106,9 +1052,7 @@
         "tier_templates_slug_unique": {
           "name": "tier_templates_slug_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "slug"
-          ]
+          "columns": ["slug"]
         }
       },
       "policies": {},
@@ -1281,12 +1225,8 @@
           "name": "sertifikat_peserta_id_peserta_id_fk",
           "tableFrom": "sertifikat",
           "tableTo": "peserta",
-          "columnsFrom": [
-            "peserta_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["peserta_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -1294,12 +1234,8 @@
           "name": "sertifikat_course_id_courses_id_fk",
           "tableFrom": "sertifikat",
           "tableTo": "courses",
-          "columnsFrom": [
-            "course_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["course_id"],
+          "columnsTo": ["id"],
           "onDelete": "set null",
           "onUpdate": "no action"
         }
@@ -1309,9 +1245,7 @@
         "sertifikat_certificate_number_unique": {
           "name": "sertifikat_certificate_number_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "certificate_number"
-          ]
+          "columns": ["certificate_number"]
         }
       },
       "policies": {},
@@ -1390,12 +1324,8 @@
           "name": "conversation_messages_document_id_documents_id_fk",
           "tableFrom": "conversation_messages",
           "tableTo": "documents",
-          "columnsFrom": [
-            "document_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["document_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -1456,12 +1386,8 @@
           "name": "conversation_summaries_document_id_documents_id_fk",
           "tableFrom": "conversation_summaries",
           "tableTo": "documents",
-          "columnsFrom": [
-            "document_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["document_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -1471,9 +1397,7 @@
         "conversation_summaries_document_id_unique": {
           "name": "conversation_summaries_document_id_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "document_id"
-          ]
+          "columns": ["document_id"]
         }
       },
       "policies": {},
@@ -1620,12 +1544,8 @@
           "name": "document_field_states_document_id_documents_id_fk",
           "tableFrom": "document_field_states",
           "tableTo": "documents",
-          "columnsFrom": [
-            "document_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["document_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -1764,12 +1684,8 @@
           "name": "document_master_profiles_document_id_documents_id_fk",
           "tableFrom": "document_master_profiles",
           "tableTo": "documents",
-          "columnsFrom": [
-            "document_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["document_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -1896,12 +1812,8 @@
           "name": "document_payload_snapshots_document_id_documents_id_fk",
           "tableFrom": "document_payload_snapshots",
           "tableTo": "documents",
-          "columnsFrom": [
-            "document_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["document_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -2021,12 +1933,8 @@
           "name": "document_trainer_profiles_document_id_documents_id_fk",
           "tableFrom": "document_trainer_profiles",
           "tableTo": "documents",
-          "columnsFrom": [
-            "document_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["document_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -2177,12 +2085,8 @@
           "name": "documents_owner_user_id_user_id_fk",
           "tableFrom": "documents",
           "tableTo": "user",
-          "columnsFrom": [
-            "owner_user_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["owner_user_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -2316,12 +2220,8 @@
           "name": "generated_files_document_id_documents_id_fk",
           "tableFrom": "generated_files",
           "tableTo": "documents",
-          "columnsFrom": [
-            "document_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["document_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -2329,12 +2229,8 @@
           "name": "generated_files_generation_job_id_generation_jobs_id_fk",
           "tableFrom": "generated_files",
           "tableTo": "generation_jobs",
-          "columnsFrom": [
-            "generation_job_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["generation_job_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -2462,12 +2358,8 @@
           "name": "generation_jobs_document_id_documents_id_fk",
           "tableFrom": "generation_jobs",
           "tableTo": "documents",
-          "columnsFrom": [
-            "document_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["document_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -2533,12 +2425,8 @@
           "name": "chapters_course_id_courses_id_fk",
           "tableFrom": "chapters",
           "tableTo": "courses",
-          "columnsFrom": [
-            "course_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["course_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -2707,12 +2595,8 @@
           "name": "lessons_chapter_id_chapters_id_fk",
           "tableFrom": "lessons",
           "tableTo": "chapters",
-          "columnsFrom": [
-            "chapter_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["chapter_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -2787,12 +2671,8 @@
           "name": "peserta_course_progress_peserta_id_peserta_id_fk",
           "tableFrom": "peserta_course_progress",
           "tableTo": "peserta",
-          "columnsFrom": [
-            "peserta_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["peserta_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -2800,12 +2680,8 @@
           "name": "peserta_course_progress_lesson_id_lessons_id_fk",
           "tableFrom": "peserta_course_progress",
           "tableTo": "lessons",
-          "columnsFrom": [
-            "lesson_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["lesson_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -2867,16 +2743,12 @@
         "admin_clerk_id_unique": {
           "name": "admin_clerk_id_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "clerk_id"
-          ]
+          "columns": ["clerk_id"]
         },
         "admin_email_unique": {
           "name": "admin_email_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "email"
-          ]
+          "columns": ["email"]
         }
       },
       "policies": {},
@@ -3003,16 +2875,12 @@
         "peserta_clerk_id_unique": {
           "name": "peserta_clerk_id_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "clerk_id"
-          ]
+          "columns": ["clerk_id"]
         },
         "peserta_email_unique": {
           "name": "peserta_email_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "email"
-          ]
+          "columns": ["email"]
         }
       },
       "policies": {},
@@ -3024,39 +2892,22 @@
     "public.certificate_status": {
       "name": "certificate_status",
       "schema": "public",
-      "values": [
-        "not_submitted",
-        "in_review",
-        "approved",
-        "rejected",
-        "issued"
-      ]
+      "values": ["not_submitted", "in_review", "approved", "rejected", "issued"]
     },
     "public.certificate_type": {
       "name": "certificate_type",
       "schema": "public",
-      "values": [
-        "bnsp",
-        "trainerhub"
-      ]
+      "values": ["bnsp", "trainerhub"]
     },
     "public.jk": {
       "name": "jk",
       "schema": "public",
-      "values": [
-        "L",
-        "P"
-      ]
+      "values": ["L", "P"]
     },
     "public.payment_status": {
       "name": "payment_status",
       "schema": "public",
-      "values": [
-        "paid",
-        "unpaid",
-        "pending",
-        "cancel"
-      ]
+      "values": ["paid", "unpaid", "pending", "cancel"]
     }
   },
   "schemas": {},

@@ -1,5 +1,5 @@
-import { useEffect } from 'react';
-import { useNavigate, useSearchParams } from 'react-router';
+import { useEffect } from 'react'
+import { useNavigate, useSearchParams } from 'react-router'
 
 /**
  * Redirect component for old password reset links
@@ -7,19 +7,19 @@ import { useNavigate, useSearchParams } from 'react-router';
  * Redirects to the new forgot password page: /auth/forgot-password
  */
 export default function PasswordResetRedirect() {
-  const navigate = useNavigate();
-  const [searchParams] = useSearchParams();
+  const navigate = useNavigate()
+  const [searchParams] = useSearchParams()
 
   useEffect(() => {
     // If has reset_password query param, redirect to forgot password page
     if (searchParams.get('reset_password') === 'true') {
-      console.log('[PasswordResetRedirect] Redirecting old URL to /auth/forgot-password');
-      navigate('/auth/forgot-password', { replace: true });
+      console.log('[PasswordResetRedirect] Redirecting old URL to /auth/forgot-password')
+      navigate('/auth/forgot-password', { replace: true })
     } else {
       // Otherwise redirect to login
-      navigate('/auth/login', { replace: true });
+      navigate('/auth/login', { replace: true })
     }
-  }, [navigate, searchParams]);
+  }, [navigate, searchParams])
 
   // Show loading while redirecting
   return (
@@ -29,5 +29,5 @@ export default function PasswordResetRedirect() {
         <p className="text-gray-600">Redirecting...</p>
       </div>
     </div>
-  );
+  )
 }

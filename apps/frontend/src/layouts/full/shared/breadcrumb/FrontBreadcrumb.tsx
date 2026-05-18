@@ -1,11 +1,9 @@
-
-import { IconChevronRight } from "@tabler/icons-react";
-import { Link } from "react-router";
-
+import { IconChevronRight } from '@tabler/icons-react'
+import { Link } from 'react-router'
 
 interface BreadCrumbType {
-  title: string;
-  link?: string;
+  title: string
+  link?: string
 }
 
 const FrontEndBreadcrumb = ({ title, link }: BreadCrumbType) => {
@@ -19,8 +17,8 @@ const FrontEndBreadcrumb = ({ title, link }: BreadCrumbType) => {
             </h2>
             <div className="flex  items-center gap-4 uppercase text-sm font-bold md:mt-0 mt-4">
               <span className="text-ld opacity-80">trainerhub</span>
-              <IconChevronRight size={15} className="text-ld"/>{" "}
-              <Link to={"/"} className="text-primary">
+              <IconChevronRight size={15} className="text-ld" />{' '}
+              <Link to={'/'} className="text-primary">
                 {link}
               </Link>
             </div>
@@ -28,7 +26,7 @@ const FrontEndBreadcrumb = ({ title, link }: BreadCrumbType) => {
         </div>
       </div>
     </>
-  );
-};
+  )
+}
 
-export default FrontEndBreadcrumb;
+export default FrontEndBreadcrumb

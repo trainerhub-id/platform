@@ -1,17 +1,17 @@
-import { OpenAPIHono } from "@hono/zod-openapi";
+import { OpenAPIHono } from '@hono/zod-openapi'
 
 export function createOpenApiApp() {
-  const app = new OpenAPIHono();
+  const app = new OpenAPIHono()
 
-  app.doc("/openapi.json", {
-    openapi: "3.0.0",
+  app.doc('/openapi.json', {
+    openapi: '3.0.0',
     info: {
-      title: "TrainerHub Hono API",
-      version: "0.1.0",
+      title: 'TrainerHub Hono API',
+      version: '0.1.0',
     },
-  });
+  })
 
-  app.get("/docs", (c) =>
+  app.get('/docs', (c) =>
     c.html(`<!doctype html>
 <html>
   <head><title>TrainerHub Hono API Docs</title></head>
@@ -20,7 +20,7 @@ export function createOpenApiApp() {
     <p>OpenAPI JSON: <a href="/openapi.json">/openapi.json</a></p>
   </body>
 </html>`),
-  );
+  )
 
-  return app;
+  return app
 }

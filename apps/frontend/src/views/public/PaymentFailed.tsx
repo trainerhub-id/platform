@@ -1,13 +1,13 @@
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from 'src/components/ui/card';
-import { Button } from 'src/components/ui/button';
-import { XCircle } from 'lucide-react';
-import { useNavigate, useSearchParams } from 'react-router';
+import { XCircle } from 'lucide-react'
+import { useNavigate, useSearchParams } from 'react-router'
+import { Button } from 'src/components/ui/button'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from 'src/components/ui/card'
 
 export default function PaymentFailed() {
-  const navigate = useNavigate();
-  const [searchParams] = useSearchParams();
-  const sessionId = searchParams.get('session');
-  const claimToken = searchParams.get('token');
+  const navigate = useNavigate()
+  const [searchParams] = useSearchParams()
+  const sessionId = searchParams.get('session')
+  const claimToken = searchParams.get('token')
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 p-4">
@@ -18,7 +18,8 @@ export default function PaymentFailed() {
           </div>
           <CardTitle className="text-2xl">Pembayaran Gagal</CardTitle>
           <CardDescription>
-            Provider menandai pembayaran tidak berhasil. Anda bisa kembali ke checkout atau mulai ulang pendaftaran.
+            Provider menandai pembayaran tidak berhasil. Anda bisa kembali ke checkout atau mulai
+            ulang pendaftaran.
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-3">
@@ -38,5 +39,5 @@ export default function PaymentFailed() {
         </CardContent>
       </Card>
     </div>
-  );
+  )
 }

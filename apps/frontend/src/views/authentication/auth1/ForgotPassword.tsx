@@ -1,9 +1,8 @@
-import { Button } from "flowbite-react"
-import { Link } from "react-router"
-import AuthForgotPassword from "../authforms/AuthForgotPassword"
-import LeftSidebarPart from "../LeftSidebarPart"
-import LogoIcon from "/src/assets/images/logos/logo.svg"
-
+import { Button } from 'flowbite-react'
+import { Link } from 'react-router'
+import LogoIcon from '/src/assets/images/logos/logo.svg'
+import AuthForgotPassword from '../authforms/AuthForgotPassword'
+import LeftSidebarPart from '../LeftSidebarPart'
 
 const ForgotPassword = () => {
   return (
@@ -16,12 +15,12 @@ const ForgotPassword = () => {
                 <img src={LogoIcon} alt="Logo" className="h-12 mb-4" />
                 <h3 className="text-2xl font-bold my-3 mt-5">Forgot Password</h3>
                 <p className="text-ld opacity-80 dark:text-white/60 text-sm font-medium">
-                  Please enter the email address associated with your account
-                  and We will email you a link to reset your password.
+                  Please enter the email address associated with your account and We will email you
+                  a link to reset your password.
                 </p>
                 <AuthForgotPassword />
                 <Button
-                  color={"lightprimary"}
+                  color={'lightprimary'}
                   as={Link}
                   to="/auth/login"
                   className="rounded-md w-full mt-4"

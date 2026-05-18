@@ -1,23 +1,23 @@
-import { motion, useSpring, useTransform } from 'framer-motion';
-import { cn } from 'src/lib/utils';
+import { motion, useSpring, useTransform } from 'framer-motion'
+import { cn } from 'src/lib/utils'
 
 type AnimatedTooltipProps = {
-  name: string;
-  designation?: string;
-  className?: string;
-  x: any; // MotionValue<number>
-};
+  name: string
+  designation?: string
+  className?: string
+  x: any // MotionValue<number>
+}
 
 const AnimatedTooltip = ({ name, designation, x, className }: AnimatedTooltipProps) => {
   const rotate = useSpring(useTransform(x, [-100, 100], [-45, 45]), {
     stiffness: 100,
     damping: 15,
-  });
+  })
 
   const translateX = useSpring(useTransform(x, [-100, 100], [-50, 50]), {
     stiffness: 100,
     damping: 15,
-  });
+  })
 
   return (
     <motion.div
@@ -29,7 +29,7 @@ const AnimatedTooltip = ({ name, designation, x, className }: AnimatedTooltipPro
       <div className="text-base font-bold text-white whitespace-nowrap">{name}</div>
       <div className="text-xs text-white whitespace-nowrap">{designation}</div>
     </motion.div>
-  );
-};
+  )
+}
 
-export default AnimatedTooltip;
+export default AnimatedTooltip

@@ -1,14 +1,12 @@
-import { Sidebar } from "flowbite-react";
-import SidebarContent from "./Sidebaritems";
-import NavItems from "./NavItems";
-import NavCollapse from "./NavCollapse";
-import SimpleBar from "simplebar-react";
-import FullLogo from "../../shared/logo/FullLogo";
-import { Icon } from "@iconify/react";
-
+import { Icon } from '@iconify/react'
+import { Sidebar } from 'flowbite-react'
+import SimpleBar from 'simplebar-react'
+import FullLogo from '../../shared/logo/FullLogo'
+import NavCollapse from './NavCollapse'
+import NavItems from './NavItems'
+import SidebarContent from './Sidebaritems'
 
 const MobileSidebar = () => {
-
   return (
     <>
       <div className="flex">
@@ -40,17 +38,17 @@ const MobileSidebar = () => {
                         <NavCollapse key={child.id} item={child} />
                       ) : (
                         <NavItems key={child.id} item={child} />
-                      )
+                      ),
                     )}
                   </div>
-                ))
+                )),
               )}
             </div>
           </SimpleBar>
         </Sidebar>
       </div>
     </>
-  );
-};
+  )
+}
 
-export default MobileSidebar;
+export default MobileSidebar
