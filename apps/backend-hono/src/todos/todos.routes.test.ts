@@ -4,6 +4,7 @@ import { createTodosRoutes } from './todos.routes'
 
 describe('todos routes', () => {
   test('returns current user todos', async () => {
+    let initialized: { workspaceId: string; userId: string; pesertaId: string } | null = null
     const app = new Hono<{ Variables: { user: { id: string; role: string } } }>()
     app.use('*', async (c, next) => {
       c.set('user', { id: 'user_1', role: 'peserta' })
@@ -16,7 +17,13 @@ describe('todos routes', () => {
           listForWorkspace: async (workspaceId: string) => [
             { id: 'todo_1', workspaceId, key: 'fill_data_awal' },
           ],
-          initializeTodosForWorkspace: async () => [],
+          initializeTodosForWorkspace: async (
+            workspaceId: string,
+            userId: string,
+            pesertaId: string,
+          ) => {
+            initialized = { workspaceId, userId, pesertaId }
+          },
           syncTodosWithProfileState: async () => undefined,
           updateStatus: async () => null,
         } as never,
@@ -36,5 +43,10 @@ describe('todos routes', () => {
     expect(res.status).toBe(200)
     const body = await res.json()
     expect(body[0].workspaceId).toBe('workspace_1')
+    expect(initialized).toEqual({
+      workspaceId: 'workspace_1',
+      userId: 'user_1',
+      pesertaId: 'peserta_1',
+    })
   })
 })
