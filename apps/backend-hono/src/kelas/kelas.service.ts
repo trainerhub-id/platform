@@ -1,5 +1,5 @@
 import { and, eq, inArray } from 'drizzle-orm'
-import { createSign } from 'node:crypto'
+import { createPrivateKey, createSign } from 'node:crypto'
 import { db } from '../db/client'
 import {
   batchTiers,
@@ -172,6 +172,7 @@ export class KelasService {
       }
 
       const privateKeyPem = Buffer.from(privateKeyB64, 'base64').toString('utf-8')
+      const privateKey = createPrivateKey({ key: privateKeyPem, format: 'pem' })
 
       const header = Buffer.from(JSON.stringify({ alg: 'RS256', typ: 'JWT', kid: keyId })).toString('base64url')
       const payload = Buffer.from(JSON.stringify({
@@ -184,7 +185,7 @@ export class KelasService {
       const signingInput = `${header}.${payload}`
       const sign = createSign('RSA-SHA256')
       sign.update(signingInput)
-      const sig = sign.sign(privateKeyPem, 'base64url')
+      const sig = sign.sign(privateKey, 'base64url')
       const token = `${signingInput}.${sig}`
 
       return { token }
