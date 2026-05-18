@@ -954,6 +954,8 @@ function MessageBubble({
 }) {
   const isUser = message.role === 'user'
   const skkniUnits = !isUser && message.content ? parseSkkniUnits(message.content) : []
+  // Only show cards when it's a list (>1 unit), not a detail view of one unit
+  const showCards = skkniUnits.length > 1
   const isAskingConfirm =
     !isUser &&
     message.content &&
@@ -981,7 +983,7 @@ function MessageBubble({
         }
       >
         <MessageResponse whiteText={isUser}>
-          {isUser ? (message.content || '...') : (skkniUnits.length > 0 ? stripSkkniLines(message.content) : (message.content || '...'))}
+          {isUser ? (message.content || '...') : (showCards ? stripSkkniLines(message.content) : (message.content || '...'))}
         </MessageResponse>
         {isAskingConfirm && onSend && (
           <button
@@ -994,7 +996,7 @@ function MessageBubble({
             Ya, Lakukan Pencarian
           </button>
         )}
-        {skkniUnits.length > 0 && onSelectUnit && (
+        {showCards && onSelectUnit && (
           <SkkniCards units={skkniUnits} onSelect={(code) => onSend?.(code)} />
         )}
       </MessageContent>
