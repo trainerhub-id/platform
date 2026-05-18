@@ -1,5 +1,7 @@
 import { PgBoss } from 'pg-boss'
 import { env } from '../config/env'
+import { DocumentRepository } from '../documents/document.repository'
+import { GenerationJobService } from './generation-job.service'
 import { ObjectStorageService } from '../storage/object-storage.service'
 import { DocumentGeneratorService } from './document-generator.service'
 import { GeneratedFileRepository } from './generated-file.repository'
@@ -58,26 +60,49 @@ export class GenerationWorkerService {
   }
 
   private async processJob(data: unknown) {
-    const results = await this.documentGenerator.generateFromJob(data)
-    const payload = data as { jobId?: string; document?: { id?: string } }
-    if (!payload.jobId || !payload.document?.id) return results
+    // data is GenerationRequest: { jobType, documentId, documentTypes, jobId? }
+    const req = data as { documentId?: string; documentTypes?: string[]; jobId?: string }
+    if (!req.documentId || !Array.isArray(req.documentTypes)) {
+      throw new Error('INVALID_GENERATION_JOB_PAYLOAD')
+    }
 
-    for (const result of results) {
-      const upload = await this.objectStorage.uploadBuffer(
-        result.bytes,
-        `generated/${payload.document.id}/${payload.jobId}`,
-        result.mimeType,
-      )
-      await this.generatedFiles.create({
-        documentId: payload.document.id,
-        generationJobId: payload.jobId,
-        documentType: result.documentType,
-        outputFormat: result.outputFormat,
-        filePath: upload.key,
-        filename: result.filename,
-        mimeType: result.mimeType,
-        sizeBytes: result.bytes.byteLength,
-      })
+    const documents = new DocumentRepository()
+    const doc = await documents.findById(req.documentId)
+    if (!doc) throw new Error(`DOCUMENT_NOT_FOUND:${req.documentId}`)
+
+    // Update job status to active
+    const jobService = new GenerationJobService()
+    const jobs = await jobService.listByDocument(req.documentId)
+    const job = jobs.find((j) => (j as { bossJobId?: string }).bossJobId === req.jobId) ?? jobs[0]
+    if (job) await jobService.updateStatus(job.id, 'active', null)
+
+    const payload = {
+      document: { id: doc.id, flow: doc.flow, masterJson: doc.masterJson, readiness: doc.readiness },
+      documentTypes: req.documentTypes,
+      jobId: job?.id,
+    }
+
+    const results = await this.documentGenerator.generateFromJob(payload)
+
+    if (job) {
+      for (const result of results) {
+        const upload = await this.objectStorage.uploadBuffer(
+          result.bytes,
+          `generated/${doc.id}/${job.id}/${result.documentType}`,
+          result.mimeType,
+        )
+        await this.generatedFiles.create({
+          documentId: doc.id,
+          generationJobId: job.id,
+          documentType: result.documentType,
+          outputFormat: result.outputFormat,
+          filePath: upload.key,
+          filename: result.filename,
+          mimeType: result.mimeType,
+          sizeBytes: result.bytes.byteLength,
+        })
+      }
+      await jobService.updateStatus(job.id, 'completed', null)
     }
 
     return results
