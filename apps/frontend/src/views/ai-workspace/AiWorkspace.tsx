@@ -835,14 +835,14 @@ function DocumentManager({
 const SKKNI_CODE_RE = /[A-Z]\.\d{2}[A-Z0-9]+\.\d{3}\.\d+/g
 
 function parseSkkniUnits(content: string): Array<{ code: string; title: string }> {
-  // Match lines like: "1. **N.79JPW00.140.1** - Judul unit" or "N.79JPW00.140.1 — Judul"
   const lines = content.split('\n')
   const results: Array<{ code: string; title: string }> = []
   for (const line of lines) {
+    // Skip markdown table rows (contain |)
+    if (line.includes('|')) continue
     const codeMatch = line.match(SKKNI_CODE_RE)
     if (!codeMatch) continue
     const code = codeMatch[0]
-    // Extract title: text after the code, strip markdown bold/dash
     const afterCode = line.slice(line.indexOf(code) + code.length)
     const title = afterCode.replace(/^[\s\-–—*_:]+/, '').replace(/\*\*/g, '').trim()
     if (code && !results.find((r) => r.code === code)) {
