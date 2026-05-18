@@ -116,6 +116,9 @@ export class ResponseService implements ResponseServiceLike {
             },
             toolChoice: 'auto' as const,
             stopWhen: stepCountIs(2),
+            providerOptions: {
+              deepseek: { thinking: { type: 'disabled' } },
+            },
           }
         : {}),
     })
