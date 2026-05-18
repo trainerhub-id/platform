@@ -220,6 +220,25 @@ export class InterviewEngine {
               source: 'system',
               pendingSuggestion: null,
             })
+            // Refresh readiness and phase after saving so document.ready reflects new state
+            const updatedStates = await fieldStates.list(input.documentId, flow)
+            const updatedReadiness =
+              flow === 'master'
+                ? buildMasterReadiness(updatedStates as FieldStateSnapshot[])
+                : buildTrainerReadiness(updatedStates as FieldStateSnapshot[])
+            const updatedPhase =
+              flow === 'master'
+                ? getNextMasterPhase(updatedStates as FieldStateSnapshot[])
+                : getNextTrainerPhase(updatedStates as FieldStateSnapshot[])
+            const updatedMasterJson =
+              flow === 'master'
+                ? compileMasterJson(updatedStates as FieldStateSnapshot[])
+                : compileTrainerJson(updatedStates as FieldStateSnapshot[])
+            await documents.updateInterviewState(input.documentId, {
+              masterJson: updatedMasterJson,
+              readiness: updatedReadiness,
+              currentPhase: updatedPhase,
+            })
           },
         }
       },
