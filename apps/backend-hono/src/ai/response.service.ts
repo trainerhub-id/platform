@@ -114,7 +114,7 @@ export class ResponseService implements ResponseServiceLike {
                 }),
               }),
             },
-            toolChoice: { type: 'tool' as const, toolName: 'search_skkni_units' },
+            toolChoice: 'auto' as const,
             stopWhen: stepCountIs(2),
           }
         : {}),
