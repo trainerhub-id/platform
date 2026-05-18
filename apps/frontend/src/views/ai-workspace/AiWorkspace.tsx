@@ -34,11 +34,6 @@ import {
   updateDocument,
 } from './ai-workspace.api'
 import { checkpointConfig, getEffectiveStatus, getProgress } from './checkpoints'
-import {
-  type DocCategory,
-  TRAINER_DOC_CATEGORIES,
-  TRAINER_DOC_CATEGORIES_GENERATING,
-} from './document-generation'
 
 type UiMessage =
   | ConversationMessage
@@ -779,13 +774,13 @@ function SkkniCards({ units, onSelect }: { units: Array<{ code: string; title: s
   return (
     <div className="mt-3 space-y-2">
       <p className="text-[12px] font-semibold uppercase tracking-wider mb-2" style={{ color: '#9CA3AF' }}>
-        Pilih unit — klik untuk isi input
+        Pilih unit — klik untuk memilih
       </p>
       {units.map((u) => (
         <button
           key={u.code}
           type="button"
-          onClick={() => onSelect(u.code)}
+          onClick={() => onSelect(`Aku pilih unit ini ${u.code}`)}
           onMouseEnter={() => setHovered(u.code)}
           onMouseLeave={() => setHovered(null)}
           className="flex w-full items-start gap-3 rounded-xl px-4 py-3 text-left transition-all"
@@ -890,25 +885,16 @@ function CheckpointPanel({
   readiness: InterviewReadiness | null
   progress: number
 }) {
-  // Derive docGenStatus from readiness
-  // In production this would come from document generation API
-  const isReady = readiness?.ready ?? false
-
-  const categories = isReady ? TRAINER_DOC_CATEGORIES : TRAINER_DOC_CATEGORIES_GENERATING
-
+  // Sidebar state is driven by interview readiness only.
+  // Document generation state (Sedang Generate / Siap Diunduh) will be
+  // connected to the document generation API when that feature is built.
   return (
     <aside
       className="hidden w-72 flex-shrink-0 overflow-y-auto lg:block"
       style={{ background: 'var(--ai-bg, #F8F6F2)' }}
     >
       <div className="p-5">
-        {isReady ? (
-          <SidebarSiapDiunduh categories={TRAINER_DOC_CATEGORIES} />
-        ) : progress > 0 && progress < 100 ? (
-          <SidebarSedangGenerate categories={categories} />
-        ) : (
-          <SidebarBelumGenerate flow={flow} readiness={readiness} progress={progress} />
-        )}
+        <SidebarBelumGenerate flow={flow} readiness={readiness} progress={progress} />
       </div>
     </aside>
   )
