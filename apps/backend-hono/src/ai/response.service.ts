@@ -13,6 +13,8 @@ export type ResponseInput = {
   missingFields?: string[]
   flow?: 'master' | 'trainer'
   masterJson?: unknown
+  documentId?: string
+  saveField?: (phaseKey: string, fieldKey: string, value: unknown) => Promise<void>
 }
 
 export interface ResponseServiceLike {
@@ -139,6 +141,13 @@ export class ResponseService implements ResponseServiceLike {
                       this.skkni.getUnitDetail(selectedUnitCode),
                       this.skkni.getCompetencyMap(selectedUnitCode).catch(() => null),
                     ])
+                    // Save directly to field states so readiness advances
+                    if (input.saveField) {
+                      await input.saveField('unit_selection', 'unit_detail', detail)
+                      if (map) {
+                        await input.saveField('competency_map', 'skkni_map', map)
+                      }
+                    }
                     return { unitCode: selectedUnitCode, detail, map }
                   },
                 }),

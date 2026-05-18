@@ -208,6 +208,19 @@ export class InterviewEngine {
           missingFields: readiness.missing,
           flow,
           masterJson,
+          documentId: input.documentId,
+          saveField: async (phaseKey: string, fieldKey: string, value: unknown) => {
+            await fieldStates.upsert({
+              documentId: input.documentId,
+              flow,
+              phaseKey,
+              fieldKey,
+              value,
+              status: 'captured',
+              source: 'system',
+              pendingSuggestion: null,
+            })
+          },
         }
       },
     )
