@@ -107,7 +107,12 @@ export class ExtractionService implements ExtractionServiceLike {
     })
 
     const flow =
-      input.phase === 'brainstorming' || input.phase === 'training_details' ? 'trainer' : 'master'
+      input.phase === 'brainstorming' ||
+      input.phase === 'training_details' ||
+      input.phase === 'unit_selection' ||
+      input.phase === 'competency_map'
+        ? 'trainer'
+        : 'master'
     return normalizeExtractionObject(output, flow)
   }
 }
